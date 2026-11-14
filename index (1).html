@@ -76,7 +76,8 @@ section{padding:72px 0}
 .paket .oznaka{font-family:var(--telo);font-size:13px;font-weight:600;background:var(--orhideja);color:#fff;border-radius:999px;padding:4px 10px}
 .paket .cena{font-family:var(--display);font-weight:800;font-size:44px;letter-spacing:-.03em;margin-top:18px}
 .paket .cena small{font-size:16px;font-weight:500;opacity:.7}
-.paket .stara{font-size:14px;opacity:.65;margin-top:2px}
+.paket .stara{font-size:14px;opacity:.75;margin-top:6px;line-height:1.4}
+.paket .stara b{font-weight:600;opacity:1}
 .paket .stara s{opacity:.9}
 .paket ul{list-style:none;margin:20px 0 26px;display:grid;gap:9px;font-size:15.5px;flex:1}
 .paket li{padding-left:22px;position:relative}
@@ -106,6 +107,14 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 .pecat{display:block;width:150px;height:150px;margin:0 auto 22px}
 .znak b{color:var(--orhideja)}
+.period-omot{display:flex;justify-content:center}
+.period{display:inline-grid;grid-auto-flow:column;gap:4px;padding:4px;margin:22px 0 4px;border-radius:999px;background:#2F3524;border:1px solid #3E4630}
+.period button{border:0;background:transparent;color:#C9CEBB;font:600 15px var(--telo);padding:10px 18px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.period button[aria-pressed="true"]{background:#F2F4EA;color:var(--mastilo)}
+.period button:focus-visible{outline:2px solid var(--zlato);outline-offset:2px}
+@media (max-width:520px){.period{display:grid;grid-auto-flow:row;grid-template-columns:1fr;border-radius:18px;width:100%}.period button{justify-content:center}}
+.paket .popust{display:inline-block;align-self:flex-start;margin-top:8px;padding:4px 10px;border-radius:999px;background:var(--zlato);color:#2A2410;font-size:13px;font-weight:700}
+.paket .popust[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -129,7 +138,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <a href="#kako">Kako radi</a>
       <a href="#paketi">Paketi</a>
       <a href="#pitanja">Pitanja</a>
-      <a class="dugme" href="https://www.instagram.com/blade.rs.official/" target="_blank" rel="noopener">Pišite nam</a>
+      <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Pišite nam</a>
     </nav>
   </div>
 </header>
@@ -140,10 +149,9 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <div>
         <h1>Salon je pun. Instagram više neće biti prazan.<span>Pošaljete sliku iz salona, mi napišemo opis i objavimo u pravom terminu. Vi samo kliknete Objavi.</span></h1>
         <div class="akcije">
-          <a class="dugme" href="https://www.instagram.com/blade.rs.official/" target="_blank" rel="noopener">Zakažite razgovor</a>
+          <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Zakažite razgovor</a>
           <a class="dugme svetlo" href="app/">Probajte aplikaciju</a>
         </div>
-        <p class="sitno">Bez naknade za uključivanje. Prvih 10 salona dobija osnivačku cenu.</p>
       </div>
       <div>
         <div class="telefon"><iframe src="app/?demo=1" title="Primer Razvitak aplikacije" loading="lazy"></iframe></div>
@@ -181,31 +189,34 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <section class="paketi-sekcija" id="paketi">
     <div class="sir">
       <h2>Paketi</h2>
-      <p class="uvod">Osnivačke cene važe za prvih 10 salona i ostaju iste dok ste naš klijent.</p>
+      <div class="period-omot"><div class="period" role="group" aria-label="Način plaćanja">
+        <button data-period="m" aria-pressed="true">Mesečno</button>
+        <button data-period="t" aria-pressed="false">Prva 3 meseca</button>
+        <button data-period="g" aria-pressed="false">Godišnje</button>
+      </div></div>
       <div class="paketi">
         <div class="paket">
           <div class="naziv">Start</div>
-          <div class="cena">1.490 <small>din/mes</small></div>
-          <div class="stara">kasnije <s>2.290 din</s></div>
-          <ul><li>8 objava mesečno</li><li>Svaka objava i kao Story</li><li>Opis u stilu vašeg salona i hashtagovi</li><li>Odobravanje pre objave, ako želite</li></ul>
-          <a class="dugme" href="https://www.instagram.com/blade.rs.official/" target="_blank" rel="noopener">Izaberite Start</a>
+          <div class="cena" data-m="1890" data-t="1690" data-g="1490"><span>1.890</span> <small>din/mes</small></div>
+          <div class="popust" aria-live="polite" hidden></div>
+          <ul><li>8 objava mesečno</li><li>Opis u stilu vašeg salona i hashtagovi</li><li>Odobravanje pre objave</li></ul>
+          <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Izaberite Start</a>
         </div>
         <div class="paket istaknut">
           <div class="naziv">Standard <span class="oznaka">Najčešći izbor</span></div>
-          <div class="cena">2.790 <small>din/mes</small></div>
-          <div class="stara">kasnije <s>3.690 din</s></div>
-          <ul><li>12 objava mesečno</li><li>4 dodatne objave kad nemate slike</li><li>8 dodatnih Story-ja iz vaših poruka</li><li>Podsetnik kad je vreme za nove slike</li><li>Sve iz paketa Start</li></ul>
-          <a class="dugme" href="https://www.instagram.com/blade.rs.official/" target="_blank" rel="noopener">Izaberite Standard</a>
+          <div class="cena" data-m="3590" data-t="3190" data-g="2890"><span>3.590</span> <small>din/mes</small></div>
+          <div class="popust" aria-live="polite" hidden></div>
+          <ul><li>12 objava mesečno</li><li>8 Story-ja mesečno</li><li>4 dodatne objave kad nemate slike</li><li>Podsetnik kad je vreme za post</li><li>Sve iz paketa Start</li></ul>
+          <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Izaberite Standard</a>
         </div>
         <div class="paket">
           <div class="naziv">Premium</div>
-          <div class="cena">4.490 <small>din/mes</small></div>
-          <div class="stara">kasnije <s>6.290 din</s></div>
-          <ul><li>20 objava mesečno</li><li>Story svaki radni dan</li><li>4 Reels-a od vaših videa</li><li>Mesečni izveštaj o rezultatima</li><li>Sve iz paketa Standard</li></ul>
-          <a class="dugme" href="https://www.instagram.com/blade.rs.official/" target="_blank" rel="noopener">Izaberite Premium</a>
+          <div class="cena" data-m="5790" data-t="5190" data-g="4590"><span>5.790</span> <small>din/mes</small></div>
+          <div class="popust" aria-live="polite" hidden></div>
+          <ul><li>20 objava mesečno</li><li>20 Story-ja mesečno</li><li>4 Reels-a od vaših videa</li><li>Mesečni izveštaj o rezultatima</li><li>Sve iz paketa Standard</li></ul>
+          <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Izaberite Premium</a>
         </div>
       </div>
-      <p class="napomena-cene">Bez naknade za uključivanje. Minimalno trajanje je 3 meseca, posle toga otkazujete kad god želite.</p>
     </div>
   </section>
 
@@ -217,6 +228,8 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <details><summary>Da li nešto može da izađe bez mog odobrenja?</summary><p>Ne, osim ako sami ne tražite da objave idu bez pregleda. Svaki predlog prvo vidite i odobrite.</p></details>
         <details><summary>Šta ako mi se opis ne dopada?</summary><p>Jednim klikom dobijete kraću, opušteniju ili potpuno novu verziju. Ili napišete šta da promenimo. Ako kažete da nešto uvek važi, npr. „nikad ne pišite cene“, to pamtimo za sve buduće objave.</p></details>
         <details><summary>Zašto Telegram?</summary><p>Besplatan je, radi na svakom telefonu i u njemu je naša aplikacija. Instalirate ga jednom, otvorite link koji vam pošaljemo i to je to.</p></details>
+        <details><summary>Kada se vide rezultati?</summary><p>Prve objave izlaze već prve nedelje. Rast pratilaca i poruka od novih mušterija obično se vidi posle dva do tri meseca redovnog objavljivanja, zato savetujemo da počnete sa 3 meseca. Tada dobijate i popust.</p></details>
+        <details><summary>Mogu li da otkažem?</summary><p>Da. Mesečni paket otkazujete kad želite, bez ugovorne obaveze i bez penala. Paket za 3 meseca je plaćen unapred i traje do kraja ta tri meseca.</p></details>
         <details><summary>Koliko traje uključivanje?</summary><p>Razgovor od 15 minuta o vašem salonu i povezivanje Instagram naloga. Prva objava može da izađe već iste nedelje.</p></details>
         <details><summary>Treba li mi poslovni Instagram nalog?</summary><p>Da, Business ili Creator nalog. Besplatno je i prebacivanje traje minut. Pomognemo vam ako niste sigurni.</p></details>
       </div>
@@ -229,7 +242,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <h2>Probajte na svom salonu</h2>
       <p class="uvod">Pošaljite nam poruku i dogovorimo kratak razgovor. Pokazaćemo vam kako bi izgledala prva objava za vaš salon.</p>
       <div class="akcije">
-        <a class="dugme" href="https://www.instagram.com/blade.rs.official/" target="_blank" rel="noopener">Pišite nam na Instagramu</a>
+        <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Pišite nam na Instagramu</a>
         <a class="dugme svetlo" href="https://t.me/kaodajebitno_bot" target="_blank" rel="noopener">Pišite nam na Telegramu</a>
       </div>
     </div>
@@ -239,5 +252,20 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 <footer>
   <div class="sir"><span>Razvitak, Instagram za salone lepote</span><a href="app/">Aplikacija za klijente</a></div>
 </footer>
+<script>
+(() => {
+  const f = n => n.toLocaleString('de-DE');
+  const izbor = p => {
+    document.querySelectorAll('[data-period]').forEach(b => b.setAttribute('aria-pressed', b.dataset.period === p));
+    document.querySelectorAll('.cena[data-m]').forEach(c => {
+      const v = +c.dataset[p], pp = c.parentElement.querySelector('.popust');
+      c.querySelector('span').textContent = f(v);
+      pp.hidden = p === 'm';
+      pp.textContent = p === 't' ? '−10% ušteda' : '−20% ušteda';
+    });
+  };
+  document.querySelectorAll('[data-period]').forEach(b => b.onclick = () => izbor(b.dataset.period));
+})();
+</script>
 </body>
 </html>
