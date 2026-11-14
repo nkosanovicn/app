@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Razvitak</title>
-<meta name="theme-color" content="#5F7033">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="description" content="Razvitak: Instagram vašeg salona na jednom mestu.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="ikona-192.png">
@@ -19,14 +19,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600&display=swap&subset=latin-ext" rel="stylesheet">
 <style>
 :root{
-  --pozadina:#F6F7F1; --povrsina:#FFFFFF; --mastilo:#23281A; --tiho:#6C7260; --linija:#E2E6D6;
-  --orhideja:#5F7033; --orhideja-svetla:#EBEFDC; --rumenilo:#F5E8C6; --zlato:#D9A63A; --menta:#2F8F6B; --cilibar:#B26E00; --cilibar-svetli:#FCF0DC;
+  --pozadina:#FFFFFF; --povrsina:#FFFFFF; --mastilo:#1E211A; --tiho:#6B6E66; --linija:#E8E9E4; --tiho-poz:#F5F6F2;
+  --orhideja:#5F7033; --orhideja-svetla:#EFF2E6; --rumenilo:#F6EFDD; --zlato:#D9A63A; --menta:#2F8F6B; --cilibar:#B26E00; --cilibar-svetli:#FCF0DC;
   --na-orhideji:#FFFFFF; --radius-veliki:22px; --radius:14px; --radius-mali:9px;
   --display:"Fredoka", system-ui, sans-serif; --telo:"Figtree", system-ui, sans-serif;
 }
 :root.tamno{
-  --pozadina:#15180F; --povrsina:#1F2318; --mastilo:#EEF0E6; --tiho:#A2A893; --linija:#343A29;
-  --orhideja:#B8CB7C; --orhideja-svetla:#2D3521; --rumenilo:#3A3220; --zlato:#E2B451; --menta:#6CCFA4; --cilibar:#F0B451; --cilibar-svetli:#3D2F1A; --na-orhideji:#151A0C;
+  --pozadina:#111210; --povrsina:#191A17; --mastilo:#ECEDE8; --tiho:#9C9F95; --linija:#2C2E29; --tiho-poz:#1F201C;
+  --orhideja:#B8CB7C; --orhideja-svetla:#262A1F; --rumenilo:#3A3220; --zlato:#E2B451; --menta:#6CCFA4; --cilibar:#F0B451; --cilibar-svetli:#3D2F1A; --na-orhideji:#151A0C;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--pozadina);color:var(--mastilo);font-family:var(--telo);font-size:16px;line-height:1.45}
@@ -40,15 +40,15 @@ img{display:block;max-width:100%}
 .zaglavlje{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
 .znak{display:flex;align-items:center;gap:10px}
 .znak svg{width:34px;height:38px}
-.znak b{font-family:var(--display);font-weight:700;font-size:23px;letter-spacing:-.01em;color:var(--orhideja)}
+.znak b{font-family:var(--display);font-weight:700;font-size:23px;letter-spacing:-.01em;color:var(--mastilo)}
 .salon-izbor{appearance:none;background:var(--povrsina);border:1px solid var(--linija);border-radius:999px;padding:8px 32px 8px 14px;font:500 14px var(--telo);color:var(--mastilo);max-width:200px;
   background-image:linear-gradient(45deg,transparent 50%,var(--tiho) 50%),linear-gradient(135deg,var(--tiho) 50%,transparent 50%);background-position:calc(100% - 17px) 55%,calc(100% - 12px) 55%;background-size:5px 5px;background-repeat:no-repeat}
-.salon-dugme{display:inline-flex;align-items:center;gap:6px;background:var(--povrsina);border:1px solid var(--linija);border-radius:999px;padding:8px 12px 8px 14px;font:500 14px var(--telo);color:var(--mastilo);max-width:210px}
+.salon-dugme{display:inline-flex;align-items:center;gap:6px;background:var(--povrsina);border:1px solid var(--linija);border-radius:999px;padding:8px 10px 8px 12px;font:500 14px var(--telo);color:var(--mastilo);max-width:150px}
 .salon-dugme span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .salon-dugme svg{width:14px;height:14px;flex:none;stroke:var(--tiho)}
 .saloni{display:grid;gap:14px;margin-top:22px}
 .salon-kartica{background:var(--povrsina);border:1px solid var(--linija);border-radius:var(--radius);overflow:hidden}
-.salon-kartica.trenutni{border-color:var(--orhideja);box-shadow:inset 4px 0 0 var(--orhideja)}
+.salon-kartica.trenutni{box-shadow:inset 3px 0 0 var(--orhideja)}
 .salon-glava{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;padding:16px 16px 6px}
 .salon-glava h3{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
 .salon-glava p{font-size:13px;color:var(--tiho);margin-top:3px}
@@ -71,11 +71,11 @@ h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01
 .pod{color:var(--tiho);font-size:15px;margin-top:6px}
 
 /* sledeca objava: list iz knjige zakazivanja */
-.listic{margin-top:22px;display:grid;grid-template-columns:86px 1fr;background:var(--povrsina);border-radius:var(--radius-veliki);overflow:hidden;box-shadow:0 1px 0 var(--linija),0 18px 40px -28px rgba(60,72,25,.40)}
-.listic .vreme{background:var(--orhideja);color:var(--na-orhideji);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 6px;position:relative}
+.listic{margin-top:22px;display:grid;grid-template-columns:86px 1fr;background:var(--povrsina);border-radius:var(--radius-veliki);overflow:hidden;border:1px solid var(--linija);box-shadow:0 16px 36px -30px rgba(30,33,26,.35)}
+.listic .vreme{background:var(--tiho-poz);color:var(--mastilo);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 6px;position:relative}
 .listic .vreme::after{content:"";position:absolute;right:-7px;top:0;bottom:0;width:14px;background:radial-gradient(circle at 7px 9px,var(--povrsina) 4px,transparent 4.5px) 0 0/14px 18px repeat-y}
-.listic .dan{font-size:13px;opacity:.85;text-transform:lowercase}
-.listic .sat{font-family:var(--display);font-weight:800;font-size:34px;line-height:1}
+.listic .dan{font-size:13px;color:var(--tiho);text-transform:lowercase}
+.listic .sat{font-family:var(--display);font-weight:700;font-size:34px;line-height:1;color:var(--orhideja)}
 .listic .sadrzaj{display:flex;gap:14px;align-items:center;padding:14px 16px 14px 20px;min-height:110px}
 .listic .sadrzaj img,.slicica{width:72px;height:90px;border-radius:var(--radius-mali);object-fit:cover;flex:none;background:var(--rumenilo)}
 .listic .naslov{font-weight:600;font-size:15px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -178,7 +178,7 @@ nav.dno button[aria-current="page"]{color:var(--orhideja);font-weight:600}
 
 /* stanja */
 .prazno{text-align:center;color:var(--tiho);padding:40px 10px}
-.traka-primer{background:var(--orhideja-svetla);color:var(--orhideja);font-size:13px;border-radius:var(--radius-mali);padding:8px 12px;margin-bottom:16px}
+.traka-primer{background:var(--tiho-poz);color:var(--tiho);border:1px solid var(--linija);font-size:13px;border-radius:var(--radius-mali);padding:8px 12px;margin-bottom:16px}
 .ucitavanje .kost{background:linear-gradient(90deg,var(--linija),var(--povrsina),var(--linija));background-size:200% 100%;animation:sija 1.2s infinite;border-radius:var(--radius)}
 @keyframes sija{to{background-position:-200% 0}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -199,7 +199,7 @@ nav.dno button[aria-current="page"]{color:var(--orhideja);font-weight:600}
 .lista-ceka span{font-size:15px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 textarea.polje{width:100%;min-height:96px;border:1px solid var(--linija);border-radius:var(--radius);padding:12px;font:inherit;color:var(--mastilo);background:var(--pozadina);resize:vertical}
 textarea.polje:focus-visible{outline:2px solid var(--orhideja);outline-offset:1px}
-.biraj{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1.5px dashed var(--orhideja);border-radius:var(--radius);padding:22px;color:var(--orhideja);font-weight:600;text-align:center;cursor:pointer;margin-bottom:12px}
+.biraj{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1.5px dashed #C3C8B4;border-radius:var(--radius);padding:22px;color:var(--orhideja);font-weight:600;text-align:center;cursor:pointer;margin-bottom:12px}
 .biraj small{color:var(--tiho);font-weight:400}
 .izabrane{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .izabrane img{width:62px;height:76px;object-fit:cover;border-radius:8px}
@@ -227,6 +227,22 @@ body.bez-menija{padding-bottom:24px}
 .savet{margin-top:26px;padding:14px 16px;border-radius:var(--radius);background:var(--povrsina);border:1px solid var(--linija);font-size:14px;color:var(--tiho)}
 .savet button{color:var(--orhideja);font-weight:600;font-size:14px;padding:0;margin-top:4px}
 .tekst-dugme{color:var(--tiho);font-size:14px;padding:10px 0;text-decoration:underline;text-underline-offset:3px}
+.desno{display:flex;align-items:center;gap:8px;min-width:0}
+.ikonica-dugme{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;border:1px solid var(--linija);background:var(--povrsina)}
+.ikonica-dugme svg{width:19px;height:19px;stroke:var(--tiho)}
+body.bez-menija .ikonica-dugme{display:none}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--tiho-poz);border:1px solid var(--linija);border-radius:12px;padding:3px}
+.seg button{padding:9px 4px;border-radius:9px;font-weight:600;font-size:14px;color:var(--tiho)}
+.seg button[aria-pressed="true"]{background:var(--povrsina);color:var(--mastilo);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.post-grupa{margin-top:24px}
+.post-grupa h4{font-size:14px;font-weight:600;color:var(--tiho);margin-bottom:8px}
+.post-red{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--linija);font-size:15px}
+.post-red span:last-child{font-weight:600;text-align:right}
+.post-link{display:flex;justify-content:space-between;align-items:center;width:100%;padding:13px 0;border-bottom:1px solid var(--linija);font-size:15px;font-weight:500;color:var(--mastilo);text-decoration:none;text-align:left}
+.post-link::after{content:"›";color:var(--tiho);font-size:20px;line-height:1}
+.dugme.opasno{background:transparent;color:#B4532A;border:1px solid var(--linija);margin-top:14px}
+.post-napomena{font-size:13px;color:var(--tiho);margin-top:8px}
+.post-verzija{font-size:12px;color:var(--tiho);text-align:center;margin-top:26px}
 .podnozje{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:22px;padding-top:12px;border-top:1px solid var(--linija)}
 .traka-primer button{color:inherit;font-weight:700;font-size:inherit;text-decoration:underline;padding:0}
 </style>
@@ -248,7 +264,7 @@ body.bez-menija{padding-bottom:24px}
 <path d="M258.0 258.0 L288.0 254.0 L286.0 284.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
       <b>Razvitak</b>
     </div>
-    <div id="salonMesto"></div>
+    <div class="desno"><div id="salonMesto"></div><button class="ikonica-dugme" id="postavkeDugme" aria-label="Podešavanja"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
   </header>
   <div id="primer" class="traka-primer" hidden>Primer prikaza sa izmišljenim podacima. Pravi podaci se vide kad se aplikacija otvori iz Telegrama.</div>
   <main id="ekran" aria-live="polite">
@@ -327,15 +343,20 @@ const sl_url = (u, w) => (/^https?:\/\//.test(String(u || '')) ? 'https://wsrv.n
 const sl_atr = (u, w) => `src="${esc(sl_url(u, w))}" data-original="${esc(u)}"`;
 const slika = (o, klasa) => o && o.slika ? `<img class="${klasa || ''}" ${sl_atr(o.slika, 500)} alt="" loading="lazy">` : `<span class="${klasa || ''} ikona-reels" aria-hidden="true">${o && o.tip === 'reel' ? '🎬' : ''}</span>`;
 
-if (uTelegramu) {
-  try {
-    tg.ready(); tg.expand();
-    if (tg.colorScheme === 'dark') document.documentElement.classList.add('tamno');
-    const boja = getComputedStyle(document.documentElement).getPropertyValue('--pozadina').trim();
-    tg.setHeaderColor && tg.setHeaderColor(boja); tg.setBackgroundColor && tg.setBackgroundColor(boja);
-    tg.onEvent && tg.onEvent('themeChanged', () => document.documentElement.classList.toggle('tamno', tg.colorScheme === 'dark'));
-  } catch (e) {}
-} else if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('tamno');
+/* tema: kao telefon (Telegram), svetla ili tamna; izbor se pamti na uređaju */
+const temaIzbor = () => { try { return localStorage.getItem('razvitak_tema') || 'auto'; } catch (e) { return 'auto'; } };
+function primeniTemu() {
+  const izbor = temaIzbor();
+  const sistemTamno = uTelegramu ? tg.colorScheme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const tamno = izbor === 'tamna' || (izbor === 'auto' && sistemTamno);
+  document.documentElement.classList.toggle('tamno', tamno);
+  const boja = getComputedStyle(document.documentElement).getPropertyValue('--pozadina').trim();
+  const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', boja);
+  if (uTelegramu) { try { tg.setHeaderColor && tg.setHeaderColor(boja); tg.setBackgroundColor && tg.setBackgroundColor(boja); } catch (e) {} }
+}
+if (uTelegramu) { try { tg.ready(); tg.expand(); tg.onEvent && tg.onEvent('themeChanged', primeniTemu); } catch (e) {} }
+else { try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', primeniTemu); } catch (e) {} }
+primeniTemu();
 
 async function ucitaj() {
   if (!uTelegramu && demo) return prikaziPrimer();
@@ -377,6 +398,44 @@ function prikazi(bezSkrola) {
 }
 
 const objava = n => n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'objave' : 'objava';
+/* ---------- podešavanja ---------- */
+function postavke() {
+  haptika();
+  const s = podaci && podaci.salon, l = (s && s.limiti) || {};
+  const iz = temaIzbor();
+  const seg = (k, t) => `<button data-tema="${k}" aria-pressed="${iz === k}">${t}</button>`;
+  const paket = s ? `<div class="post-grupa"><h4>Vaš paket</h4>
+      <div class="post-red"><span>Paket</span><span>${esc(s.paket || '')}</span></div>
+      <div class="post-red"><span>Objave mesečno</span><span>${Number(l.objave || s.limit) || 'po dogovoru'}</span></div>
+      ${Number(l.reels) ? `<div class="post-red"><span>Reels mesečno</span><span>${l.reels}</span></div>` : ''}
+      ${Number(l.story) ? `<div class="post-red"><span>Dodatni Story mesečno</span><span>${l.story}</span></div>` : ''}
+      <div class="post-red"><span>Raspored objava</span><span>${esc(s.raspored || '')}</span></div>
+      <p class="post-napomena">Za promenu paketa ili rasporeda pišite nam u chat.</p></div>` : '';
+  const nalog = uTelegramu ? '' : (demo || !token
+    ? `<div class="post-grupa"><h4>Nalog</h4><button class="dugme" id="postPrijava">Prijavite se</button></div>`
+    : `<div class="post-grupa"><h4>Nalog</h4>${podaci && podaci.ime ? `<div class="post-red"><span>Prijavljeni ste kao</span><span>${esc(podaci.ime)}</span></div>` : ''}
+        <button class="dugme opasno" id="postOdjava">Odjavi se sa ovog uređaja</button>
+        <p class="post-napomena">Za odjavu sa svih uređaja odjednom pošaljite botu reč „odjava“.</p></div>`);
+  otvoriPanel(`<h3>Podešavanja</h3>
+    <div class="post-grupa" style="margin-top:14px"><h4>Izgled</h4><div class="seg" role="group" aria-label="Tema">${seg('auto', uTelegramu ? 'Kao Telegram' : 'Kao telefon')}${seg('svetla', 'Svetla')}${seg('tamna', 'Tamna')}</div></div>
+    ${paket}
+    <div class="post-grupa"><h4>Pomoć</h4>
+      <a class="post-link" href="https://t.me/${BOT}" target="_blank" rel="noopener" id="postChat">Pišite nam u chat</a>
+      ${!uTelegramu && !samostalno ? '<button class="post-link" id="postEkran">Dodaj Razvitak na početni ekran</button>' : ''}
+    </div>
+    ${nalog}
+    <p class="post-verzija">Razvitak, verzija od 14.11.2026.</p>`);
+  document.querySelectorAll('[data-tema]').forEach(b => b.onclick = () => {
+    haptika(); try { localStorage.setItem('razvitak_tema', b.dataset.tema); } catch (e) {}
+    primeniTemu(); document.querySelectorAll('[data-tema]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  });
+  const ch = document.getElementById('postChat'); if (ch && uTelegramu) ch.onclick = e => { e.preventDefault(); try { tg.openTelegramLink('https://t.me/' + BOT); } catch (er) { location.href = 'https://t.me/' + BOT; } };
+  const pe = document.getElementById('postEkran'); if (pe) pe.onclick = () => { zatvoriPanel(); setTimeout(dodajNaEkran, 250); };
+  const pp = document.getElementById('postPrijava'); if (pp) pp.onclick = () => { zatvoriPanel(); demo = false; history.replaceState(null, '', location.pathname); ucitaj(); };
+  const po = document.getElementById('postOdjava'); if (po) po.onclick = () => { if (confirm('Odjaviti se sa Razvitka na ovom uređaju?')) { zatvoriPanel(); odjava(); } };
+}
+document.getElementById('postavkeDugme').onclick = postavke;
+
 /* ---------- admin: svi saloni ---------- */
 let saloniLista = null, saloniVreme = 0;
 const kljucSalona = () => kljucKes() + '_saloni';
@@ -461,11 +520,7 @@ function pocetna() {
       <button class="radnja" data-uputstvo="reels"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 4l2 5M14 4l2 5"/><path d="M10.5 12.5v4l3.5-2z"/></svg>Reels</button>
       <button class="radnja" data-uputstvo="story"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4 2.2"/><path d="M12 8.5v7M8.5 12h7"/></svg>Story</button>
     </div>
-    <p class="pod" style="margin-top:18px">Raspored: ${esc(s.raspored)}. Paket ${esc(s.paket)}.</p>
-    ${uTelegramu ? '' : `<div class="podnozje">${samostalno ? '' : '<button class="tekst-dugme" id="naEkran">Dodaj Razvitak na početni ekran</button>'}${demo ? '<button class="tekst-dugme" id="uPrijavu">Prijavite se</button>' : '<button class="tekst-dugme" id="odjaviSe">Odjavi se</button>'}</div>`}`);
-  const ne = document.getElementById('naEkran'); if (ne) ne.onclick = dodajNaEkran;
-  const oj = document.getElementById('odjaviSe'); if (oj) oj.onclick = () => { if (confirm('Odjaviti se sa Razvitka na ovom uređaju?')) odjava(); };
-  const up = document.getElementById('uPrijavu'); if (up) up.onclick = () => { demo = false; ucitaj(); };
+    <p class="pod" style="margin-top:18px">Raspored: ${esc(s.raspored)}. Paket ${esc(s.paket)}.</p>`);
   document.querySelectorAll('[data-uputstvo]').forEach(d => d.onclick = () => ({ objava: novaObjava, story: noviStory, reels: () => uputstvo('reels') })[d.dataset.uputstvo]());
   const oc = document.getElementById('otvoriCeka'); if (oc) oc.onclick = listaCeka;
 }
