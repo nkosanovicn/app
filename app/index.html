@@ -322,7 +322,10 @@ const bezHashtagova = t => String(t || '').split('\n').filter(l => !/^(#\S+\s*)+
 const broj = n => n == null ? '–' : Number(n).toLocaleString('sr-Latn');
 const haptika = v => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(v || 'light'); } catch (e) {} };
 const datum = iso => { if (!iso) return ''; const d = new Date(iso); return d.toLocaleDateString('sr-Latn', { day: 'numeric', month: 'long' }); };
-const slika = (o, klasa) => o && o.slika ? `<img class="${klasa || ''}" src="${esc(o.slika)}" alt="" loading="lazy">` : `<span class="${klasa || ''} ikona-reels" aria-hidden="true">${o && o.tip === 'reel' ? '🎬' : ''}</span>`;
+/* slike sa ImgBB-a idu preko wsrv.nl (brže, smanjene, i rade i kad je ImgBB nedostupan); ako proxy ne uspe, probaj original */
+const sl_url = (u, w) => (/^https?:\/\//.test(String(u || '')) ? 'https://wsrv.nl/?url=' + encodeURIComponent(String(u).replace(/^https?:\/\//, '')) + '&w=' + (w || 900) + '&we&output=webp&q=82' : String(u || ''));
+const sl_atr = (u, w) => `src="${esc(sl_url(u, w))}" data-original="${esc(u)}"`;
+const slika = (o, klasa) => o && o.slika ? `<img class="${klasa || ''}" ${sl_atr(o.slika, 500)} alt="" loading="lazy">` : `<span class="${klasa || ''} ikona-reels" aria-hidden="true">${o && o.tip === 'reel' ? '🎬' : ''}</span>`;
 
 if (uTelegramu) {
   try {
@@ -353,7 +356,7 @@ async function ucitaj() {
   }
 }
 const PALA_SLIKA = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><g fill="none" stroke="#8C9A66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="14" width="24" height="20" rx="3"/><circle cx="20" cy="21" r="2.2"/><path d="M14 31l7-7 5 5 3-3 5 5"/></g></svg>');
-document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && !t.dataset.pala) { t.dataset.pala = '1'; t.classList.add('pala'); t.alt = 'Slika nije dostupna'; t.src = PALA_SLIKA; } }, true);
+document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && t.dataset.original && !t.dataset.probao) { t.dataset.probao = '1'; t.src = t.dataset.original; return; } if (t && t.tagName === 'IMG' && !t.dataset.pala) { t.dataset.pala = '1'; t.classList.add('pala'); t.alt = 'Slika nije dostupna'; t.src = PALA_SLIKA; } }, true);
 function ekran(html) { document.getElementById('ekran').innerHTML = html; }
 
 function zaglavlje() {
@@ -491,7 +494,7 @@ function plan() {
 function objave() {
   const o = podaci.objavljeno || [];
   ekran(`<h1>Objavljeno</h1><p class="pod">${o.length ? 'Poslednje objave na vašem profilu (' + o.length + ').' : ''}</p>
-    ${o.length ? `<div class="mreza" style="margin-top:16px">${o.map(x => `<button data-id="${x.id}" data-izvor="objavljeno" aria-label="${esc(prvaRecenica(x.caption))}">${x.slika ? `<img src="${esc(x.slika)}" alt="" loading="lazy">` : '<span style="display:grid;place-items:center;height:100%;font-size:28px">🎬</span>'}${x.slika_broj > 1 ? `<span class="oznaka">${x.slika_broj} slike</span>` : (x.tip === 'reel' ? '<span class="oznaka">Reels</span>' : '')}</button>`).join('')}</div>`
+    ${o.length ? `<div class="mreza" style="margin-top:16px">${o.map(x => `<button data-id="${x.id}" data-izvor="objavljeno" aria-label="${esc(prvaRecenica(x.caption))}">${x.slika ? `<img ${sl_atr(x.slika, 400)} alt="" loading="lazy">` : '<span style="display:grid;place-items:center;height:100%;font-size:28px">🎬</span>'}${x.slika_broj > 1 ? `<span class="oznaka">${x.slika_broj} slike</span>` : (x.tip === 'reel' ? '<span class="oznaka">Reels</span>' : '')}</button>`).join('')}</div>`
       : '<div class="prazno"><p>Ovde će se pojaviti vaše objave čim prva izađe.</p></div>'}`);
   vezi('objavljeno');
 }
@@ -501,7 +504,7 @@ function vezi(izvor) {
     haptika();
     const lista = izvor === 'plan' ? podaci.plan.map(t => t.objava).filter(Boolean) : podaci.objavljeno;
     const x = lista.find(y => String(y.id) === d.dataset.id); if (!x) return;
-    otvoriPanel(`${x.slika ? `<img class="velika-slika" src="${esc(x.slika)}" alt="">` : ''}<p>${izvor === 'plan' ? 'Spremno za objavu' : 'Objavljeno ' + esc(datum(x.datum))}${x.slika_broj > 1 ? ', karusel od ' + x.slika_broj + ' slike' : ''}</p><div class="opis">${esc(bezHashtagova(x.caption))}</div>`);
+    otvoriPanel(`${x.slika ? `<img class="velika-slika" ${sl_atr(x.slika, 1080)} alt="">` : ''}<p>${izvor === 'plan' ? 'Spremno za objavu' : 'Objavljeno ' + esc(datum(x.datum))}${x.slika_broj > 1 ? ', karusel od ' + x.slika_broj + ' slike' : ''}</p><div class="opis">${esc(bezHashtagova(x.caption))}</div>`);
   });
 }
 
@@ -569,7 +572,7 @@ function pregled(o, termin) {
   const story = o.tip === 'story_tekst', kartica = o.tip === 'post_kartica';
   const slike = (o.slike && o.slike.length ? o.slike : (o.slika ? [o.slika] : []));
   otvoriPanel(`<h3>${story ? 'Predlog Story-ja' : 'Predlog objave'}</h3>
-    ${slike.length ? `<div class="galerija${story ? ' uspravno' : ''}">${slike.map(u => `<img src="${esc(u)}" alt="">`).join('')}</div>` : ''}
+    ${slike.length ? `<div class="galerija${story ? ' uspravno' : ''}">${slike.map(u => `<img ${sl_atr(u, 1080)} alt="">`).join('')}</div>` : ''}
     ${termin ? `<p>Ako odobrite, izlazi ${esc(termin)}.</p>` : (story ? '<p>Kad odobrite, Story izlazi odmah.</p>' : '')}
     ${story ? '' : `<div class="opis" id="opisPregled">${esc(bezHashtagova(o.caption))}</div>`}
     <div class="dugmad"><button class="dugme" id="aOk">${story ? 'Objavi Story' : 'Objavi'}</button><button class="dugme ne" id="aNe">Ne objavljuj</button></div>
