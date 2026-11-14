@@ -100,6 +100,7 @@ h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01
 img.pala{object-fit:contain!important;background:var(--orhideja-svetla)}
 .mikrofon-red{display:flex;align-items:center;gap:10px;margin-top:10px}
 .mikrofon-red small{color:var(--tiho);font-size:13px}
+.opis .hestegovi{display:block;margin-top:12px;color:var(--orhideja);font-size:14px;line-height:1.5;white-space:normal}
 .svoja-izmena{margin-top:14px}
 .svoja-izmena .dugme.sporedno{margin-top:10px;width:100%}
 .dugme.sporedno{background:var(--povrsina);color:var(--orhideja);border:1.5px solid var(--orhideja)}
@@ -314,7 +315,7 @@ body.bez-menija .ikonica-dugme{display:none}
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-14.12';
+const VERZIJA = '2026-11-14.13';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -376,6 +377,8 @@ function istekla() { obrisiKes(); token = ''; skladiste.stavi('blade_token', '')
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const prvaRecenica = t => { const r = String(t || '').split('\n').map(x => x.trim()).filter(x => x && !x.startsWith('#'))[0] || ''; return r.length > 110 ? r.slice(0, 107) + '…' : r; };
+const hestegovi = t => String(t || '').split('\n').filter(l => /^(#\S+\s*)+$/.test(l.trim())).join(' ').trim();
+const opisHtml = t => esc(bezHashtagova(t)) + (hestegovi(t) ? `<span class="hestegovi">${esc(hestegovi(t))}</span>` : '');
 const bezHashtagova = t => String(t || '').split('\n').filter(l => !/^(#\S+\s*)+$/.test(l.trim())).join('\n').trim();
 const broj = n => n == null ? '–' : Number(n).toLocaleString('sr-Latn');
 const haptika = v => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(v || 'light'); } catch (e) {} };
@@ -706,7 +709,7 @@ function vezi(izvor) {
     haptika();
     const lista = izvor === 'plan' ? podaci.plan.map(t => t.objava).filter(Boolean) : podaci.objavljeno;
     const x = lista.find(y => String(y.id) === d.dataset.id); if (!x) return;
-    otvoriPanel(`${x.slika ? `<img class="velika-slika" ${sl_atr(x.slika, 1080)} alt="">` : ''}<p>${izvor === 'plan' ? 'Spremno za objavu' : 'Objavljeno ' + esc(datum(x.datum))}${x.slika_broj > 1 ? ', karusel od ' + x.slika_broj + ' slike' : ''}</p><div class="opis">${esc(bezHashtagova(x.caption))}</div>`);
+    otvoriPanel(`${x.slika ? `<img class="velika-slika" ${sl_atr(x.slika, 1080)} alt="">` : ''}<p>${izvor === 'plan' ? 'Spremno za objavu' : 'Objavljeno ' + esc(datum(x.datum))}${x.slika_broj > 1 ? ', karusel od ' + x.slika_broj + ' slike' : ''}</p><div class="opis">${opisHtml(x.caption)}</div>`);
   });
 }
 
@@ -789,7 +792,7 @@ function pregled(o, termin) {
   otvoriPanel(`<h3>${story ? 'Predlog Story-ja' : 'Predlog objave'}</h3>
     ${slike.length ? `<div class="galerija${story ? ' uspravno' : ''}">${slike.map(u => `<img ${sl_atr(u, 1080)} alt="">`).join('')}</div>` : ''}
     ${termin ? `<p>Ako odobrite, izlazi ${esc(termin)}.</p>` : (story ? '<p>Kad odobrite, Story izlazi odmah.</p>' : '')}
-    ${story ? '' : `<div class="opis" id="opisPregled">${esc(bezHashtagova(o.caption))}</div>`}
+    ${story ? '' : `<div class="opis" id="opisPregled">${opisHtml(o.caption)}</div>`}
     ${story ? '' : `<div class="cipovi"><button class="cip" data-iz="kr">Kraće</button><button class="cip" data-iz="op">Opuštenije</button><button class="cip" data-iz="dt">Drugi tekst</button></div>
     <div class="svoja-izmena"><textarea class="polje" id="svojaIzmena" rows="2" placeholder="${kartica ? 'Šta da promenimo? U opisu ili na slikama, npr. „neka Milica pita koliko traje balayage“' : 'Šta da promenimo u opisu? Npr. „dodaj da radimo i nedeljom“'}"></textarea>
     <div class="mikrofon-red"><button class="cip mik" id="mikIzmena" type="button"></button></div>
@@ -802,7 +805,7 @@ function pregled(o, termin) {
   document.getElementById('aNe').onclick = async e => { haptika(); zakljucaj(true);
     try { const j = await akcija({ akcija: 'ne', red_id: o.id }); zatvoriPanel(); tost(j.poruka || 'Neće biti objavljeno.'); osvezi(); } catch (er) { tost(er.message); zakljucaj(false); } };
   const izmeni = async (c, polja) => { haptika(); const staro = c.textContent; c.textContent = 'Pišem…'; zakljucaj(true);
-    try { const j = await akcija({ ...polja, red_id: o.id }); if (j.slike_u_izradi) { zatvoriPanel(); tost(j.poruka || 'Pravim nove slike, stižu za 1 do 2 minuta.'); [100000, 160000].forEach(ms => setTimeout(() => osvezi(), ms)); return; } o.caption = j.caption || o.caption; document.getElementById('opisPregled').textContent = bezHashtagova(o.caption); tost('Evo nove verzije.'); if (polja.akcija === 'tx') { const p = document.getElementById('svojaIzmena'); if (p) p.value = ''; } } catch (er) { tost(er.message); }
+    try { const j = await akcija({ ...polja, red_id: o.id }); if (j.slike_u_izradi) { zatvoriPanel(); tost(j.poruka || 'Pravim nove slike, stižu za 1 do 2 minuta.'); [100000, 160000].forEach(ms => setTimeout(() => osvezi(), ms)); return; } o.caption = j.caption || o.caption; document.getElementById('opisPregled').innerHTML = opisHtml(o.caption); tost('Evo nove verzije.'); if (polja.akcija === 'tx') { const p = document.getElementById('svojaIzmena'); if (p) p.value = ''; } } catch (er) { tost(er.message); }
     c.textContent = staro; zakljucaj(false); osveziIzmenu(); };
   document.querySelectorAll('[data-iz]').forEach(c => c.onclick = () => izmeni(c, { akcija: c.dataset.iz }));
   const poljeIzmene = document.getElementById('svojaIzmena'), dugmeIzmene = document.getElementById('posaljiIzmenu');
