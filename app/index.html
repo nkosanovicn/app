@@ -101,6 +101,10 @@ img.pala{object-fit:contain!important;background:var(--orhideja-svetla)}
 .mikrofon-red{display:flex;align-items:center;gap:10px;margin-top:10px}
 .mikrofon-red small{color:var(--tiho);font-size:13px}
 .svoja-izmena{margin-top:14px}
+.svoja-izmena .dugme.sporedno{margin-top:10px;width:100%}
+.dugme.sporedno{background:var(--povrsina);color:var(--orhideja);border:1.5px solid var(--orhideja)}
+.dugme.sporedno:disabled{opacity:.45}
+.dugmad.dole{margin-top:22px;padding-top:18px;border-top:1px solid var(--linija)}
 .svoja-izmena .mikrofon-red{display:flex;gap:8px;align-items:center;margin-top:8px}
 .napomena-izmena{display:block;margin-top:10px;color:var(--tiho);font-size:13px;line-height:1.4}
 .cip.mik{display:inline-flex;align-items:center;gap:7px;color:var(--orhideja);border-color:var(--orhideja-svetla);font-weight:600}
@@ -310,7 +314,7 @@ body.bez-menija .ikonica-dugme{display:none}
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-14.11';
+const VERZIJA = '2026-11-14.12';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -786,11 +790,11 @@ function pregled(o, termin) {
     ${slike.length ? `<div class="galerija${story ? ' uspravno' : ''}">${slike.map(u => `<img ${sl_atr(u, 1080)} alt="">`).join('')}</div>` : ''}
     ${termin ? `<p>Ako odobrite, izlazi ${esc(termin)}.</p>` : (story ? '<p>Kad odobrite, Story izlazi odmah.</p>' : '')}
     ${story ? '' : `<div class="opis" id="opisPregled">${esc(bezHashtagova(o.caption))}</div>`}
-    <div class="dugmad"><button class="dugme" id="aOk">${story ? 'Objavi Story' : 'Objavi'}</button><button class="dugme ne" id="aNe">Ne objavljuj</button></div>
     ${story ? '' : `<div class="cipovi"><button class="cip" data-iz="kr">Kraće</button><button class="cip" data-iz="op">Opuštenije</button><button class="cip" data-iz="dt">Drugi tekst</button></div>
-    <div class="svoja-izmena"><textarea class="polje" id="svojaIzmena" rows="2" placeholder="Ili napišite šta da promenimo u opisu, npr. „dodaj da radimo i nedeljom“"></textarea>
-    <div class="mikrofon-red"><button class="cip mik" id="mikIzmena" type="button"></button><button class="cip" id="posaljiIzmenu" type="button" disabled>Promeni opis</button></div>
-    ${kartica ? '<small class="napomena-izmena">Za izmenu teksta na slikama odgovorite (Reply) na pregled u Telegramu.</small>' : ''}</div>`}`);
+    <div class="svoja-izmena"><textarea class="polje" id="svojaIzmena" rows="2" placeholder="${kartica ? 'Šta da promenimo? U opisu ili na slikama, npr. „neka Milica pita koliko traje balayage“' : 'Šta da promenimo u opisu? Npr. „dodaj da radimo i nedeljom“'}"></textarea>
+    <div class="mikrofon-red"><button class="cip mik" id="mikIzmena" type="button"></button></div>
+    <button class="dugme sporedno" id="posaljiIzmenu" type="button" disabled>Primeni izmenu</button></div>`}
+    <div class="dugmad dole"><button class="dugme" id="aOk">${story ? 'Objavi Story' : 'Objavi'}</button><button class="dugme ne" id="aNe">Ne objavljuj</button></div>`);
   const sva = () => document.querySelectorAll('#panelSadrzaj button');
   const zakljucaj = v => sva().forEach(b => b.disabled = v);
   document.getElementById('aOk').onclick = async e => { haptika('medium'); const b = e.currentTarget; b.textContent = story ? 'Objavljujem…' : 'Šaljem…'; zakljucaj(true);
@@ -798,7 +802,7 @@ function pregled(o, termin) {
   document.getElementById('aNe').onclick = async e => { haptika(); zakljucaj(true);
     try { const j = await akcija({ akcija: 'ne', red_id: o.id }); zatvoriPanel(); tost(j.poruka || 'Neće biti objavljeno.'); osvezi(); } catch (er) { tost(er.message); zakljucaj(false); } };
   const izmeni = async (c, polja) => { haptika(); const staro = c.textContent; c.textContent = 'Pišem…'; zakljucaj(true);
-    try { const j = await akcija({ ...polja, red_id: o.id }); o.caption = j.caption || o.caption; document.getElementById('opisPregled').textContent = bezHashtagova(o.caption); tost('Evo nove verzije.'); if (polja.akcija === 'tx') { const p = document.getElementById('svojaIzmena'); if (p) p.value = ''; } } catch (er) { tost(er.message); }
+    try { const j = await akcija({ ...polja, red_id: o.id }); if (j.slike_u_izradi) { zatvoriPanel(); tost(j.poruka || 'Pravim nove slike, stižu za 1 do 2 minuta.'); [100000, 160000].forEach(ms => setTimeout(() => osvezi(), ms)); return; } o.caption = j.caption || o.caption; document.getElementById('opisPregled').textContent = bezHashtagova(o.caption); tost('Evo nove verzije.'); if (polja.akcija === 'tx') { const p = document.getElementById('svojaIzmena'); if (p) p.value = ''; } } catch (er) { tost(er.message); }
     c.textContent = staro; zakljucaj(false); osveziIzmenu(); };
   document.querySelectorAll('[data-iz]').forEach(c => c.onclick = () => izmeni(c, { akcija: c.dataset.iz }));
   const poljeIzmene = document.getElementById('svojaIzmena'), dugmeIzmene = document.getElementById('posaljiIzmenu');
