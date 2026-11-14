@@ -256,6 +256,13 @@ body.bez-menija .ikonica-dugme{display:none}
 .ig-nalog a{font-size:14px;color:var(--tiho);text-decoration:none}
 .ig-nalog small{display:block;font-size:13px;color:var(--tiho);margin-top:2px}
 .ig-nalog small.upozorenje{color:#B4532A;font-weight:600}
+.sati{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.sati button{padding:10px 0;border-radius:10px;border:1px solid var(--linija);font-size:14px;font-weight:600;color:var(--tiho);background:var(--povrsina);font-variant-numeric:tabular-nums}
+.sati button[aria-pressed="true"]{background:var(--orhideja);border-color:var(--orhideja);color:var(--na-orhideji)}
+.raspored-kartica{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;margin:14px 0 6px;padding:14px 16px;border:1px solid var(--linija);border-radius:var(--radius);background:var(--povrsina)}
+.raspored-kartica small{display:block;font-size:13px;color:var(--tiho)}
+.raspored-kartica b{font-weight:600;font-size:16px}
+.raspored-kartica .promeni{color:var(--orhideja);font-weight:600;font-size:14px;flex:none}
 .post-verzija{font-size:12px;color:var(--tiho);text-align:center;margin-top:26px}
 .podnozje{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:22px;padding-top:12px;border-top:1px solid var(--linija)}
 .traka-primer button{color:inherit;font-weight:700;font-size:inherit;text-decoration:underline;padding:0}
@@ -300,7 +307,7 @@ body.bez-menija .ikonica-dugme{display:none}
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-14.8';
+const VERZIJA = '2026-11-14.10';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -428,26 +435,71 @@ function prikazi(bezSkrola) {
 }
 
 const objava = n => n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'objave' : 'objava';
+/* ---------- raspored objava (dani i do 3 vremena dnevno) ---------- */
+function rasporedPanel() {
+  haptika();
+  const s = podaci.salon, l = s.limiti || {};
+  let rDani = Array.isArray(s.dani) && s.dani.length ? s.dani.map(Number) : [1, 2, 3, 4, 5, 6, 7];
+  let rSati = Array.isArray(s.sati) && s.sati.length ? s.sati.map(Number) : (s.sat ? [Number(s.sat)] : [10, 19]);
+  const pocetno = rDani.join(',') + '|' + rSati.join(',');
+  const SATI = Array.from({ length: 16 }, (_, i) => i + 7);
+  otvoriPanel(`<h3>Raspored objava</h3><p>Izaberite dane i vreme kada objave izlaze. Objava izlazi samo kad je spremna i odobrena.</p>
+    <div class="post-grupa" style="margin-top:8px"><h4>Dani</h4>
+      <div class="dani" role="group" aria-label="Dani objava">${['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'].map((d, i) => `<button data-dan="${i + 1}" aria-pressed="${rDani.includes(i + 1)}">${d}</button>`).join('')}</div></div>
+    <div class="post-grupa"><h4>Vreme (najviše 3 dnevno)</h4>
+      <div class="sati" role="group" aria-label="Vreme objava">${SATI.map(h => `<button data-sat="${h}" aria-pressed="${rSati.includes(h)}">${String(h).padStart(2, '0')}:00</button>`).join('')}</div></div>
+    <p class="post-napomena" id="rasporedInfo"></p>
+    <button class="dugme" id="sacuvajRaspored" disabled style="margin-top:14px">Sačuvaj raspored</button>`);
+  const info = () => {
+    const nedeljno = rDani.length * rSati.length, mesecno = Math.round(nedeljno * 4.3), lim = Number(l.objave || s.limit) || 0;
+    const sati = rSati.slice().sort((a, b) => a - b).map(h => h + 'h').join(', ');
+    document.getElementById('rasporedInfo').textContent = !rSati.length ? 'Izaberite bar jedno vreme.' : !rDani.length ? 'Izaberite bar jedan dan.'
+      : `Objave u ${sati}. To je ${nedeljno} termina nedeljno, oko ${mesecno} mesečno.` + (lim ? (mesecno < lim ? ` Paket ima ${lim} objava, pa neke neće stati u raspored.` : (mesecno > lim * 1.6 ? ` Paket ima ${lim} objava, pa će neki termini ostati prazni.` : '')) : '');
+    document.getElementById('sacuvajRaspored').disabled = !rDani.length || !rSati.length || (rDani.join(',') + '|' + rSati.slice().sort((a, b) => a - b).join(',')) === pocetno;
+  };
+  document.querySelectorAll('[data-dan]').forEach(b => b.onclick = () => {
+    haptika(); const d = Number(b.dataset.dan);
+    rDani = rDani.includes(d) ? rDani.filter(x => x !== d) : [...rDani, d].sort((a, c) => a - c);
+    b.setAttribute('aria-pressed', rDani.includes(d)); info();
+  });
+  document.querySelectorAll('[data-sat]').forEach(b => b.onclick = () => {
+    haptika(); const h = Number(b.dataset.sat);
+    if (rSati.includes(h)) rSati = rSati.filter(x => x !== h);
+    else if (rSati.length >= 3) return tost('Najviše 3 objave dnevno. Prvo isključite jedno vreme.');
+    else rSati = [...rSati, h].sort((a, c) => a - c);
+    b.setAttribute('aria-pressed', rSati.includes(h)); info();
+  });
+  info();
+  const sr = document.getElementById('sacuvajRaspored');
+  sr.onclick = async () => {
+    haptika('medium'); sr.disabled = true; sr.textContent = 'Čuvam…';
+    try {
+      if (pravo()) {
+        const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: s.kod, deo: 'raspored', dani: rDani.join(','), sati: rSati.join(',') }) });
+        if (odg.status === 401 && !uTelegramu) { zatvoriPanel(); return istekla(); }
+        const j = await odg.json(); if (!j.ok) throw new Error(j.greska || 'Raspored nije sačuvan.');
+      }
+      const DN = ['pon', 'uto', 'sre', 'čet', 'pet', 'sub', 'ned'];
+      s.dani = rDani; s.sati = rSati; s.raspored = rDani.map(d => DN[d - 1]).join(', ') + ' u ' + rSati.map(h => h + 'h').join(', ').replace(/, ([^,]*)$/, ' i $1');
+      zatvoriPanel(); tost('Raspored je sačuvan.'); if (tab === 'plan') prikazi(true); osvezi();
+    } catch (er) { tost(er.message || 'Nema veze sa serverom.'); sr.disabled = false; sr.textContent = 'Sačuvaj raspored'; }
+  };
+}
+
 /* ---------- podešavanja ---------- */
 function postavke() {
   haptika();
   const s = podaci && podaci.salon, l = (s && s.limiti) || {};
-  let rDani = s && Array.isArray(s.dani) && s.dani.length ? s.dani.map(Number) : [1, 2, 3, 4, 5, 6, 7];
-  let rSat = s && s.sat ? String(s.sat) : 'oba';
-  const pocetno = rDani.join(',') + '|' + rSat;
+
   const iz = temaIzbor();
   const seg = (k, t) => `<button data-tema="${k}" aria-pressed="${iz === k}">${t}</button>`;
   const paket = s ? `<div class="post-grupa"><h4>Vaš paket</h4>
       <div class="post-red"><span>Paket</span><span>${esc(s.paket || '')}</span></div>
       <div class="post-red"><span>Objave mesečno</span><span>${Number(l.objave || s.limit) || 'po dogovoru'}</span></div>
       ${Number(l.reels) ? `<div class="post-red"><span>Reels mesečno</span><span>${l.reels}</span></div>` : ''}
-      ${Number(l.story) ? `<div class="post-red"><span>Dodatni Story mesečno</span><span>${l.story}</span></div>` : ''}
+      ${Number(l.story) ? `<div class="post-red"><span>Story mesečno</span><span>${l.story}</span></div>` : ''}
       <p class="post-napomena">Za promenu paketa pišite nam u chat.</p></div>
-    <div class="post-grupa"><h4>Raspored objava</h4>
-      <div class="dani" role="group" aria-label="Dani objava">${['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'].map((d, i) => `<button data-dan="${i + 1}" aria-pressed="${rDani.includes(i + 1)}">${d}</button>`).join('')}</div>
-      <div class="seg" role="group" aria-label="Vreme objava" style="margin-top:10px">${[['10', 'u 10h'], ['19', 'u 19h'], ['oba', '10h i 19h']].map(([k, t]) => `<button data-sat="${k}" aria-pressed="${rSat === k}">${t}</button>`).join('')}</div>
-      <p class="post-napomena" id="rasporedInfo"></p>
-      <button class="dugme" id="sacuvajRaspored" disabled>Sačuvaj raspored</button></div>` : '';
+    <div class="post-grupa"><h4>Raspored objava</h4><button class="post-link" id="postRaspored">${esc(s.raspored || 'Podesite raspored')}</button></div>` : '';
   const nalog = uTelegramu ? '' : (demo || !token
     ? `<div class="post-grupa"><h4>Nalog</h4><button class="dugme" id="postPrijava">Prijavite se</button></div>`
     : `<div class="post-grupa"><h4>Nalog</h4>${podaci && podaci.ime ? `<div class="post-red"><span>Prijavljeni ste kao</span><span>${esc(podaci.ime)}</span></div>` : ''}
@@ -456,41 +508,17 @@ function postavke() {
   otvoriPanel(`<h3>Podešavanja</h3>
     <div class="post-grupa" style="margin-top:14px"><h4>Izgled</h4><div class="seg" role="group" aria-label="Tema">${seg('auto', uTelegramu ? 'Kao Telegram' : 'Kao telefon')}${seg('svetla', 'Svetla')}${seg('tamna', 'Tamna')}</div></div>
     ${s ? `<div class="post-grupa"><h4>Naziv salona u aplikaciji</h4><div class="naziv-red"><input class="polje" id="nazivSalona" maxlength="60" value="${esc(s.naziv || '')}" aria-label="Naziv salona"><button class="cip" id="sacuvajNaziv" disabled>Sačuvaj</button></div><p class="post-napomena">Ovaj naziv se vidi u aplikaciji i u dnu grafika koje pravimo.</p></div>` : ''}
-    <div class="post-grupa"><h4>Instagram nalog</h4><div id="igNalog" class="ig-nalog"><span class="ig-slika"></span><div><b>Učitavam…</b></div></div></div>
+    <div class="post-grupa"><h4>Instagram nalog</h4><div id="igNalog" class="ig-nalog"><span class="ig-slika"></span><div><b>Učitavam…</b></div></div>
+      <button class="post-link" id="poveziIg">Poveži ili osveži Instagram</button>
+      <p class="post-napomena">Posle promene imena ili slike na Instagramu, ovde ga povežite ponovo da se podaci osveže.</p></div>
     ${paket}
     <div class="post-grupa"><h4>Pomoć</h4>
       <a class="post-link" href="https://t.me/${BOT}" target="_blank" rel="noopener" id="postChat">Pišite nam u chat</a>
       ${!uTelegramu && !samostalno ? '<button class="post-link" id="postEkran">Dodaj Razvitak na početni ekran</button>' : ''}
     </div>
     ${nalog}
-    <p class="post-verzija">Razvitak, verzija 2026-11-14.8</p>`);
-  const rInfo = () => {
-    const el = document.getElementById('rasporedInfo'); if (!el) return;
-    const nedeljno = rDani.length * (rSat === 'oba' ? 2 : 1), mesecno = Math.round(nedeljno * 4.3), lim = Number(l.objave || (s && s.limit)) || 0;
-    el.textContent = `To je ${nedeljno} ${nedeljno === 1 ? 'termin' : (nedeljno < 5 ? 'termina' : 'termina')} nedeljno, oko ${mesecno} mesečno.` + (lim ? (mesecno < lim ? ` Paket ima ${lim} objava, pa neke neće stati u raspored.` : (mesecno > lim * 1.6 ? ` Paket ima ${lim} objava, pa će neki termini ostati prazni.` : '')) : '') + ' Objava izlazi samo kad je spremna.';
-    document.getElementById('sacuvajRaspored').disabled = !rDani.length || (rDani.join(',') + '|' + rSat) === pocetno;
-  };
-  document.querySelectorAll('[data-dan]').forEach(b => b.onclick = () => {
-    haptika(); const d = Number(b.dataset.dan);
-    rDani = rDani.includes(d) ? rDani.filter(x => x !== d) : [...rDani, d].sort((a, c) => a - c);
-    b.setAttribute('aria-pressed', rDani.includes(d)); rInfo();
-  });
-  document.querySelectorAll('[data-sat]').forEach(b => b.onclick = () => { haptika(); rSat = b.dataset.sat; document.querySelectorAll('[data-sat]').forEach(x => x.setAttribute('aria-pressed', x === b)); rInfo(); });
-  const sr = document.getElementById('sacuvajRaspored');
-  if (sr) { rInfo(); sr.onclick = async () => {
-    haptika('medium'); sr.disabled = true; sr.textContent = 'Čuvam…';
-    try {
-      if (pravo()) {
-        const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: s.kod, deo: 'raspored', dani: rDani.join(','), sat: rSat }) });
-        if (odg.status === 401 && !uTelegramu) { zatvoriPanel(); return istekla(); }
-        const j = await odg.json(); if (!j.ok) throw new Error(j.greska || 'Raspored nije sačuvan.');
-      } else {
-        const DN = ['pon', 'uto', 'sre', 'čet', 'pet', 'sub', 'ned'];
-        s.dani = rDani; s.sat = rSat === 'oba' ? null : Number(rSat); s.raspored = rDani.map(d => DN[d - 1]).join(', ') + ' u ' + (rSat === 'oba' ? '10h i 19h' : rSat + 'h');
-      }
-      zatvoriPanel(); tost('Raspored je sačuvan.'); osvezi();
-    } catch (er) { tost(er.message || 'Nema veze sa serverom.'); sr.disabled = false; sr.textContent = 'Sačuvaj raspored'; }
-  }; }
+    <p class="post-verzija">Razvitak, verzija 2026-11-14.10</p>`);
+  const pr = document.getElementById('postRaspored'); if (pr) pr.onclick = () => { zatvoriPanel(); setTimeout(rasporedPanel, 250); };
   const nz = document.getElementById('nazivSalona'), nzb = document.getElementById('sacuvajNaziv');
   if (nz) {
     nz.addEventListener('input', () => { nzb.disabled = nz.value.trim().length < 2 || nz.value.trim() === (s.naziv || ''); });
@@ -506,12 +534,25 @@ function postavke() {
       } catch (er) { tost(er.message || 'Nema veze sa serverom.'); nzb.disabled = false; nzb.textContent = 'Sačuvaj'; }
     };
   }
+  const pig = document.getElementById('poveziIg');
+  if (pig) pig.onclick = async () => {
+    haptika(); if (!pravo()) return tost('U primeru se Instagram ne povezuje.');
+    pig.disabled = true; pig.textContent = 'Pripremam link…';
+    try {
+      const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: s ? s.kod : '', deo: 'povezi' }) });
+      if (odg.status === 401 && !uTelegramu) { zatvoriPanel(); return istekla(); }
+      const j = await odg.json(); if (!j.ok || !j.link) throw new Error(j.greska || 'Link nije napravljen.');
+      if (uTelegramu && tg.openLink) tg.openLink(j.link);
+      else { const w = window.open(j.link, '_blank', 'noopener'); if (!w) location.href = j.link; }
+      pig.textContent = 'Poveži ili osveži Instagram'; pig.disabled = false;
+    } catch (er) { tost(er.message || 'Nema veze sa serverom.'); pig.textContent = 'Poveži ili osveži Instagram'; pig.disabled = false; }
+  };
   (async () => {
     const el = document.getElementById('igNalog'); if (!el) return;
     const prikazi = ig => {
       if (!document.body.contains(el)) return;
-      if (!ig) { el.innerHTML = '<span class="ig-slika"></span><div><b>Instagram nije povezan</b><small>Pišite nam u chat da ga povežemo.</small></div>'; return; }
-      el.innerHTML = `${ig.slika ? `<img class="ig-slika" ${sl_atr(ig.slika, 120)} alt="">` : '<span class="ig-slika"></span>'}<div><b>${esc(ig.ime || ig.korisnik)}</b>${ig.korisnik ? `<a href="https://instagram.com/${encodeURIComponent(ig.korisnik)}" target="_blank" rel="noopener">@${esc(ig.korisnik)}</a>` : ''}${ig.ponovo ? '<small class="upozorenje">Instagram treba ponovo povezati. Pišite nam u chat.</small>' : ''}</div>`;
+      if (!ig) { el.innerHTML = '<span class="ig-slika"></span><div><b>Instagram nije povezan</b><small>Povežite ga dugmetom ispod.</small></div>'; return; }
+      el.innerHTML = `${ig.slika ? `<img class="ig-slika" ${sl_atr(ig.slika, 120)} alt="">` : '<span class="ig-slika"></span>'}<div><b>${esc(ig.ime || ig.korisnik)}</b>${ig.korisnik ? `<a href="https://instagram.com/${encodeURIComponent(ig.korisnik)}" target="_blank" rel="noopener">@${esc(ig.korisnik)}</a>` : ''}${ig.ponovo ? '<small class="upozorenje">Veza sa Instagramom je prekinuta. Povežite ga ponovo.</small>' : ''}</div>`;
     };
     if (!pravo()) return prikazi({ ime: 'Studio Lana', korisnik: 'studio.lana' });
     try {
@@ -634,9 +675,12 @@ function plan() {
   (podaci.plan || []).forEach(t => { (dani[t.dan] = dani[t.dan] || []).push(t); });
   const kljucevi = Object.keys(dani);
   const zauzeto = (podaci.plan || []).filter(t => t.objava).length;
-  ekran(`<h1>Plan objava</h1><p class="pod">Naredne dve nedelje: ${zauzeto} od ${(podaci.plan || []).length} termina ima spremnu objavu.</p>
+  ekran(`<h1>Plan objava</h1>
+    <button class="raspored-kartica" id="otvoriRaspored"><span><small>Raspored objava</small><b>${esc(podaci.salon.raspored || 'nije podešen')}</b></span><span class="promeni">Promeni</span></button>
+    <p class="pod">Naredne dve nedelje: ${zauzeto} od ${(podaci.plan || []).length} termina ima spremnu objavu.</p>
     <div style="margin-top:14px">${kljucevi.length ? kljucevi.map(k => { const [dan, dm] = k.split(' '); return `<div class="dan-blok"><div class="dan-oznaka"><b>${esc(dm.replace(/\.$/, ''))}</b>${esc(dan)}</div><div>${dani[k].map(t => `<div class="termin"><span class="sat-cip">${esc(t.sat)}</span>${t.objava ? `<button class="zauzet" data-id="${t.objava.id}" data-izvor="plan">${slika(t.objava)}<span>${esc(prvaRecenica(t.objava.caption))}</span></button>` : `<div class="slobodan">Slobodno, pošaljite sliku u chat</div>`}</div>`).join('')}</div></div>`; }).join('') : '<p class="prazno">Nema termina u naredne dve nedelje.</p>'}</div>`);
   vezi('plan');
+  document.getElementById('otvoriRaspored').onclick = rasporedPanel;
 }
 
 function objave() {
@@ -964,7 +1008,7 @@ async function demoAkcija(p) {
 const sl = (h1, h2) => `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${h1}"/><stop offset="1" stop-color="${h2}"/></linearGradient></defs><rect width="80" height="100" fill="url(#g)"/></svg>`)}`;
 const PRIMER = {
   ok: true, admin: false, ime: 'Jelena',
-  salon: { naziv: 'Studio Lana', kod: 'lana', paket: 'PREMIUM', limit: 20, limiti: { objave: 20, reels: 4, story: 22 }, raspored: 'uto, čet, sub u 19h', dani: [2, 4, 6], sat: 19, story: true },
+  salon: { naziv: 'Studio Lana', kod: 'lana', paket: 'PREMIUM', limit: 20, limiti: { objave: 20, reels: 4, story: 20 }, raspored: 'uto, čet, sub u 19h', dani: [2, 4, 6], sati: [19], story: true },
   brojke: { objavljeno: 11, reels: 2, story: 9, ceka: 1, spremno: 2 },
   ceka: [{ id: 21, tip: 'post', slika: sl('#C7A27C', '#5B3A29'), slika_broj: 1, caption: 'Topli karamel za jesen', datum: '' }],
   plan: [
