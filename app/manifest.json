@@ -1,14 +1,14 @@
 {
- "name": "Blade",
- "short_name": "Blade",
+ "name": "Razvitak",
+ "short_name": "Razvitak",
  "description": "Instagram vašeg salona na jednom mestu.",
  "lang": "sr-Latn",
  "start_url": "/app/",
  "scope": "/app/",
  "display": "standalone",
  "orientation": "portrait",
- "background_color": "#F7F5F8",
- "theme_color": "#7A3E7F",
+ "background_color": "#F6F7F1",
+ "theme_color": "#5F7033",
  "icons": [
   {
    "src": "ikona-192.png",

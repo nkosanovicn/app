@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Blade, Instagram za salone lepote</title>
+<title>Razvitak, Instagram za salone lepote</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <meta name="description" content="Pošaljete sliku iz salona, mi napišemo opis i objavimo na Instagramu u pravom terminu. Vi samo kliknete Objavi.">
-<meta property="og:title" content="Blade: Instagram za salone lepote">
+<meta property="og:title" content="Razvitak: Instagram za salone lepote">
 <meta property="og:description" content="Pošaljete sliku, mi pišemo i objavljujemo. Vi samo odobrite.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&display=swap&subset=latin-ext" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600&display=swap&subset=latin-ext" rel="stylesheet">
 <style>
-:root{--pozadina:#F7F5F8;--povrsina:#FFFFFF;--mastilo:#2B1E2F;--tiho:#6E6475;--linija:#E7E1EA;--orhideja:#7A3E7F;--orhideja-tamna:#5E2C63;--orhideja-svetla:#F1E6F2;--rumenilo:#F2D7DE;--display:"Bricolage Grotesque",system-ui,sans-serif;--telo:"Figtree",system-ui,sans-serif}
+:root{--pozadina:#F6F7F1;--povrsina:#FFFFFF;--mastilo:#23281A;--tiho:#646A58;--linija:#E2E6D6;--orhideja:#5F7033;--orhideja-tamna:#4A5827;--orhideja-svetla:#EBEFDC;--rumenilo:#F5E8C6;--zlato:#D9A63A;--display:"Fredoka",system-ui,sans-serif;--telo:"Figtree",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--pozadina);color:var(--mastilo);font-family:var(--telo);font-size:17px;line-height:1.55}
@@ -45,7 +46,7 @@ nav.meni .dugme{padding:10px 16px;font-size:15px;color:#fff}
 .hero h1 span{display:block;color:var(--tiho);font-weight:500;font-size:.5em;letter-spacing:-.01em;margin-top:18px;line-height:1.3}
 .hero .akcije{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
 .hero .sitno{font-size:14px;color:var(--tiho);margin-top:14px}
-.telefon{justify-self:center;width:330px;height:676px;border-radius:48px;background:#1A1320;padding:12px;box-shadow:0 40px 80px -40px rgba(70,20,80,.55),inset 0 0 0 2px #3A2D42;position:relative}
+.telefon{justify-self:center;width:330px;height:676px;border-radius:48px;background:#15180F;padding:12px;box-shadow:0 40px 80px -40px rgba(45,55,15,.55),inset 0 0 0 2px #343A29;position:relative}
 .telefon iframe{width:100%;height:100%;border:0;border-radius:38px;background:var(--pozadina)}
 .telefon-natpis{text-align:center;font-size:14px;color:var(--tiho);margin-top:14px}
 @media(max-width:900px){.hero .sir{grid-template-columns:1fr}.telefon{width:min(340px,92vw);height:640px}}
@@ -66,11 +67,11 @@ section{padding:72px 0}
 @media(max-width:760px){.mogucnosti{grid-template-columns:1fr}}
 
 /* paketi */
-.paketi-sekcija{background:var(--mastilo);color:#F3ECF5}
-.paketi-sekcija p.uvod{color:#BFB2C6}
+.paketi-sekcija{background:var(--mastilo);color:#EEF0E6}
+.paketi-sekcija p.uvod{color:#B9BFA9}
 .paketi{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px;align-items:stretch}
-.paket{background:#362838;border-radius:24px;padding:28px 24px;display:flex;flex-direction:column}
-.paket.istaknut{background:#F3ECF5;color:var(--mastilo)}
+.paket{background:#2F3524;border-radius:24px;padding:28px 24px;display:flex;flex-direction:column}
+.paket.istaknut{background:#F2F4EA;color:var(--mastilo)}
 .paket .naziv{font-family:var(--display);font-weight:700;font-size:22px;display:flex;justify-content:space-between;align-items:center}
 .paket .oznaka{font-family:var(--telo);font-size:13px;font-weight:600;background:var(--orhideja);color:#fff;border-radius:999px;padding:4px 10px}
 .paket .cena{font-family:var(--display);font-weight:800;font-size:44px;letter-spacing:-.03em;margin-top:18px}
@@ -80,11 +81,11 @@ section{padding:72px 0}
 .paket ul{list-style:none;margin:20px 0 26px;display:grid;gap:9px;font-size:15.5px;flex:1}
 .paket li{padding-left:22px;position:relative}
 .paket li::before{content:"";position:absolute;left:0;top:.55em;width:10px;height:10px;border-radius:3px;background:var(--orhideja)}
-.paket:not(.istaknut) li::before{background:#C79BCB}
+.paket:not(.istaknut) li::before{background:#D9A63A}
 .paket .dugme{width:100%}
-.paket:not(.istaknut) .dugme{background:transparent;border:1px solid #6C5672}
-.paket:not(.istaknut) .dugme:hover{background:#4A3A4E}
-.napomena-cene{margin-top:24px;font-size:15px;color:#BFB2C6;max-width:46em}
+.paket:not(.istaknut) .dugme{background:transparent;border:1px solid #56603F}
+.paket:not(.istaknut) .dugme:hover{background:#3A4230}
+.napomena-cene{margin-top:24px;font-size:15px;color:#B9BFA9;max-width:46em}
 @media(max-width:900px){.paketi{grid-template-columns:1fr}}
 
 /* pitanja */
@@ -103,14 +104,26 @@ section{padding:72px 0}
 footer{border-top:1px solid var(--linija);padding:26px 0;font-size:14px;color:var(--tiho)}
 footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+.pecat{display:block;width:150px;height:150px;margin:0 auto 22px}
+.znak b{color:var(--orhideja)}
 </style>
 </head>
 <body>
 <header class="traka">
   <div class="sir">
-    <a class="znak" href="#" aria-label="Blade, početak">
-      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#7A3E7F"/><path d="M9 23 L23 9 M13 23h10" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
-      <b>Blade</b>
+    <a class="znak" href="#" aria-label="Razvitak, početak">
+      <svg width="32" height="36" aria-hidden="true" viewBox="150 125 212 238"><path d="M256.0 214.0 L214.0 160.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" fill="none"/>
+<path d="M198.0 170.0 L206.0 140.0 L232.0 154.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M256.0 214.0 L312.0 150.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" fill="none"/>
+<path d="M290.0 146.0 L322.0 138.0 L316.0 170.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="256.0" cy="222.0" r="22.0" fill="#6B7C3C"/>
+<rect x="160.0" y="216.0" width="192.0" height="138.0" rx="30.0" fill="#6B7C3C"/>
+<rect x="178.0" y="234.0" width="128.0" height="102.0" rx="20.0" fill="#FFFFFF"/>
+<circle cx="328.0" cy="260.0" r="8.5" fill="#FFFFFF"/>
+<circle cx="328.0" cy="288.0" r="8.5" fill="#FFFFFF"/>
+<path d="M192.0 322.0 L222.0 292.0 L240.0 308.0 L282.0 262.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M258.0 258.0 L288.0 254.0 L286.0 284.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <b>Razvitak</b>
     </a>
     <nav class="meni" aria-label="Glavni meni">
       <a href="#kako">Kako radi</a>
@@ -133,7 +146,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <p class="sitno">Bez naknade za uključivanje. Prvih 10 salona dobija osnivačku cenu.</p>
       </div>
       <div>
-        <div class="telefon"><iframe src="app/?demo=1" title="Primer Blade aplikacije" loading="lazy"></iframe></div>
+        <div class="telefon"><iframe src="app/?demo=1" title="Primer Razvitak aplikacije" loading="lazy"></iframe></div>
         <p class="telefon-natpis">Ovo je prava aplikacija sa izmišljenim salonom. Slobodno kliknite.</p>
       </div>
     </div>
@@ -212,6 +225,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
   <section class="kraj">
     <div class="sir">
+      <img class="pecat" src="razvitak-logo.svg" alt="Razvitak" width="150" height="150">
       <h2>Probajte na svom salonu</h2>
       <p class="uvod">Pošaljite nam poruku i dogovorimo kratak razgovor. Pokazaćemo vam kako bi izgledala prva objava za vaš salon.</p>
       <div class="akcije">
@@ -223,7 +237,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 </main>
 
 <footer>
-  <div class="sir"><span>Blade, Instagram za salone lepote</span><a href="app/">Aplikacija za klijente</a></div>
+  <div class="sir"><span>Razvitak, Instagram za salone lepote</span><a href="app/">Aplikacija za klijente</a></div>
 </footer>
 </body>
 </html>

@@ -3,30 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Blade</title>
-<meta name="theme-color" content="#7A3E7F">
-<meta name="description" content="Blade: Instagram vašeg salona na jednom mestu.">
+<title>Razvitak</title>
+<meta name="theme-color" content="#5F7033">
+<meta name="description" content="Razvitak: Instagram vašeg salona na jednom mestu.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="ikona-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Blade">
+<meta name="apple-mobile-web-app-title" content="Razvitak">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&display=swap&subset=latin-ext" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600&display=swap&subset=latin-ext" rel="stylesheet">
 <style>
 :root{
-  --pozadina:#F7F5F8; --povrsina:#FFFFFF; --mastilo:#2B1E2F; --tiho:#7D7484; --linija:#E7E1EA;
-  --orhideja:#7A3E7F; --orhideja-svetla:#F1E6F2; --rumenilo:#F2D7DE; --menta:#2F8F6B; --cilibar:#B26E00; --cilibar-svetli:#FCF0DC;
+  --pozadina:#F6F7F1; --povrsina:#FFFFFF; --mastilo:#23281A; --tiho:#6C7260; --linija:#E2E6D6;
+  --orhideja:#5F7033; --orhideja-svetla:#EBEFDC; --rumenilo:#F5E8C6; --zlato:#D9A63A; --menta:#2F8F6B; --cilibar:#B26E00; --cilibar-svetli:#FCF0DC;
   --na-orhideji:#FFFFFF; --radius-veliki:22px; --radius:14px; --radius-mali:9px;
-  --display:"Bricolage Grotesque", system-ui, sans-serif; --telo:"Figtree", system-ui, sans-serif;
+  --display:"Fredoka", system-ui, sans-serif; --telo:"Figtree", system-ui, sans-serif;
 }
 :root.tamno{
-  --pozadina:#1A1320; --povrsina:#251B2C; --mastilo:#F3ECF5; --tiho:#A99DB1; --linija:#3A2D42;
-  --orhideja:#D19AD6; --orhideja-svetla:#3A2742; --rumenilo:#4A2E3B; --menta:#6CCFA4; --cilibar:#F0B451; --cilibar-svetli:#3D2F1A; --na-orhideji:#1E1424;
+  --pozadina:#15180F; --povrsina:#1F2318; --mastilo:#EEF0E6; --tiho:#A2A893; --linija:#343A29;
+  --orhideja:#B8CB7C; --orhideja-svetla:#2D3521; --rumenilo:#3A3220; --zlato:#E2B451; --menta:#6CCFA4; --cilibar:#F0B451; --cilibar-svetli:#3D2F1A; --na-orhideji:#151A0C;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--pozadina);color:var(--mastilo);font-family:var(--telo);font-size:16px;line-height:1.45}
@@ -39,10 +39,30 @@ img{display:block;max-width:100%}
 /* zaglavlje */
 .zaglavlje{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
 .znak{display:flex;align-items:center;gap:10px}
-.znak svg{width:30px;height:30px}
-.znak b{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em}
+.znak svg{width:34px;height:38px}
+.znak b{font-family:var(--display);font-weight:700;font-size:23px;letter-spacing:-.01em;color:var(--orhideja)}
 .salon-izbor{appearance:none;background:var(--povrsina);border:1px solid var(--linija);border-radius:999px;padding:8px 32px 8px 14px;font:500 14px var(--telo);color:var(--mastilo);max-width:200px;
   background-image:linear-gradient(45deg,transparent 50%,var(--tiho) 50%),linear-gradient(135deg,var(--tiho) 50%,transparent 50%);background-position:calc(100% - 17px) 55%,calc(100% - 12px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+.salon-dugme{display:inline-flex;align-items:center;gap:6px;background:var(--povrsina);border:1px solid var(--linija);border-radius:999px;padding:8px 12px 8px 14px;font:500 14px var(--telo);color:var(--mastilo);max-width:210px}
+.salon-dugme span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.salon-dugme svg{width:14px;height:14px;flex:none;stroke:var(--tiho)}
+.saloni{display:grid;gap:14px;margin-top:22px}
+.salon-kartica{background:var(--povrsina);border:1px solid var(--linija);border-radius:var(--radius);overflow:hidden}
+.salon-kartica.trenutni{border-color:var(--orhideja);box-shadow:inset 4px 0 0 var(--orhideja)}
+.salon-glava{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;padding:16px 16px 6px}
+.salon-glava h3{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+.salon-glava p{font-size:13px;color:var(--tiho);margin-top:3px}
+.salon-glava p .upozorenje{color:#B4532A;font-weight:600}
+.salon-glava .oznaka{font-size:12px;font-weight:600;color:var(--orhideja);background:var(--orhideja-svetla);border-radius:999px;padding:4px 10px;flex:none}
+.salon-glava svg{width:18px;height:18px;stroke:var(--tiho);flex:none}
+.salon-brojke{display:grid;grid-template-columns:repeat(3,1fr);padding:10px 16px 12px;gap:8px}
+.salon-brojke div{display:flex;flex-direction:column}
+.salon-brojke b{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.salon-brojke b small{font-size:14px;color:var(--tiho);font-weight:500}
+.salon-brojke span{font-size:13px;color:var(--tiho)}
+.salon-brojke .vazno b{color:var(--orhideja)}
+.salon-radnje{display:flex;gap:8px;padding:0 16px 16px}
+.salon-radnje .cip{flex:1;justify-content:center;display:inline-flex;font-weight:600}
 .salon-ime{font-size:14px;color:var(--tiho);text-align:right;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* tipografija */
@@ -51,7 +71,7 @@ h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01
 .pod{color:var(--tiho);font-size:15px;margin-top:6px}
 
 /* sledeca objava: list iz knjige zakazivanja */
-.listic{margin-top:22px;display:grid;grid-template-columns:86px 1fr;background:var(--povrsina);border-radius:var(--radius-veliki);overflow:hidden;box-shadow:0 1px 0 var(--linija),0 18px 40px -28px rgba(80,30,90,.45)}
+.listic{margin-top:22px;display:grid;grid-template-columns:86px 1fr;background:var(--povrsina);border-radius:var(--radius-veliki);overflow:hidden;box-shadow:0 1px 0 var(--linija),0 18px 40px -28px rgba(60,72,25,.40)}
 .listic .vreme{background:var(--orhideja);color:var(--na-orhideji);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 6px;position:relative}
 .listic .vreme::after{content:"";position:absolute;right:-7px;top:0;bottom:0;width:14px;background:radial-gradient(circle at 7px 9px,var(--povrsina) 4px,transparent 4.5px) 0 0/14px 18px repeat-y}
 .listic .dan{font-size:13px;opacity:.85;text-transform:lowercase}
@@ -70,12 +90,12 @@ h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01
 .zupci{display:flex;gap:4px;margin-top:10px;height:34px;align-items:flex-end}
 .zupci i{flex:1;max-width:22px;height:100%;border-radius:4px 4px 2px 2px;background:var(--linija)}
 .zupci i.pun{background:var(--orhideja)}
-.dodatno{display:grid;gap:10px;margin-top:16px}
-.dodatno div{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:12px;font-size:15px}
+.dodatno{display:grid;gap:14px;margin-top:4px}
+.dodatno div{display:grid;grid-template-columns:64px 1fr 60px;align-items:center;gap:12px;font-size:15px}
 .dodatno span{color:var(--tiho)}
 .dodatno .mini{height:8px;border-radius:99px;background:var(--linija);overflow:hidden}
 .dodatno .mini i{display:block;height:100%;background:var(--orhideja);border-radius:99px}
-.dodatno b{font-weight:600;font-variant-numeric:tabular-nums}
+.dodatno b{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
 .dodatno b small{color:var(--tiho);font-weight:500;font-size:14px}
 img.pala{object-fit:contain!important;background:var(--orhideja-svetla)}
 .mikrofon-red{display:flex;align-items:center;gap:10px;margin-top:10px}
@@ -119,7 +139,7 @@ img.pala{object-fit:contain!important;background:var(--orhideja-svetla)}
 .mreza{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;border-radius:var(--radius);overflow:hidden}
 .mreza button{position:relative;aspect-ratio:4/5;background:var(--rumenilo)}
 .mreza img{width:100%;height:100%;object-fit:cover}
-.mreza .oznaka{position:absolute;top:6px;right:6px;background:rgba(20,10,25,.6);color:#fff;font-size:11px;font-weight:600;border-radius:6px;padding:2px 6px}
+.mreza .oznaka{position:absolute;top:6px;right:6px;background:rgba(18,22,10,.6);color:#fff;font-size:11px;font-weight:600;border-radius:6px;padding:2px 6px}
 
 /* brojke */
 .pratioci{display:flex;align-items:baseline;gap:10px}
@@ -143,7 +163,7 @@ nav.dno svg{width:24px;height:24px;stroke:currentColor}
 nav.dno button[aria-current="page"]{color:var(--orhideja);font-weight:600}
 
 /* donji panel */
-.zavesa{position:fixed;inset:0;background:rgba(20,10,25,.45);opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}
+.zavesa{position:fixed;inset:0;background:rgba(18,22,10,.45);opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}
 .zavesa.otvorena{opacity:1;pointer-events:auto}
 .panel{position:fixed;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:var(--povrsina);border-radius:22px 22px 0 0;padding:10px 20px calc(24px + env(safe-area-inset-bottom));transform:translateY(calc(100% + 40px));visibility:hidden;transition:transform .28s cubic-bezier(.2,.8,.2,1),visibility 0s .28s;z-index:11;max-width:560px;margin:0 auto}
 .panel.otvoren{transform:none;visibility:visible;transition:transform .28s cubic-bezier(.2,.8,.2,1)}
@@ -214,9 +234,19 @@ body.bez-menija{padding-bottom:24px}
 <body>
 <div class="omot">
   <header class="zaglavlje">
-    <div class="znak" aria-label="Blade">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--orhideja)"/><path d="M9 23 L23 9 M13 23h10" stroke="var(--na-orhideji)" stroke-width="2.6" stroke-linecap="round"/></svg>
-      <b>Blade</b>
+    <div class="znak" aria-label="Razvitak">
+      <svg aria-hidden="true" viewBox="150 125 212 238"><path d="M256.0 214.0 L214.0 160.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" fill="none"/>
+<path d="M198.0 170.0 L206.0 140.0 L232.0 154.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M256.0 214.0 L312.0 150.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" fill="none"/>
+<path d="M290.0 146.0 L322.0 138.0 L316.0 170.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="256.0" cy="222.0" r="22.0" fill="#6B7C3C"/>
+<rect x="160.0" y="216.0" width="192.0" height="138.0" rx="30.0" fill="#6B7C3C"/>
+<rect x="178.0" y="234.0" width="128.0" height="102.0" rx="20.0" fill="#FFFFFF"/>
+<circle cx="328.0" cy="260.0" r="8.5" fill="#FFFFFF"/>
+<circle cx="328.0" cy="288.0" r="8.5" fill="#FFFFFF"/>
+<path d="M192.0 322.0 L222.0 292.0 L240.0 308.0 L282.0 262.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M258.0 258.0 L288.0 254.0 L286.0 284.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <b>Razvitak</b>
     </div>
     <div id="salonMesto"></div>
   </header>
@@ -230,6 +260,7 @@ body.bez-menija{padding-bottom:24px}
   <button data-tab="pocetna" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>Početna</button>
   <button data-tab="plan"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Plan</button>
   <button data-tab="objave"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Objave</button>
+  <button data-tab="saloni" hidden><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l1.5-5h13L20 10M4 10v9h16v-9M4 10c0 1.7 1.3 2.5 2.7 2.5S9.3 11.7 9.3 10c0 1.7 1.3 2.5 2.7 2.5s2.7-.8 2.7-2.5c0 1.7 1.3 2.5 2.6 2.5S20 11.7 20 10M10 19v-4h4v4"/></svg>Saloni</button>
   <button data-tab="brojke"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M21 19H3"/></svg>Brojke</button>
 </nav>
 
@@ -321,29 +352,79 @@ async function ucitaj() {
     ekran(`<div class="prazno"><h1>Nema veze sa serverom</h1><p class="pod">Proverite internet i pokušajte ponovo.</p><button class="dugme" style="margin-top:18px" onclick="ucitaj()">Pokušaj ponovo</button></div>`);
   }
 }
-const PALA_SLIKA = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><g fill="none" stroke="#9A7BA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="14" width="24" height="20" rx="3"/><circle cx="20" cy="21" r="2.2"/><path d="M14 31l7-7 5 5 3-3 5 5"/></g></svg>');
+const PALA_SLIKA = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><g fill="none" stroke="#8C9A66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="14" width="24" height="20" rx="3"/><circle cx="20" cy="21" r="2.2"/><path d="M14 31l7-7 5 5 3-3 5 5"/></g></svg>');
 document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && !t.dataset.pala) { t.dataset.pala = '1'; t.classList.add('pala'); t.alt = 'Slika nije dostupna'; t.src = PALA_SLIKA; } }, true);
 function ekran(html) { document.getElementById('ekran').innerHTML = html; }
 
 function zaglavlje() {
   const m = document.getElementById('salonMesto');
   if (podaci.admin && podaci.saloni && podaci.saloni.length) {
-    m.innerHTML = `<select class="salon-izbor" aria-label="Izaberi salon">${podaci.saloni.map(s => `<option value="${esc(s.kod)}"${s.kod === podaci.salon.kod ? ' selected' : ''}>${esc(s.naziv)}</option>`).join('')}</select>`;
-    m.querySelector('select').onchange = e => { kodIzbor = e.target.value; skladiste.stavi('blade_salon', kodIzbor); podaci = null; ekran('<div class="ucitavanje"><div class="kost" style="height:200px"></div></div>'); ucitaj(); };
+    m.innerHTML = `<button class="salon-dugme" aria-label="Promeni salon"><span>${esc(podaci.salon.naziv)}</span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10l5 5 5-5"/></svg></button>`;
+    m.querySelector('button').onclick = () => { haptika(); tab = 'saloni'; prikazi(); };
   } else m.innerHTML = `<div class="salon-ime">${esc(podaci.salon.naziv)}</div>`;
 }
 
 function prikazi(bezSkrola) {
   zaglavlje();
+  document.querySelector('nav.dno [data-tab="saloni"]').hidden = !podaci.admin;
+  if (tab === 'saloni' && !podaci.admin) tab = 'pocetna';
   document.querySelectorAll('nav.dno button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tab ? 'page' : 'false'));
-  ({ pocetna, plan, objave, brojke })[tab]();
+  ({ pocetna, plan, objave, brojke, saloni: saloniEkran })[tab]();
   if (!bezSkrola) window.scrollTo(0, 0);
 }
 
 const objava = n => n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'objave' : 'objava';
-function dodatno(b, s) {
+/* ---------- admin: svi saloni ---------- */
+let saloniLista = null, saloniVreme = 0;
+const kljucSalona = () => kljucKes() + '_saloni';
+function kadaPre(iso) {
+  if (!iso) return 'Još ništa nije poslato';
+  const dana = Math.floor((Date.now() - new Date(iso).getTime()) / 864e5);
+  return 'Poslednje ' + (dana <= 0 ? 'danas' : dana === 1 ? 'juče' : 'pre ' + dana + ' dana');
+}
+async function ucitajSalone(odmah) {
+  if (!pravo() || !podaci || !podaci.admin || (!odmah && Date.now() - saloniVreme < 60 * 1000)) return;
+  saloniVreme = Date.now();
+  try {
+    const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), deo: 'saloni' }) });
+    if (odg.status === 401 && !uTelegramu) return istekla();
+    const j = await odg.json(); if (!j.ok) throw new Error();
+    saloniLista = j.saloni; try { localStorage.setItem(kljucSalona(), JSON.stringify(j.saloni)); } catch (e) {}
+    if (tab === 'saloni') saloniEkran();
+  } catch (e) { saloniVreme = 0; if (tab === 'saloni' && !saloniLista) ekran(`<h1>Saloni</h1><div class="prazno"><p>Spisak se nije učitao.</p><button class="dugme" style="margin-top:18px" onclick="ucitajSalone(true)">Pokušaj ponovo</button></div>`); }
+}
+function saloniEkran() {
+  if (!saloniLista) { try { saloniLista = JSON.parse(localStorage.getItem(kljucSalona()) || 'null'); } catch (e) {} }
+  ucitajSalone();
+  if (!saloniLista) return ekran(`<h1>Saloni</h1><p class="pod">Učitavam salone…</p><div class="ucitavanje"><div class="kost" style="height:150px;margin-top:22px"></div><div class="kost" style="height:150px;margin-top:14px"></div></div>`);
+  const sad = podaci.salon.kod;
+  ekran(`<h1>Saloni</h1><p class="pod">Izaberite salon za koji radite. Brojke su za ovaj mesec.</p>
+  <div class="saloni">${saloniLista.map(s => {
+    const b = s.brojke, l = s.limiti || {};
+    const napomene = [s.paket ? 'Paket ' + esc(s.paket) : '', kadaPre(s.poslednje), !s.povezan ? '<span class="upozorenje">Telegram nije povezan</span>' : '', b.greske ? `<span class="upozorenje">${b.greske} ${b.greske === 1 ? 'greška' : 'greške'} pri objavi</span>` : ''].filter(Boolean).join('. ');
+    return `<article class="salon-kartica${s.kod === sad ? ' trenutni' : ''}">
+      <button class="salon-glava" data-otvori="${esc(s.kod)}"><div><h3>${esc(s.naziv)}</h3><p>${napomene}</p></div>${s.kod === sad ? '<span class="oznaka">Otvoren</span>' : '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>'}</button>
+      <div class="salon-brojke">
+        <div><b>${b.objavljeno}${l.objave ? `<small> / ${l.objave}</small>` : ''}</b><span>objavljeno</span></div>
+        <div class="${b.ceka ? 'vazno' : ''}"><b>${b.ceka}</b><span>čeka</span></div>
+        <div><b>${b.spremno}</b><span>spremno</span></div>
+      </div>
+      <div class="salon-radnje"><button class="cip" data-radnja="objava" data-kod="${esc(s.kod)}">Nova objava</button><button class="cip" data-radnja="story" data-kod="${esc(s.kod)}">Story</button></div>
+    </article>`; }).join('')}</div>`);
+  document.querySelectorAll('[data-otvori]').forEach(d => d.onclick = () => { haptika(); izaberiSalon(d.dataset.otvori); });
+  document.querySelectorAll('[data-radnja]').forEach(d => d.onclick = () => { haptika(); izaberiSalon(d.dataset.kod, d.dataset.radnja === 'objava' ? novaObjava : noviStory); });
+}
+async function izaberiSalon(kod, posle) {
+  if (podaci && podaci.salon.kod === kod) { tab = 'pocetna'; prikazi(); if (posle) posle(); return; }
+  const naziv = ((saloniLista || []).find(s => s.kod === kod) || {}).naziv || '';
+  kodIzbor = kod; skladiste.stavi('blade_salon', kod); podaci = null; tab = 'pocetna';
+  ekran('<div class="ucitavanje"><div class="kost" style="height:200px"></div><div class="kost" style="height:90px;margin-top:16px"></div></div>');
+  await ucitaj();
+  if (podaci && podaci.salon && podaci.salon.kod === kod) { if (naziv) tost('Radite za: ' + naziv); if (posle) posle(); }
+}
+function dodatno(b, s, limit) {
   const lim = s.limiti || {};
-  const stavke = [['Reels', b.reels || 0, Number(lim.reels) || 0], ['Story', b.story || 0, Number(lim.story) || 0]].filter(x => x[2] > 0 || x[1] > 0);
+  const stavke = [['Objave', b.objavljeno || 0, Number(lim.objave || limit) || 0, true], ['Reels', b.reels || 0, Number(lim.reels) || 0], ['Story', b.story || 0, Number(lim.story) || 0]].filter(x => x[3] || x[2] > 0 || x[1] > 0);
   if (!stavke.length) return '';
   return `<div class="dodatno">${stavke.map(([n, v, l]) => `<div><span>${n}</span><span class="mini" aria-hidden="true"><i style="width:${l ? Math.min(100, v / l * 100).toFixed(0) : 100}%"></i></span><b>${v}${l ? `<small> / ${l}</small>` : ''}</b></div>`).join('')}</div>`;
 }
@@ -361,7 +442,6 @@ function pocetna() {
     <div class="sadrzaj"><div><div class="naslov" style="color:var(--mastilo)">Termin je slobodan</div><div class="napomena">Pošaljite sliku ili video u chat, mi pripremamo objavu za ${esc(prviSlobodan.dan)}</div></div></div></div>`;
   else listic = '';
   const limit = s.limit || Math.max(b.objavljeno, 8);
-  const zupci = Array.from({ length: Math.min(limit, 24) }, (_, i) => `<i class="${i < b.objavljeno ? 'pun' : ''}"></i>`).join('');
   const ceka = b.ceka ? `<button class="ceka" id="otvoriCeka"><div class="slike">${p.ceka.slice(0, 3).map(o => slika(o)).join('')}</div><p><strong>${b.ceka === 1 ? 'Jedna objava čeka' : b.ceka + ' ' + objava(b.ceka) + (objava(b.ceka) === 'objave' ? ' čekaju' : ' čeka')} vaše odobrenje</strong>Pogledajte i odobrite ovde.</p></button>` : '';
   ekran(`
     <h1>${pozdrav()}${ime ? ', ' + esc(ime) : ''}</h1>
@@ -369,9 +449,8 @@ function pocetna() {
     ${listic}
     ${ceka}
     <section class="mesec" aria-label="Ovog meseca">
-      <div class="red"><span class="broj">${b.objavljeno}<small> / ${limit} objava</small></span><span class="pod" style="margin:0">ovog meseca</span></div>
-      <div class="zupci" aria-hidden="true">${zupci}</div>
-      ${dodatno(b, s)}
+      <h2 style="margin-top:0">Ovog meseca</h2>
+      ${dodatno(b, s, limit)}
     </section>
     <h2>Pošaljite nešto novo</h2>
     <div class="radnje">
@@ -380,9 +459,9 @@ function pocetna() {
       <button class="radnja" data-uputstvo="story"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4 2.2"/><path d="M12 8.5v7M8.5 12h7"/></svg>Story</button>
     </div>
     <p class="pod" style="margin-top:18px">Raspored: ${esc(s.raspored)}. Paket ${esc(s.paket)}.</p>
-    ${uTelegramu ? '' : `<div class="podnozje">${samostalno ? '' : '<button class="tekst-dugme" id="naEkran">Dodaj Blade na početni ekran</button>'}${demo ? '<button class="tekst-dugme" id="uPrijavu">Prijavite se</button>' : '<button class="tekst-dugme" id="odjaviSe">Odjavi se</button>'}</div>`}`);
+    ${uTelegramu ? '' : `<div class="podnozje">${samostalno ? '' : '<button class="tekst-dugme" id="naEkran">Dodaj Razvitak na početni ekran</button>'}${demo ? '<button class="tekst-dugme" id="uPrijavu">Prijavite se</button>' : '<button class="tekst-dugme" id="odjaviSe">Odjavi se</button>'}</div>`}`);
   const ne = document.getElementById('naEkran'); if (ne) ne.onclick = dodajNaEkran;
-  const oj = document.getElementById('odjaviSe'); if (oj) oj.onclick = () => { if (confirm('Odjaviti se sa Blade-a na ovom uređaju?')) odjava(); };
+  const oj = document.getElementById('odjaviSe'); if (oj) oj.onclick = () => { if (confirm('Odjaviti se sa Razvitka na ovom uređaju?')) odjava(); };
   const up = document.getElementById('uPrijavu'); if (up) up.onclick = () => { demo = false; ucitaj(); };
   document.querySelectorAll('[data-uputstvo]').forEach(d => d.onclick = () => ({ objava: novaObjava, story: noviStory, reels: () => uputstvo('reels') })[d.dataset.uputstvo]());
   const oc = document.getElementById('otvoriCeka'); if (oc) oc.onclick = listaCeka;
@@ -516,22 +595,34 @@ async function smanji(fajl) {
 }
 function novaObjava() {
   haptika(); let izabrane = [];
-  otvoriPanel(`<h3>Nova objava</h3><p>Izaberite jednu sliku ili do 10 za karusel.</p>
+  otvoriPanel(`<h3>Nova objava</h3><p>Izaberite jednu sliku ili do 10 za karusel. Bez slike napišite temu, a mi pravimo grafiku sa tekstom.</p>
     <label class="biraj"><input type="file" id="fajlovi" accept="image/*" multiple hidden>Izaberite slike<small>iz galerije ili kamere</small></label>
     <div class="izabrane" id="izabrane"></div>
-    <textarea class="polje" id="napomena" placeholder="Kratka napomena, npr. „balayage, nova klijentkinja“ (nije obavezno)"></textarea>
+    <textarea class="polje" id="napomena" placeholder="Uz slike: kratka napomena, npr. „balayage, nova klijentkinja“. Bez slike: tema, npr. „3 razloga da negujete kosu zimi“."></textarea>
     <div class="mikrofon-red"><button class="cip mik" id="mikNapomena" type="button"></button><small>govor se sam pretvara u tekst</small></div>
     <button class="dugme" id="napravi" style="margin-top:14px" disabled>Napravi objavu</button>`);
   mikrofon('napomena', 'mikNapomena', 'balayage, nova klijentkinja, radila Jelena');
-  const dugme = document.getElementById('napravi');
+  const dugme = document.getElementById('napravi'), polje = document.getElementById('napomena');
+  const osveziDugme = () => {
+    const tema = polje.value.trim().length >= 4;
+    dugme.disabled = !izabrane.length && !tema;
+    dugme.textContent = izabrane.length > 1 ? `Napravi karusel (${izabrane.length} slike)` : (izabrane.length ? 'Napravi objavu' : (tema ? 'Napravi objavu bez slike' : 'Izaberite sliku ili napišite temu'));
+  };
+  polje.addEventListener('input', osveziDugme); osveziDugme();
   document.getElementById('fajlovi').onchange = async e => {
     const f = [...e.target.files].slice(0, 10);
     izabrane = await Promise.all(f.map(smanji));
     document.getElementById('izabrane').innerHTML = izabrane.map(u => `<img src="${u}" alt="">`).join('');
-    dugme.disabled = !izabrane.length; dugme.textContent = izabrane.length > 1 ? `Napravi karusel (${izabrane.length} slike)` : 'Napravi objavu';
+    osveziDugme();
   };
   dugme.onclick = async () => {
-    haptika('medium'); const napomena = document.getElementById('napomena').value.trim();
+    haptika('medium'); const napomena = polje.value.trim();
+    if (!izabrane.length) {
+      radi('Smišljamo tekst i crtamo grafiku u bojama salona. Traje do jednog minuta.');
+      try { const j = await akcija({ akcija: 'grafika', napomena }); osvezi(); pregled(j.objava, j.termin); }
+      catch (er) { zatvoriPanel(); tost(er.message); }
+      return;
+    }
     radi(izabrane.length > 1 ? 'Šaljem slike i pišem opis za karusel. Traje oko pola minuta.' : 'Šaljem sliku i pišem opis. Traje oko pola minuta.');
     try { const j = await akcija({ akcija: 'objava', napomena, slike: JSON.stringify(izabrane.map(u => u.split(',')[1])) }); osvezi(); pregled(j.objava, j.termin); }
     catch (er) { zatvoriPanel(); tost(er.message); }
@@ -560,7 +651,7 @@ const uBase64 = blob => new Promise((ok, ne) => { const r = new FileReader(); r.
 function mikrofon(poljeId, dugmeId, primerTekst) {
   const d = document.getElementById(dugmeId), polje = document.getElementById(poljeId);
   const vrati = () => { d.disabled = false; d.classList.remove('snima'); d.innerHTML = MIK + 'Izgovorite'; };
-  const upisi = t => { polje.value = (polje.value.trim() ? polje.value.trim() + ' ' : '') + t; };
+  const upisi = t => { polje.value = (polje.value.trim() ? polje.value.trim() + ' ' : '') + t; polje.dispatchEvent(new Event('input')); };
   vrati();
   let rec = null, tajmer = null, pocetak = 0;
   d.onclick = async () => {
@@ -570,7 +661,7 @@ function mikrofon(poljeId, dugmeId, primerTekst) {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) return tost(uTelegramu ? 'Ovde mikrofon ne radi. Pošaljite glasovnu poruku u chat.' : 'Ovaj pregledač ne podržava snimanje.');
     let tok;
     try { tok = await navigator.mediaDevices.getUserMedia({ audio: true }); }
-    catch (e) { return tost(uTelegramu ? 'Telegram nije dozvolio mikrofon. Pošaljite glasovnu poruku u chat.' : 'Dozvolite mikrofon za blade.rs u podešavanjima pregledača.'); }
+    catch (e) { return tost(uTelegramu ? 'Telegram nije dozvolio mikrofon. Pošaljite glasovnu poruku u chat.' : 'Dozvolite mikrofon za ovu stranicu u podešavanjima pregledača.'); }
     const tip = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/webm', 'audio/ogg'].find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || '';
     const delovi = [];
     try { rec = new MediaRecorder(tok, tip ? { mimeType: tip } : undefined); } catch (e) { tok.getTracks().forEach(t => t.stop()); return tost('Snimanje nije uspelo.'); }
@@ -595,8 +686,8 @@ function mikrofon(poljeId, dugmeId, primerTekst) {
   };
 }
 
-/* ---------- prijava preko Telegrama (sajt blade.rs/app) ---------- */
-const ZNAK = '<svg class="velik-znak" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--orhideja)"/><path d="M9 23 L23 9 M13 23h10" stroke="var(--na-orhideji)" stroke-width="2.6" stroke-linecap="round"/></svg>';
+/* ---------- prijava preko Telegrama (sajt razvitak.studio/app) ---------- */
+const ZNAK = '<svg class="velik-znak" aria-hidden="true" viewBox="150 125 212 238"><path d="M256.0 214.0 L214.0 160.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" fill="none"/><path d="M198.0 170.0 L206.0 140.0 L232.0 154.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M256.0 214.0 L312.0 150.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" fill="none"/><path d="M290.0 146.0 L322.0 138.0 L316.0 170.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="256.0" cy="222.0" r="22.0" fill="#6B7C3C"/><rect x="160.0" y="216.0" width="192.0" height="138.0" rx="30.0" fill="#6B7C3C"/><rect x="178.0" y="234.0" width="128.0" height="102.0" rx="20.0" fill="#FFFFFF"/><circle cx="328.0" cy="260.0" r="8.5" fill="#FFFFFF"/><circle cx="328.0" cy="288.0" r="8.5" fill="#FFFFFF"/><path d="M192.0 322.0 L222.0 292.0 L240.0 308.0 L282.0 262.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M258.0 258.0 L288.0 254.0 L286.0 284.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
 let prozivka = null;
 function prikaziPrimer() {
   podaci = JSON.parse(JSON.stringify(PRIMER));
@@ -616,7 +707,7 @@ function ekranPrijave(poruka) {
     <p class="pod">${esc(poruka || 'Prijava ide preko Telegrama, bez lozinke. Potvrdite jednom i ostajete prijavljeni na ovom uređaju.')}</p>
     <button class="dugme" id="kreniPrijavu">Prijava preko Telegrama</button>
     <button class="tekst-dugme" id="pogledajPrimer" style="display:block;margin:12px auto 0">Pogledajte primer</button>
-    ${iosSavet ? '<div class="savet">Na iPhone-u prvo dodajte Blade na početni ekran, pa se prijavite iz te ikonice. Tako ostajete prijavljeni.<br><button id="savetEkran">Kako se dodaje</button></div>' : ''}
+    ${iosSavet ? '<div class="savet">Na iPhone-u prvo dodajte Razvitak na početni ekran, pa se prijavite iz te ikonice. Tako ostajete prijavljeni.<br><button id="savetEkran">Kako se dodaje</button></div>' : ''}
   </div>`);
   document.getElementById('kreniPrijavu').onclick = kreniPrijavu;
   document.getElementById('pogledajPrimer').onclick = () => { demo = true; prikaziPrimer(); };
@@ -638,7 +729,7 @@ async function kreniPrijavu(e) {
 function ekranCekanja(p) {
   ekran(`<div class="prijava">${ZNAK}
     <h1>Potvrdite u Telegramu</h1>
-    <ol class="koraci"><li><span>Otvorite Telegram dugmetom ispod.</span></li><li><span>U chatu sa Blade botom pritisnite <strong>Start</strong>.</span></li><li><span>Vratite se ovde. Blade se otvara sam.</span></li></ol>
+    <ol class="koraci"><li><span>Otvorite Telegram dugmetom ispod.</span></li><li><span>U chatu sa Razvitak botom pritisnite <strong>Start</strong>.</span></li><li><span>Vratite se ovde. Razvitak se otvara sam.</span></li></ol>
     <a class="dugme" href="${esc(p.link)}" target="_blank" rel="noopener" id="otvoriTg">Otvori Telegram</a>
     <div class="cekam" id="cekam"><i></i><span>Čekam potvrdu iz Telegrama…</span></div>
     <button class="tekst-dugme" id="odustani" style="display:block;margin:14px auto 0">Odustani</button>
@@ -670,7 +761,7 @@ document.addEventListener('visibilitychange', () => {
   if (p) proveri(p, 0);
 });
 async function odjava() {
-  obrisiKes(); podaci = null;
+  obrisiKes(); podaci = null; saloniLista = null;
   const t = token; token = ''; skladiste.stavi('blade_token', ''); skladiste.stavi('blade_salon', '');
   try { await fetch(API_PRIJAVA, { method: 'POST', body: new URLSearchParams({ akcija: 'odjava', token: t }) }); } catch (er) {}
   ekranPrijave('Odjavljeni ste sa ovog uređaja.');
@@ -680,15 +771,19 @@ window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); ponuda
 async function dodajNaEkran() {
   if (ponudaInstalacije) { ponudaInstalacije.prompt(); try { await ponudaInstalacije.userChoice; } catch (er) {} ponudaInstalacije = null; return; }
   otvoriPanel(iPhone
-    ? `<h3>Blade na početnom ekranu</h3><ol><li>Otvorite blade.rs/app u Safari-ju.</li><li>Dole pritisnite dugme Podeli (kvadrat sa strelicom nagore).</li><li>Izaberite „Dodaj na početni ekran“, pa „Dodaj“.</li><li>Otvorite Blade sa nove ikonice i prijavite se.</li></ol><button class="dugme" onclick="zatvoriPanel()">Razumem</button>`
-    : `<h3>Blade na početnom ekranu</h3><ol><li>Otvorite blade.rs/app u Chrome-u.</li><li>Gore desno pritisnite ⋮ (tri tačkice).</li><li>Izaberite „Dodaj na početni ekran“ ili „Instaliraj aplikaciju“.</li><li>Blade se sada otvara kao aplikacija, bez adresne trake.</li></ol><button class="dugme" onclick="zatvoriPanel()">Razumem</button>`);
+    ? `<h3>Razvitak na početnom ekranu</h3><ol><li>Otvorite ovu stranicu u Safari-ju.</li><li>Dole pritisnite dugme Podeli (kvadrat sa strelicom nagore).</li><li>Izaberite „Dodaj na početni ekran“, pa „Dodaj“.</li><li>Otvorite Razvitak sa nove ikonice i prijavite se.</li></ol><button class="dugme" onclick="zatvoriPanel()">Razumem</button>`
+    : `<h3>Razvitak na početnom ekranu</h3><ol><li>Otvorite ovu stranicu u Chrome-u.</li><li>Gore desno pritisnite ⋮ (tri tačkice).</li><li>Izaberite „Dodaj na početni ekran“ ili „Instaliraj aplikaciju“.</li><li>Razvitak se sada otvara kao aplikacija, bez adresne trake.</li></ol><button class="dugme" onclick="zatvoriPanel()">Razumem</button>`);
 }
 
 /* demo bez Telegrama */
 const cekaj = ms => new Promise(r => setTimeout(r, ms));
 async function demoAkcija(p) {
-  await cekaj(p.akcija === 'objava' ? 1800 : 900);
+  await cekaj(['objava', 'grafika'].includes(p.akcija) ? 1800 : 900);
   const d = podaci;
+  if (p.akcija === 'grafika') {
+    const o = { id: Date.now(), tip: 'post_kartica', slika: sl('#3E4A20', '#6B7C3C'), slike: [], slika_broj: 1, caption: p.napomena.charAt(0).toUpperCase() + p.napomena.slice(1) + ' ✨\nSačuvajte objavu da vam bude pri ruci, a za sva pitanja smo tu.\n\nZakažite termin porukom u DM.\n\n#salon #beograd', status: 'ceka_odobrenje' };
+    o.slike = [o.slika]; d.ceka.unshift(o); d.brojke.ceka++; return { ok: true, objava: o, termin: 'u ' + (d.plan.find(t => !t.objava) || { dan: 'sledećem terminu' }).dan + ' u 19h' };
+  }
   if (p.akcija === 'objava') {
     const slike = JSON.parse(p.slike).map(b => 'data:image/jpeg;base64,' + b);
     const o = { id: Date.now(), tip: 'post', slika: slike[0], slike, slika_broj: slike.length, caption: (p.napomena ? 'Rezultat koji se vidi: ' + p.napomena + ' ✨' : 'Novi rad iz našeg salona ✨') + '\nSvaki detalj je urađen sa pažnjom, da kosa izgleda negovano i posle nekoliko nedelja.\n\nZakažite termin porukom u DM.\n\n#frizer #beograd', status: 'ceka_odobrenje' };
