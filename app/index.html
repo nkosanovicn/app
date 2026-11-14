@@ -100,6 +100,9 @@ h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01
 img.pala{object-fit:contain!important;background:var(--orhideja-svetla)}
 .mikrofon-red{display:flex;align-items:center;gap:10px;margin-top:10px}
 .mikrofon-red small{color:var(--tiho);font-size:13px}
+.svoja-izmena{margin-top:14px}
+.svoja-izmena .mikrofon-red{display:flex;gap:8px;align-items:center;margin-top:8px}
+.napomena-izmena{display:block;margin-top:10px;color:var(--tiho);font-size:13px;line-height:1.4}
 .cip.mik{display:inline-flex;align-items:center;gap:7px;color:var(--orhideja);border-color:var(--orhideja-svetla);font-weight:600}
 .cip.mik svg{width:17px;height:17px;stroke:currentColor}
 .cip.mik.snima{background:var(--orhideja);color:var(--na-orhideji);border-color:var(--orhideja)}
@@ -307,7 +310,7 @@ body.bez-menija .ikonica-dugme{display:none}
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-14.10';
+const VERZIJA = '2026-11-14.11';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -374,8 +377,11 @@ const broj = n => n == null ? '–' : Number(n).toLocaleString('sr-Latn');
 const haptika = v => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(v || 'light'); } catch (e) {} };
 const datum = iso => { if (!iso) return ''; const d = new Date(iso); return d.toLocaleDateString('sr-Latn', { day: 'numeric', month: 'long' }); };
 /* slike sa ImgBB-a idu preko wsrv.nl (brže, smanjene, i rade i kad je ImgBB nedostupan); ako proxy ne uspe, probaj original */
-const sl_url = (u, w) => (/^https?:\/\//.test(String(u || '')) ? 'https://wsrv.nl/?url=' + encodeURIComponent(String(u).replace(/^https?:\/\//, '')) + '&w=' + (w || 900) + '&we&output=webp&q=82' : String(u || ''));
-const sl_atr = (u, w) => `src="${esc(sl_url(u, w))}" data-original="${esc(u)}"`;
+const sl_wp = (u, w) => 'https://i0.wp.com/' + String(u).replace(/^https?:\/\//, '') + '?w=' + (w || 900);
+const sl_ws = (u, w) => 'https://wsrv.nl/?url=' + encodeURIComponent(String(u).replace(/^https?:\/\//, '')) + '&w=' + (w || 900) + '&we&output=webp&q=82';
+const sl_url = (u, w) => (/^https?:\/\//.test(String(u || '')) ? sl_wp(u, w) : String(u || ''));
+/* redosled pokušaja: i0.wp.com → wsrv.nl → original → sličica „nije dostupna“ */
+const sl_atr = (u, w) => /^https?:\/\//.test(String(u || '')) ? `src="${esc(sl_wp(u, w))}" data-rezerve="${esc(sl_ws(u, w) + '|' + u)}"` : `src="${esc(u)}"`;
 const slika = (o, klasa) => o && o.slika ? `<img class="${klasa || ''}" ${sl_atr(o.slika, 500)} alt="" loading="lazy">` : `<span class="${klasa || ''} ikona-reels" aria-hidden="true">${o && o.tip === 'reel' ? '🎬' : ''}</span>`;
 
 /* tema: kao telefon (Telegram), svetla ili tamna; izbor se pamti na uređaju */
@@ -412,7 +418,7 @@ async function ucitaj() {
   }
 }
 const PALA_SLIKA = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><g fill="none" stroke="#8C9A66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="14" width="24" height="20" rx="3"/><circle cx="20" cy="21" r="2.2"/><path d="M14 31l7-7 5 5 3-3 5 5"/></g></svg>');
-document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && t.dataset.original && !t.dataset.probao) { t.dataset.probao = '1'; t.src = t.dataset.original; return; } if (t && t.tagName === 'IMG' && !t.dataset.pala) { t.dataset.pala = '1'; t.classList.add('pala'); t.alt = 'Slika nije dostupna'; t.src = PALA_SLIKA; } }, true);
+document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && t.dataset.rezerve) { const r = t.dataset.rezerve.split('|'); const sledeca = r.shift(); t.dataset.rezerve = r.join('|'); if (!r.length) delete t.dataset.rezerve; if (sledeca) { t.src = sledeca; return; } } if (t && t.tagName === 'IMG' && t.dataset.original && !t.dataset.probao) { t.dataset.probao = '1'; t.src = t.dataset.original; return; } if (t && t.tagName === 'IMG' && !t.dataset.pala) { t.dataset.pala = '1'; t.classList.add('pala'); t.alt = 'Slika nije dostupna'; t.src = PALA_SLIKA; } }, true);
 function ekran(html) { document.getElementById('ekran').innerHTML = html; }
 
 function zaglavlje() {
@@ -781,16 +787,27 @@ function pregled(o, termin) {
     ${termin ? `<p>Ako odobrite, izlazi ${esc(termin)}.</p>` : (story ? '<p>Kad odobrite, Story izlazi odmah.</p>' : '')}
     ${story ? '' : `<div class="opis" id="opisPregled">${esc(bezHashtagova(o.caption))}</div>`}
     <div class="dugmad"><button class="dugme" id="aOk">${story ? 'Objavi Story' : 'Objavi'}</button><button class="dugme ne" id="aNe">Ne objavljuj</button></div>
-    ${story || kartica ? '' : `<div class="cipovi"><button class="cip" data-iz="kr">Kraće</button><button class="cip" data-iz="op">Opuštenije</button><button class="cip" data-iz="dt">Drugi tekst</button></div>`}`);
+    ${story ? '' : `<div class="cipovi"><button class="cip" data-iz="kr">Kraće</button><button class="cip" data-iz="op">Opuštenije</button><button class="cip" data-iz="dt">Drugi tekst</button></div>
+    <div class="svoja-izmena"><textarea class="polje" id="svojaIzmena" rows="2" placeholder="Ili napišite šta da promenimo u opisu, npr. „dodaj da radimo i nedeljom“"></textarea>
+    <div class="mikrofon-red"><button class="cip mik" id="mikIzmena" type="button"></button><button class="cip" id="posaljiIzmenu" type="button" disabled>Promeni opis</button></div>
+    ${kartica ? '<small class="napomena-izmena">Za izmenu teksta na slikama odgovorite (Reply) na pregled u Telegramu.</small>' : ''}</div>`}`);
   const sva = () => document.querySelectorAll('#panelSadrzaj button');
   const zakljucaj = v => sva().forEach(b => b.disabled = v);
   document.getElementById('aOk').onclick = async e => { haptika('medium'); const b = e.currentTarget; b.textContent = story ? 'Objavljujem…' : 'Šaljem…'; zakljucaj(true);
     try { const j = await akcija({ akcija: 'ok', red_id: o.id }); zatvoriPanel(); tost(j.poruka || 'Odobreno.'); osvezi(); } catch (er) { tost(er.message); zakljucaj(false); b.textContent = story ? 'Objavi Story' : 'Objavi'; } };
   document.getElementById('aNe').onclick = async e => { haptika(); zakljucaj(true);
     try { const j = await akcija({ akcija: 'ne', red_id: o.id }); zatvoriPanel(); tost(j.poruka || 'Neće biti objavljeno.'); osvezi(); } catch (er) { tost(er.message); zakljucaj(false); } };
-  document.querySelectorAll('[data-iz]').forEach(c => c.onclick = async () => { haptika(); const staro = c.textContent; c.textContent = 'Pišem…'; zakljucaj(true);
-    try { const j = await akcija({ akcija: c.dataset.iz, red_id: o.id }); o.caption = j.caption || o.caption; document.getElementById('opisPregled').textContent = bezHashtagova(o.caption); tost('Evo nove verzije.'); } catch (er) { tost(er.message); }
-    c.textContent = staro; zakljucaj(false); });
+  const izmeni = async (c, polja) => { haptika(); const staro = c.textContent; c.textContent = 'Pišem…'; zakljucaj(true);
+    try { const j = await akcija({ ...polja, red_id: o.id }); o.caption = j.caption || o.caption; document.getElementById('opisPregled').textContent = bezHashtagova(o.caption); tost('Evo nove verzije.'); if (polja.akcija === 'tx') { const p = document.getElementById('svojaIzmena'); if (p) p.value = ''; } } catch (er) { tost(er.message); }
+    c.textContent = staro; zakljucaj(false); osveziIzmenu(); };
+  document.querySelectorAll('[data-iz]').forEach(c => c.onclick = () => izmeni(c, { akcija: c.dataset.iz }));
+  const poljeIzmene = document.getElementById('svojaIzmena'), dugmeIzmene = document.getElementById('posaljiIzmenu');
+  const osveziIzmenu = () => { if (dugmeIzmene && poljeIzmene) dugmeIzmene.disabled = poljeIzmene.value.trim().length < 3; };
+  if (poljeIzmene) {
+    mikrofon('svojaIzmena', 'mikIzmena', 'dodaj da radimo i nedeljom');
+    poljeIzmene.addEventListener('input', osveziIzmenu); osveziIzmenu();
+    dugmeIzmene.onclick = () => izmeni(dugmeIzmene, { akcija: 'tx', tekst: poljeIzmene.value.trim() });
+  }
 }
 function radi(t) { document.getElementById('panelSadrzaj').innerHTML = `<div class="radi"><i></i><div>${esc(t)}</div></div>`; }
 async function smanji(fajl) {
@@ -999,7 +1016,7 @@ async function demoAkcija(p) {
   }
   if (p.akcija === 'story') { const o = { id: Date.now(), tip: 'story_tekst', slika: sl('#2B2B2B', '#4A3B36'), slike: [], caption: p.tekst, status: 'ceka_odobrenje' }; o.slike = [o.slika]; d.ceka.unshift(o); d.brojke.ceka++; return { ok: true, objava: o }; }
   const i = d.ceka.findIndex(o => String(o.id) === String(p.red_id)); const o = d.ceka[i];
-  if (['kr', 'op', 'dt'].includes(p.akcija)) return { ok: true, caption: ({ kr: 'Kraća verzija: ', op: 'Opuštenije: ', dt: 'Nova verzija: ' })[p.akcija] + prvaRecenica(o.caption) + '\n\nZakažite termin porukom u DM.' };
+  if (['kr', 'op', 'dt', 'tx'].includes(p.akcija)) return { ok: true, caption: ({ kr: 'Kraća verzija: ', op: 'Opuštenije: ', dt: 'Nova verzija: ', tx: 'Po vašoj želji: ' })[p.akcija] + prvaRecenica(o.caption) + '\n\nZakažite termin porukom u DM.' };
   d.ceka.splice(i, 1); d.brojke.ceka--;
   if (p.akcija === 'ok') { if (o.tip === 'story_tekst') { d.brojke.story++; return { ok: true, poruka: 'Story je objavljen na Instagramu.' }; } const t = d.plan.find(x => !x.objava); if (t) t.objava = o; d.brojke.spremno++; return { ok: true, poruka: 'Odobreno! Izlazi ' + (t ? t.dan + ' u ' + t.sat : 'u sledećem terminu') + '.' }; }
   return { ok: true, poruka: 'U redu, ova objava neće biti objavljena.' };
