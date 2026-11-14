@@ -1,0 +1,30 @@
+{
+ "name": "Blade",
+ "short_name": "Blade",
+ "description": "Instagram vašeg salona na jednom mestu.",
+ "lang": "sr-Latn",
+ "start_url": "/app/",
+ "scope": "/app/",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#F7F5F8",
+ "theme_color": "#7A3E7F",
+ "icons": [
+  {
+   "src": "ikona-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "ikona-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "ikona-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

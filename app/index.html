@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Blade</title>
+<meta name="theme-color" content="#7A3E7F">
+<meta name="description" content="Blade: Instagram vašeg salona na jednom mestu.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="ikona-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Blade">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -166,6 +175,25 @@ textarea.polje:focus-visible{outline:2px solid var(--orhideja);outline-offset:1p
 .tost.vidljiv{opacity:1;transform:translate(-50%,0)}
 .ceka{cursor:pointer;width:100%;text-align:left}
 [hidden]{display:none!important}
+body.bez-menija nav.dno{display:none}
+body.bez-menija{padding-bottom:24px}
+.prijava{padding:34px 4px 10px}
+.prijava .velik-znak{width:64px;height:64px;margin-bottom:26px}
+.prijava h1{font-size:34px}
+.prijava .pod{font-size:16px;margin:12px 0 28px;max-width:34ch}
+.prijava .dugme + .dugme{margin-top:10px}
+.prijava a.dugme{text-decoration:none}
+.koraci{list-style:none;display:grid;gap:14px;margin:6px 0 26px;counter-reset:k}
+.koraci li{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;counter-increment:k}
+.koraci li::before{content:counter(k);width:30px;height:30px;border-radius:50%;background:var(--orhideja-svetla);color:var(--orhideja);font-weight:700;display:grid;place-items:center;font-size:14px}
+.koraci li.gotov::before{content:"✓";background:var(--orhideja);color:var(--na-orhideji)}
+.cekam{display:flex;align-items:center;gap:10px;color:var(--tiho);font-size:15px;margin-top:18px}
+.cekam i{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--orhideja-svetla);border-top-color:var(--orhideja);animation:vrti .9s linear infinite;flex:none}
+.savet{margin-top:26px;padding:14px 16px;border-radius:var(--radius);background:var(--povrsina);border:1px solid var(--linija);font-size:14px;color:var(--tiho)}
+.savet button{color:var(--orhideja);font-weight:600;font-size:14px;padding:0;margin-top:4px}
+.tekst-dugme{color:var(--tiho);font-size:14px;padding:10px 0;text-decoration:underline;text-underline-offset:3px}
+.podnozje{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:22px;padding-top:12px;border-top:1px solid var(--linija)}
+.traka-primer button{color:inherit;font-weight:700;font-size:inherit;text-decoration:underline;padding:0}
 </style>
 </head>
 <body>
@@ -198,7 +226,21 @@ textarea.polje:focus-visible{outline:2px solid var(--orhideja);outline-offset:1p
 const API = 'https://miroslavmiki.app.n8n.cloud/webhook/blade-app-api';
 const tg = window.Telegram && window.Telegram.WebApp;
 const uTelegramu = !!(tg && tg.initData);
+const BOT = 'kaodajebitno_bot';
+const API_PRIJAVA = 'https://miroslavmiki.app.n8n.cloud/webhook/blade-app-prijava';
+const uOkviru = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+const samostalno = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const iPhone = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const skladiste = {
+  uzmi: k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
+  stavi: (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
+};
+let token = uTelegramu ? '' : skladiste.uzmi('blade_token');
+let demo = !uTelegramu && (uOkviru || new URLSearchParams(location.search).has('demo'));
 let podaci = null, tab = 'pocetna', kodIzbor = '';
+const pravo = () => uTelegramu || (!!token && !demo);
+const prijava = () => uTelegramu ? { initData: tg.initData } : { token };
+function istekla() { token = ''; skladiste.stavi('blade_token', ''); podaci = null; ekranPrijave('Prijava je istekla ili ste se odjavili. Prijavite se ponovo.'); }
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const prvaRecenica = t => { const r = String(t || '').split('\n').map(x => x.trim()).filter(x => x && !x.startsWith('#'))[0] || ''; return r.length > 110 ? r.slice(0, 107) + '…' : r; };
@@ -208,7 +250,7 @@ const haptika = v => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impact
 const datum = iso => { if (!iso) return ''; const d = new Date(iso); return d.toLocaleDateString('sr-Latn', { day: 'numeric', month: 'long' }); };
 const slika = (o, klasa) => o && o.slika ? `<img class="${klasa || ''}" src="${esc(o.slika)}" alt="" loading="lazy">` : `<span class="${klasa || ''} ikona-reels" aria-hidden="true">${o && o.tip === 'reel' ? '🎬' : ''}</span>`;
 
-if (tg) {
+if (uTelegramu) {
   try {
     tg.ready(); tg.expand();
     if (tg.colorScheme === 'dark') document.documentElement.classList.add('tamno');
@@ -219,12 +261,15 @@ if (tg) {
 } else if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('tamno');
 
 async function ucitaj() {
-  if (!uTelegramu) { podaci = PRIMER; document.getElementById('primer').hidden = false; prikazi(); return; }
+  if (!uTelegramu && demo) return prikaziPrimer();
+  if (!pravo()) return ekranPrijave();
+  document.body.classList.remove('bez-menija');
   try {
-    const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ initData: tg.initData, kod: kodIzbor }) });
+    const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: kodIzbor || skladiste.uzmi('blade_salon') }) });
+    if (odg.status === 401 && !uTelegramu) return istekla();
     const j = await odg.json();
-    if (j.nepovezan) return ekran(`<div class="prazno"><h1>Još niste povezani</h1><p class="pod">Otvorite link koji ste dobili od nas i pritisnite Start, pa ponovo otvorite aplikaciju.</p></div>`);
-    if (!j.ok) return ekran(`<div class="prazno"><h1>Aplikacija se nije učitala</h1><p class="pod">Zatvorite je i otvorite ponovo iz chata. Ako se ponovi, pišite nam u chatu.</p></div>`);
+    if (j.nepovezan) return ekran(`<div class="prazno"><h1>Još niste povezani</h1><p class="pod">Ovaj Telegram nalog još nije povezan sa salonom. Otvorite link koji ste dobili od nas i pritisnite Start, pa ponovo otvorite aplikaciju.</p>${uTelegramu ? '' : '<button class="tekst-dugme" onclick="odjava()">Prijavi se drugim nalogom</button>'}</div>`);
+    if (!j.ok) return ekran(`<div class="prazno"><h1>Aplikacija se nije učitala</h1><p class="pod">${uTelegramu ? 'Zatvorite je i otvorite ponovo iz chata.' : 'Osvežite stranicu.'} Ako se ponovi, pišite nam u chatu.</p></div>`);
     podaci = j; prikazi();
   } catch (e) {
     ekran(`<div class="prazno"><h1>Nema veze sa serverom</h1><p class="pod">Proverite internet i pokušajte ponovo.</p><button class="dugme" style="margin-top:18px" onclick="ucitaj()">Pokušaj ponovo</button></div>`);
@@ -236,7 +281,7 @@ function zaglavlje() {
   const m = document.getElementById('salonMesto');
   if (podaci.admin && podaci.saloni && podaci.saloni.length) {
     m.innerHTML = `<select class="salon-izbor" aria-label="Izaberi salon">${podaci.saloni.map(s => `<option value="${esc(s.kod)}"${s.kod === podaci.salon.kod ? ' selected' : ''}>${esc(s.naziv)}</option>`).join('')}</select>`;
-    m.querySelector('select').onchange = e => { kodIzbor = e.target.value; ekran('<div class="ucitavanje"><div class="kost" style="height:200px"></div></div>'); ucitaj(); };
+    m.querySelector('select').onchange = e => { kodIzbor = e.target.value; if (!uTelegramu) skladiste.stavi('blade_salon', kodIzbor); ekran('<div class="ucitavanje"><div class="kost" style="height:200px"></div></div>'); ucitaj(); };
   } else m.innerHTML = `<div class="salon-ime">${esc(podaci.salon.naziv)}</div>`;
 }
 
@@ -259,7 +304,7 @@ function pocetna() {
   if (sledeci) listic = `<div class="listic"><div class="vreme"><span class="dan">${esc(sledeci.dan.split(' ')[0])}</span><span class="sat">${esc(sledeci.sat)}</span></div>
     <div class="sadrzaj">${slika(sledeci.objava)}<div><div class="naslov">${esc(prvaRecenica(sledeci.objava.caption))}</div><div class="napomena">Sledeća objava, ${esc(sledeci.dan)}</div></div></div></div>`;
   else if (prviSlobodan) listic = `<div class="listic prazan"><div class="vreme"><span class="dan">${esc(prviSlobodan.dan.split(' ')[0])}</span><span class="sat">${esc(prviSlobodan.sat)}</span></div>
-    <div class="sadrzaj"><div><div class="naslov" style="color:var(--mastilo)">Termin je slobodan</div><div class="napomena">Pošaljite sliku ili video u chat, mi pripremamo objavu za ${esc(prviSlobodan.dan)}.</div></div></div></div>`;
+    <div class="sadrzaj"><div><div class="naslov" style="color:var(--mastilo)">Termin je slobodan</div><div class="napomena">Pošaljite sliku ili video u chat, mi pripremamo objavu za ${esc(prviSlobodan.dan)}</div></div></div></div>`;
   else listic = '';
   const limit = s.limit || Math.max(b.objavljeno, 8);
   const zupci = Array.from({ length: Math.min(limit, 24) }, (_, i) => `<i class="${i < b.objavljeno ? 'pun' : ''}"></i>`).join('');
@@ -280,7 +325,11 @@ function pocetna() {
       <button class="radnja" data-uputstvo="reels"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 4l2 5M14 4l2 5"/><path d="M10.5 12.5v4l3.5-2z"/></svg>Reels</button>
       <button class="radnja" data-uputstvo="story"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4 2.2"/><path d="M12 8.5v7M8.5 12h7"/></svg>Story</button>
     </div>
-    <p class="pod" style="margin-top:18px">Raspored: ${esc(s.raspored)}. Paket ${esc(s.paket)}.</p>`);
+    <p class="pod" style="margin-top:18px">Raspored: ${esc(s.raspored)}. Paket ${esc(s.paket)}.</p>
+    ${uTelegramu ? '' : `<div class="podnozje">${samostalno ? '' : '<button class="tekst-dugme" id="naEkran">Dodaj Blade na početni ekran</button>'}${demo ? '<button class="tekst-dugme" id="uPrijavu">Prijavite se</button>' : '<button class="tekst-dugme" id="odjaviSe">Odjavi se</button>'}</div>`}`);
+  const ne = document.getElementById('naEkran'); if (ne) ne.onclick = dodajNaEkran;
+  const oj = document.getElementById('odjaviSe'); if (oj) oj.onclick = () => { if (confirm('Odjaviti se sa Blade-a na ovom uređaju?')) odjava(); };
+  const up = document.getElementById('uPrijavu'); if (up) up.onclick = () => { demo = false; ucitaj(); };
   document.querySelectorAll('[data-uputstvo]').forEach(d => d.onclick = () => ({ objava: novaObjava, story: noviStory, reels: () => uputstvo('reels') })[d.dataset.uputstvo]());
   const oc = document.getElementById('otvoriCeka'); if (oc) oc.onclick = listaCeka;
 }
@@ -292,8 +341,8 @@ const UPUTSTVA = {
 };
 function uputstvo(vrsta) {
   haptika(); const u = UPUTSTVA[vrsta];
-  otvoriPanel(`<h3>${u.n}</h3><ol>${u.k.map(x => `<li>${esc(x)}</li>`).join('')}</ol><button class="dugme" id="uChat">Idi u chat</button>`);
-  document.getElementById('uChat').onclick = () => { haptika('medium'); if (tg && uTelegramu) tg.close(); else zatvoriPanel(); };
+  otvoriPanel(`<h3>${u.n}</h3><ol>${u.k.map(x => `<li>${esc(x)}</li>`).join('')}</ol>${uTelegramu ? '<button class="dugme" id="uChat">Idi u chat</button>' : `<a class="dugme" style="text-decoration:none" href="https://t.me/${BOT}" target="_blank" rel="noopener">Otvori chat u Telegramu</a>`}`);
+  const uc = document.getElementById('uChat'); if (uc) uc.onclick = () => { haptika('medium'); tg.close(); };
 }
 
 function plan() {
@@ -366,9 +415,10 @@ document.querySelectorAll('nav.dno button').forEach(b => b.onclick = () => { if 
 const API_AKCIJA = 'https://miroslavmiki.app.n8n.cloud/webhook/blade-app-akcija';
 function tost(t) { const e = document.getElementById('tost'); e.textContent = t; e.classList.add('vidljiv'); clearTimeout(tost.t); tost.t = setTimeout(() => e.classList.remove('vidljiv'), 3200); }
 async function akcija(polja) {
-  if (!uTelegramu) return demoAkcija(polja);
-  const telo = new URLSearchParams({ initData: tg.initData, kod: podaci.salon.kod || '', ...polja });
+  if (!pravo()) return demoAkcija(polja);
+  const telo = new URLSearchParams({ ...prijava(), kod: podaci.salon.kod || '', ...polja });
   const odg = await fetch(API_AKCIJA, { method: 'POST', body: telo });
+  if (odg.status === 401 && !uTelegramu) { zatvoriPanel(); istekla(); throw new Error('Prijavite se ponovo.'); }
   let j = {}; try { j = await odg.json(); } catch (e) {}
   if (!j.ok) throw new Error(j.greska || 'Nešto nije u redu. Pokušajte ponovo.');
   return j;
@@ -441,9 +491,97 @@ function noviStory() {
   };
 }
 async function osvezi() {
-  if (!uTelegramu) { prikazi(); return; }
-  try { const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ initData: tg.initData, kod: podaci.salon.kod || kodIzbor }) }); const j = await odg.json(); if (j.ok) { podaci = j; prikazi(); } } catch (e) {}
+  if (!pravo()) { prikazi(); return; }
+  try { const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: podaci.salon.kod || kodIzbor }) }); if (odg.status === 401 && !uTelegramu) return istekla(); const j = await odg.json(); if (j.ok) { podaci = j; prikazi(); } } catch (e) {}
 }
+/* ---------- prijava preko Telegrama (sajt blade.rs/app) ---------- */
+const ZNAK = '<svg class="velik-znak" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--orhideja)"/><path d="M9 23 L23 9 M13 23h10" stroke="var(--na-orhideji)" stroke-width="2.6" stroke-linecap="round"/></svg>';
+let prozivka = null;
+function prikaziPrimer() {
+  podaci = JSON.parse(JSON.stringify(PRIMER));
+  const t = document.getElementById('primer'); t.hidden = false;
+  t.innerHTML = uOkviru ? 'Primer prikaza sa izmišljenim podacima.' : 'Primer sa izmišljenim podacima. <button id="trakaPrijava">Prijavite se</button> da vidite svoj salon.';
+  const b = document.getElementById('trakaPrijava'); if (b) b.onclick = () => { demo = false; history.replaceState(null, '', location.pathname); ucitaj(); };
+  document.body.classList.remove('bez-menija'); tab = 'pocetna'; prikazi();
+}
+function ekranPrijave(poruka) {
+  clearTimeout(prozivka); podaci = null;
+  document.body.classList.add('bez-menija');
+  document.getElementById('primer').hidden = true;
+  document.getElementById('salonMesto').innerHTML = '';
+  const iosSavet = iPhone && !samostalno;
+  ekran(`<div class="prijava">${ZNAK}
+    <h1>Instagram vašeg salona, na jednom mestu</h1>
+    <p class="pod">${esc(poruka || 'Prijava ide preko Telegrama, bez lozinke. Potvrdite jednom i ostajete prijavljeni na ovom uređaju.')}</p>
+    <button class="dugme" id="kreniPrijavu">Prijava preko Telegrama</button>
+    <button class="tekst-dugme" id="pogledajPrimer" style="display:block;margin:12px auto 0">Pogledajte primer</button>
+    ${iosSavet ? '<div class="savet">Na iPhone-u prvo dodajte Blade na početni ekran, pa se prijavite iz te ikonice. Tako ostajete prijavljeni.<br><button id="savetEkran">Kako se dodaje</button></div>' : ''}
+  </div>`);
+  document.getElementById('kreniPrijavu').onclick = kreniPrijavu;
+  document.getElementById('pogledajPrimer').onclick = () => { demo = true; prikaziPrimer(); };
+  const se = document.getElementById('savetEkran'); if (se) se.onclick = dodajNaEkran;
+}
+async function kreniPrijavu(e) {
+  const b = e && e.currentTarget; if (b) { b.disabled = true; b.textContent = 'Spremam link…'; }
+  try {
+    const odg = await fetch(API_PRIJAVA, { method: 'POST', body: new URLSearchParams({ akcija: 'start' }) });
+    const j = await odg.json();
+    if (!j.ok || !j.kod) throw new Error();
+    try { sessionStorage.setItem('blade_prijava', JSON.stringify({ kod: j.kod, tajna: j.tajna, link: j.link, od: Date.now() })); } catch (er) {}
+    ekranCekanja(j);
+  } catch (er) {
+    if (b) { b.disabled = false; b.textContent = 'Prijava preko Telegrama'; }
+    tost('Nema veze sa serverom. Proverite internet i pokušajte ponovo.');
+  }
+}
+function ekranCekanja(p) {
+  ekran(`<div class="prijava">${ZNAK}
+    <h1>Potvrdite u Telegramu</h1>
+    <ol class="koraci"><li><span>Otvorite Telegram dugmetom ispod.</span></li><li><span>U chatu sa Blade botom pritisnite <strong>Start</strong>.</span></li><li><span>Vratite se ovde. Blade se otvara sam.</span></li></ol>
+    <a class="dugme" href="${esc(p.link)}" target="_blank" rel="noopener" id="otvoriTg">Otvori Telegram</a>
+    <div class="cekam" id="cekam"><i></i><span>Čekam potvrdu iz Telegrama…</span></div>
+    <button class="tekst-dugme" id="odustani" style="display:block;margin:14px auto 0">Odustani</button>
+  </div>`);
+  document.getElementById('otvoriTg').onclick = () => { const l = document.querySelector('.koraci li'); if (l) l.classList.add('gotov'); };
+  document.getElementById('odustani').onclick = () => { try { sessionStorage.removeItem('blade_prijava'); } catch (er) {} ekranPrijave(); };
+  proveri(p, 0);
+}
+async function proveri(p, broj) {
+  clearTimeout(prozivka);
+  if (Date.now() - p.od > 10 * 60 * 1000) { try { sessionStorage.removeItem('blade_prijava'); } catch (er) {} return ekranPrijave('Link za prijavu je istekao. Pokušajte ponovo.'); }
+  if (document.hidden) { prozivka = setTimeout(() => proveri(p, broj), 1500); return; }
+  try {
+    const odg = await fetch(API_PRIJAVA, { method: 'POST', body: new URLSearchParams({ akcija: 'provera', kod: p.kod, tajna: p.tajna }) });
+    const j = await odg.json();
+    if (j.ok && j.token) {
+      try { sessionStorage.removeItem('blade_prijava'); } catch (er) {}
+      token = j.token; skladiste.stavi('blade_token', token); demo = false;
+      tab = 'pocetna'; tost('Prijavljeni ste.'); return ucitaj();
+    }
+    if (j.stanje === 'istekao') { try { sessionStorage.removeItem('blade_prijava'); } catch (er) {} return ekranPrijave('Link za prijavu je istekao ili je već iskorišćen. Pokušajte ponovo.'); }
+  } catch (er) {}
+  if (!document.getElementById('cekam')) return;
+  prozivka = setTimeout(() => proveri(p, broj + 1), broj < 40 ? 3000 : 6000);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden || pravo() || !document.getElementById('cekam')) return;
+  let p = null; try { p = JSON.parse(sessionStorage.getItem('blade_prijava') || 'null'); } catch (er) {}
+  if (p) proveri(p, 0);
+});
+async function odjava() {
+  const t = token; token = ''; skladiste.stavi('blade_token', ''); skladiste.stavi('blade_salon', '');
+  try { await fetch(API_PRIJAVA, { method: 'POST', body: new URLSearchParams({ akcija: 'odjava', token: t }) }); } catch (er) {}
+  ekranPrijave('Odjavljeni ste sa ovog uređaja.');
+}
+let ponudaInstalacije = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); ponudaInstalacije = e; });
+async function dodajNaEkran() {
+  if (ponudaInstalacije) { ponudaInstalacije.prompt(); try { await ponudaInstalacije.userChoice; } catch (er) {} ponudaInstalacije = null; return; }
+  otvoriPanel(iPhone
+    ? `<h3>Blade na početnom ekranu</h3><ol><li>Otvorite blade.rs/app u Safari-ju.</li><li>Dole pritisnite dugme Podeli (kvadrat sa strelicom nagore).</li><li>Izaberite „Dodaj na početni ekran“, pa „Dodaj“.</li><li>Otvorite Blade sa nove ikonice i prijavite se.</li></ol><button class="dugme" onclick="zatvoriPanel()">Razumem</button>`
+    : `<h3>Blade na početnom ekranu</h3><ol><li>Otvorite blade.rs/app u Chrome-u.</li><li>Gore desno pritisnite ⋮ (tri tačkice).</li><li>Izaberite „Dodaj na početni ekran“ ili „Instaliraj aplikaciju“.</li><li>Blade se sada otvara kao aplikacija, bez adresne trake.</li></ol><button class="dugme" onclick="zatvoriPanel()">Razumem</button>`);
+}
+
 /* demo bez Telegrama */
 const cekaj = ms => new Promise(r => setTimeout(r, ms));
 async function demoAkcija(p) {
@@ -479,7 +617,13 @@ const PRIMER = {
     godine: { '18-24': 410, '25-34': 980, '35-44': 640, '45-54': 250, '55-64': 80 }, pol: { F: 1890, M: 410, U: 84 },
     gradovi: [['Beograd', 1720], ['Pančevo', 96], ['Novi Sad', 71], ['Zemun', 58], ['Smederevo', 31]] }
 };
-ucitaj();
+(() => {
+  if (!uTelegramu && !token && !demo) {
+    let p = null; try { p = JSON.parse(sessionStorage.getItem('blade_prijava') || 'null'); } catch (er) {}
+    if (p && Date.now() - p.od < 10 * 60 * 1000) { document.body.classList.add('bez-menija'); return ekranCekanja(p); }
+  }
+  ucitaj();
+})();
 </script>
 </body>
 </html>
