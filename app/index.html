@@ -70,6 +70,21 @@ h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01
 .zupci{display:flex;gap:4px;margin-top:10px;height:34px;align-items:flex-end}
 .zupci i{flex:1;max-width:22px;height:100%;border-radius:4px 4px 2px 2px;background:var(--linija)}
 .zupci i.pun{background:var(--orhideja)}
+.dodatno{display:grid;gap:10px;margin-top:16px}
+.dodatno div{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:12px;font-size:15px}
+.dodatno span{color:var(--tiho)}
+.dodatno .mini{height:8px;border-radius:99px;background:var(--linija);overflow:hidden}
+.dodatno .mini i{display:block;height:100%;background:var(--orhideja);border-radius:99px}
+.dodatno b{font-weight:600;font-variant-numeric:tabular-nums}
+.dodatno b small{color:var(--tiho);font-weight:500;font-size:14px}
+img.pala{object-fit:contain!important;background:var(--orhideja-svetla)}
+.mikrofon-red{display:flex;align-items:center;gap:10px;margin-top:10px}
+.mikrofon-red small{color:var(--tiho);font-size:13px}
+.cip.mik{display:inline-flex;align-items:center;gap:7px;color:var(--orhideja);border-color:var(--orhideja-svetla);font-weight:600}
+.cip.mik svg{width:17px;height:17px;stroke:currentColor}
+.cip.mik.snima{background:var(--orhideja);color:var(--na-orhideji);border-color:var(--orhideja)}
+.cip.mik.snima::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;animation:puls 1s ease-in-out infinite}
+@keyframes puls{50%{opacity:.25}}
 .zupci i.pun:nth-child(odd){height:86%}
 .zupci i:not(.pun):nth-child(odd){height:86%}
 
@@ -240,7 +255,35 @@ let demo = !uTelegramu && (uOkviru || new URLSearchParams(location.search).has('
 let podaci = null, tab = 'pocetna', kodIzbor = '';
 const pravo = () => uTelegramu || (!!token && !demo);
 const prijava = () => uTelegramu ? { initData: tg.initData } : { token };
-function istekla() { token = ''; skladiste.stavi('blade_token', ''); podaci = null; ekranPrijave('Prijava je istekla ili ste se odjavili. Prijavite se ponovo.'); }
+/* pamćenje poslednjih podataka u telefonu: otvaranje je trenutno, pa se tiho osveži */
+const kljucKes = () => 'blade_kes_' + (uTelegramu ? String((tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) || 'tg') : token.slice(0, 16));
+function sacuvajKes() { if (!pravo() || !podaci || !podaci.salon) return; try { localStorage.setItem(kljucKes(), JSON.stringify({ kod: podaci.salon.kod, t: Date.now(), p: podaci })); } catch (e) {} }
+function uzmiKes() {
+  try { const k = JSON.parse(localStorage.getItem(kljucKes()) || 'null'); const zeljeni = kodIzbor || skladiste.uzmi('blade_salon');
+    if (!k || (zeljeni && k.kod !== zeljeni) || Date.now() - k.t > 14 * 864e5) return null; return k.p; } catch (e) { return null; }
+}
+function obrisiKes() { try { Object.keys(localStorage).filter(k => k.startsWith('blade_kes_')).forEach(k => localStorage.removeItem(k)); } catch (e) {} }
+let statVreme = 0;
+function primi(j) {
+  const isti = podaci && podaci.salon && j.salon && podaci.salon.kod === j.salon.kod;
+  const stat = isti ? podaci.stat : undefined;
+  podaci = j;
+  if (stat === undefined) { delete podaci.stat; statVreme = 0; } else podaci.stat = stat;
+  sacuvajKes();
+}
+async function ucitajStat() {
+  if (!pravo() || !podaci || Date.now() - statVreme < 5 * 60 * 1000) return;
+  statVreme = Date.now(); const kod = podaci.salon.kod;
+  try {
+    const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod, deo: 'stat' }) });
+    if (odg.status === 401 && !uTelegramu) return istekla();
+    const j = await odg.json(); if (!j.ok) throw new Error();
+    if (!podaci || podaci.salon.kod !== kod) return;
+    podaci.stat = j.stat; sacuvajKes();
+    if (tab === 'brojke') brojke();
+  } catch (e) { statVreme = 0; if (tab === 'brojke' && podaci && podaci.stat === undefined) ekran(`<h1>Brojke</h1><div class="prazno"><p>Statistika se nije učitala.</p><button class="dugme" style="margin-top:18px" onclick="brojke()">Pokušaj ponovo</button></div>`); }
+}
+function istekla() { obrisiKes(); token = ''; skladiste.stavi('blade_token', ''); podaci = null; ekranPrijave('Prijava je istekla ili ste se odjavili. Prijavite se ponovo.'); }
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const prvaRecenica = t => { const r = String(t || '').split('\n').map(x => x.trim()).filter(x => x && !x.startsWith('#'))[0] || ''; return r.length > 110 ? r.slice(0, 107) + '…' : r; };
@@ -264,35 +307,46 @@ async function ucitaj() {
   if (!uTelegramu && demo) return prikaziPrimer();
   if (!pravo()) return ekranPrijave();
   document.body.classList.remove('bez-menija');
+  const kes = !podaci && uzmiKes();
+  if (kes) { podaci = kes; prikazi(); }
   try {
     const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: kodIzbor || skladiste.uzmi('blade_salon') }) });
     if (odg.status === 401 && !uTelegramu) return istekla();
     const j = await odg.json();
     if (j.nepovezan) return ekran(`<div class="prazno"><h1>Još niste povezani</h1><p class="pod">Ovaj Telegram nalog još nije povezan sa salonom. Otvorite link koji ste dobili od nas i pritisnite Start, pa ponovo otvorite aplikaciju.</p>${uTelegramu ? '' : '<button class="tekst-dugme" onclick="odjava()">Prijavi se drugim nalogom</button>'}</div>`);
     if (!j.ok) return ekran(`<div class="prazno"><h1>Aplikacija se nije učitala</h1><p class="pod">${uTelegramu ? 'Zatvorite je i otvorite ponovo iz chata.' : 'Osvežite stranicu.'} Ako se ponovi, pišite nam u chatu.</p></div>`);
-    podaci = j; prikazi();
+    primi(j); prikazi(!!kes);
   } catch (e) {
+    if (kes) return tost('Nema interneta. Prikazujem poslednje podatke.');
     ekran(`<div class="prazno"><h1>Nema veze sa serverom</h1><p class="pod">Proverite internet i pokušajte ponovo.</p><button class="dugme" style="margin-top:18px" onclick="ucitaj()">Pokušaj ponovo</button></div>`);
   }
 }
+const PALA_SLIKA = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><g fill="none" stroke="#9A7BA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="14" width="24" height="20" rx="3"/><circle cx="20" cy="21" r="2.2"/><path d="M14 31l7-7 5 5 3-3 5 5"/></g></svg>');
+document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && !t.dataset.pala) { t.dataset.pala = '1'; t.classList.add('pala'); t.alt = 'Slika nije dostupna'; t.src = PALA_SLIKA; } }, true);
 function ekran(html) { document.getElementById('ekran').innerHTML = html; }
 
 function zaglavlje() {
   const m = document.getElementById('salonMesto');
   if (podaci.admin && podaci.saloni && podaci.saloni.length) {
     m.innerHTML = `<select class="salon-izbor" aria-label="Izaberi salon">${podaci.saloni.map(s => `<option value="${esc(s.kod)}"${s.kod === podaci.salon.kod ? ' selected' : ''}>${esc(s.naziv)}</option>`).join('')}</select>`;
-    m.querySelector('select').onchange = e => { kodIzbor = e.target.value; if (!uTelegramu) skladiste.stavi('blade_salon', kodIzbor); ekran('<div class="ucitavanje"><div class="kost" style="height:200px"></div></div>'); ucitaj(); };
+    m.querySelector('select').onchange = e => { kodIzbor = e.target.value; skladiste.stavi('blade_salon', kodIzbor); podaci = null; ekran('<div class="ucitavanje"><div class="kost" style="height:200px"></div></div>'); ucitaj(); };
   } else m.innerHTML = `<div class="salon-ime">${esc(podaci.salon.naziv)}</div>`;
 }
 
-function prikazi() {
+function prikazi(bezSkrola) {
   zaglavlje();
   document.querySelectorAll('nav.dno button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tab ? 'page' : 'false'));
   ({ pocetna, plan, objave, brojke })[tab]();
-  window.scrollTo(0, 0);
+  if (!bezSkrola) window.scrollTo(0, 0);
 }
 
 const objava = n => n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'objave' : 'objava';
+function dodatno(b, s) {
+  const lim = s.limiti || {};
+  const stavke = [['Reels', b.reels || 0, Number(lim.reels) || 0], ['Story', b.story || 0, Number(lim.story) || 0]].filter(x => x[2] > 0 || x[1] > 0);
+  if (!stavke.length) return '';
+  return `<div class="dodatno">${stavke.map(([n, v, l]) => `<div><span>${n}</span><span class="mini" aria-hidden="true"><i style="width:${l ? Math.min(100, v / l * 100).toFixed(0) : 100}%"></i></span><b>${v}${l ? `<small> / ${l}</small>` : ''}</b></div>`).join('')}</div>`;
+}
 function pozdrav() { const h = new Date().getHours(); return h < 11 ? 'Dobro jutro' : (h < 18 ? 'Dobar dan' : 'Dobro veče'); }
 
 function pocetna() {
@@ -317,7 +371,7 @@ function pocetna() {
     <section class="mesec" aria-label="Ovog meseca">
       <div class="red"><span class="broj">${b.objavljeno}<small> / ${limit} objava</small></span><span class="pod" style="margin:0">ovog meseca</span></div>
       <div class="zupci" aria-hidden="true">${zupci}</div>
-      ${b.reels || b.story ? `<p class="pod">${[b.reels ? 'Reels: ' + b.reels : '', b.story ? 'Story: ' + b.story : ''].filter(Boolean).join(', ')}</p>` : ''}
+      ${dodatno(b, s)}
     </section>
     <h2>Pošaljite nešto novo</h2>
     <div class="radnje">
@@ -374,6 +428,8 @@ function vezi(izvor) {
 
 function brojke() {
   const st = podaci.stat;
+  ucitajStat();
+  if (st === undefined) return ekran(`<h1>Brojke</h1><p class="pod">Učitavam Instagram statistiku…</p><div class="ucitavanje"><div class="kost" style="height:70px;margin-top:22px"></div><div class="kost" style="height:120px;margin-top:16px"></div><div class="kost" style="height:110px;margin-top:16px"></div></div>`);
   if (!st) return ekran(`<h1>Brojke</h1><div class="prazno"><p>Statistika će se pojaviti kad povežemo vaš Instagram nalog.</p></div>`);
   const niz = st.niz || [];
   const max = Math.max(1, ...niz.map(x => x.v));
@@ -464,7 +520,9 @@ function novaObjava() {
     <label class="biraj"><input type="file" id="fajlovi" accept="image/*" multiple hidden>Izaberite slike<small>iz galerije ili kamere</small></label>
     <div class="izabrane" id="izabrane"></div>
     <textarea class="polje" id="napomena" placeholder="Kratka napomena, npr. „balayage, nova klijentkinja“ (nije obavezno)"></textarea>
+    <div class="mikrofon-red"><button class="cip mik" id="mikNapomena" type="button"></button><small>govor se sam pretvara u tekst</small></div>
     <button class="dugme" id="napravi" style="margin-top:14px" disabled>Napravi objavu</button>`);
+  mikrofon('napomena', 'mikNapomena', 'balayage, nova klijentkinja, radila Jelena');
   const dugme = document.getElementById('napravi');
   document.getElementById('fajlovi').onchange = async e => {
     const f = [...e.target.files].slice(0, 10);
@@ -483,7 +541,9 @@ function noviStory() {
   haptika();
   otvoriPanel(`<h3>Novi Story</h3><p>Napišite obaveštenje za pratioce. Mi pravimo grafiku.</p>
     <textarea class="polje" id="storyTekst" placeholder="npr. Danas slobodni termini u 14h i 16h"></textarea>
+    <div class="mikrofon-red"><button class="cip mik" id="mikStory" type="button"></button><small>govor se sam pretvara u tekst</small></div>
     <button class="dugme" id="napraviStory" style="margin-top:14px">Napravi Story</button>`);
+  mikrofon('storyTekst', 'mikStory', 'Danas imamo slobodne termine u 14 i 16 časova, pišite nam u DM');
   document.getElementById('napraviStory').onclick = async () => {
     const tekst = document.getElementById('storyTekst').value.trim(); if (!tekst) return tost('Napišite tekst za Story.');
     haptika('medium'); radi('Pravim Story grafiku…');
@@ -492,8 +552,49 @@ function noviStory() {
 }
 async function osvezi() {
   if (!pravo()) { prikazi(); return; }
-  try { const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: podaci.salon.kod || kodIzbor }) }); if (odg.status === 401 && !uTelegramu) return istekla(); const j = await odg.json(); if (j.ok) { podaci = j; prikazi(); } } catch (e) {}
+  try { const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: podaci.salon.kod || kodIzbor }) }); if (odg.status === 401 && !uTelegramu) return istekla(); const j = await odg.json(); if (j.ok) { primi(j); prikazi(true); } } catch (e) {}
 }
+/* ---------- glasovna poruka: snimi u telefonu, AI prepiše u tekst ---------- */
+const MIK = '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>';
+const uBase64 = blob => new Promise((ok, ne) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1] || ''); r.onerror = ne; r.readAsDataURL(blob); });
+function mikrofon(poljeId, dugmeId, primerTekst) {
+  const d = document.getElementById(dugmeId), polje = document.getElementById(poljeId);
+  const vrati = () => { d.disabled = false; d.classList.remove('snima'); d.innerHTML = MIK + 'Izgovorite'; };
+  const upisi = t => { polje.value = (polje.value.trim() ? polje.value.trim() + ' ' : '') + t; };
+  vrati();
+  let rec = null, tajmer = null, pocetak = 0;
+  d.onclick = async () => {
+    haptika();
+    if (rec && rec.state === 'recording') { rec.stop(); return; }
+    if (!pravo()) { d.disabled = true; d.innerHTML = 'Prepisujem…'; await cekaj(1200); upisi(primerTekst); return vrati(); }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) return tost(uTelegramu ? 'Ovde mikrofon ne radi. Pošaljite glasovnu poruku u chat.' : 'Ovaj pregledač ne podržava snimanje.');
+    let tok;
+    try { tok = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+    catch (e) { return tost(uTelegramu ? 'Telegram nije dozvolio mikrofon. Pošaljite glasovnu poruku u chat.' : 'Dozvolite mikrofon za blade.rs u podešavanjima pregledača.'); }
+    const tip = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/webm', 'audio/ogg'].find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || '';
+    const delovi = [];
+    try { rec = new MediaRecorder(tok, tip ? { mimeType: tip } : undefined); } catch (e) { tok.getTracks().forEach(t => t.stop()); return tost('Snimanje nije uspelo.'); }
+    rec.ondataavailable = e => { if (e.data && e.data.size) delovi.push(e.data); };
+    rec.onstop = async () => {
+      tok.getTracks().forEach(t => t.stop()); clearInterval(tajmer);
+      d.classList.remove('snima'); d.disabled = true; d.innerHTML = 'Prepisujem…';
+      if (Date.now() - pocetak < 900) { vrati(); return tost('Snimak je prekratak. Držite dok govorite.'); }
+      const blob = new Blob(delovi, { type: (rec.mimeType || tip || 'audio/webm') });
+      try {
+        const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: podaci.salon.kod || '', deo: 'glas', tip: blob.type, zvuk: await uBase64(blob) }) });
+        if (odg.status === 401 && !uTelegramu) { zatvoriPanel(); return istekla(); }
+        const j = await odg.json();
+        if (!j.ok) throw new Error(j.greska || 'Nisam uspeo da razumem snimak.');
+        upisi(j.tekst); haptika('medium');
+      } catch (er) { tost(er.message || 'Nema veze sa serverom.'); }
+      vrati();
+    };
+    rec.start(); pocetak = Date.now(); d.classList.add('snima');
+    const prikazSata = () => { const sek = Math.floor((Date.now() - pocetak) / 1000); d.innerHTML = 'Zaustavi ' + Math.floor(sek / 60) + ':' + String(sek % 60).padStart(2, '0'); if (sek >= 120 && rec.state === 'recording') rec.stop(); };
+    prikazSata(); tajmer = setInterval(prikazSata, 300);
+  };
+}
+
 /* ---------- prijava preko Telegrama (sajt blade.rs/app) ---------- */
 const ZNAK = '<svg class="velik-znak" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--orhideja)"/><path d="M9 23 L23 9 M13 23h10" stroke="var(--na-orhideji)" stroke-width="2.6" stroke-linecap="round"/></svg>';
 let prozivka = null;
@@ -569,6 +670,7 @@ document.addEventListener('visibilitychange', () => {
   if (p) proveri(p, 0);
 });
 async function odjava() {
+  obrisiKes(); podaci = null;
   const t = token; token = ''; skladiste.stavi('blade_token', ''); skladiste.stavi('blade_salon', '');
   try { await fetch(API_PRIJAVA, { method: 'POST', body: new URLSearchParams({ akcija: 'odjava', token: t }) }); } catch (er) {}
   ekranPrijave('Odjavljeni ste sa ovog uređaja.');
@@ -603,8 +705,8 @@ async function demoAkcija(p) {
 const sl = (h1, h2) => `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${h1}"/><stop offset="1" stop-color="${h2}"/></linearGradient></defs><rect width="80" height="100" fill="url(#g)"/></svg>`)}`;
 const PRIMER = {
   ok: true, admin: false, ime: 'Jelena',
-  salon: { naziv: 'Studio Lana', kod: 'lana', paket: 'STANDARD', limit: 12, raspored: 'uto, čet, sub u 19h', story: true },
-  brojke: { objavljeno: 7, reels: 2, story: 9, ceka: 1, spremno: 2 },
+  salon: { naziv: 'Studio Lana', kod: 'lana', paket: 'PREMIUM', limit: 20, limiti: { objave: 20, reels: 4, story: 22 }, raspored: 'uto, čet, sub u 19h', story: true },
+  brojke: { objavljeno: 11, reels: 2, story: 9, ceka: 1, spremno: 2 },
   ceka: [{ id: 21, tip: 'post', slika: sl('#C7A27C', '#5B3A29'), slika_broj: 1, caption: 'Topli karamel za jesen', datum: '' }],
   plan: [
     { dan: 'utorak 17.11.', sat: '19h', objava: { id: 31, tip: 'post', slika: sl('#E8C9A0', '#8A5A3B'), slika_broj: 3, caption: 'Balayage koji lepo raste i posle tri meseca ✨\nJelena je radila meke prelaze za našu stalnu klijentkinju.\n\n#vracar #balayage' } },
