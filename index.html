@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blade</title>
+<script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&display=swap&subset=latin-ext" rel="stylesheet">
+<style>
+:root{
+  --pozadina:#F7F5F8; --povrsina:#FFFFFF; --mastilo:#2B1E2F; --tiho:#7D7484; --linija:#E7E1EA;
+  --orhideja:#7A3E7F; --orhideja-svetla:#F1E6F2; --rumenilo:#F2D7DE; --menta:#2F8F6B; --cilibar:#B26E00; --cilibar-svetli:#FCF0DC;
+  --na-orhideji:#FFFFFF; --radius-veliki:22px; --radius:14px; --radius-mali:9px;
+  --display:"Bricolage Grotesque", system-ui, sans-serif; --telo:"Figtree", system-ui, sans-serif;
+}
+:root.tamno{
+  --pozadina:#1A1320; --povrsina:#251B2C; --mastilo:#F3ECF5; --tiho:#A99DB1; --linija:#3A2D42;
+  --orhideja:#D19AD6; --orhideja-svetla:#3A2742; --rumenilo:#4A2E3B; --menta:#6CCFA4; --cilibar:#F0B451; --cilibar-svetli:#3D2F1A; --na-orhideji:#1E1424;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--pozadina);color:var(--mastilo);font-family:var(--telo);font-size:16px;line-height:1.45}
+body{min-height:100vh;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,select:focus-visible{outline:2px solid var(--orhideja);outline-offset:2px}
+img{display:block;max-width:100%}
+.omot{max-width:560px;margin:0 auto;padding:18px 18px 0}
+
+/* zaglavlje */
+.zaglavlje{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+.znak{display:flex;align-items:center;gap:10px}
+.znak svg{width:30px;height:30px}
+.znak b{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em}
+.salon-izbor{appearance:none;background:var(--povrsina);border:1px solid var(--linija);border-radius:999px;padding:8px 32px 8px 14px;font:500 14px var(--telo);color:var(--mastilo);max-width:200px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--tiho) 50%),linear-gradient(135deg,var(--tiho) 50%,transparent 50%);background-position:calc(100% - 17px) 55%,calc(100% - 12px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+.salon-ime{font-size:14px;color:var(--tiho);text-align:right;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* tipografija */
+h1{font-family:var(--display);font-weight:700;font-size:30px;line-height:1.08;letter-spacing:-.025em}
+h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.015em;margin:30px 0 12px}
+.pod{color:var(--tiho);font-size:15px;margin-top:6px}
+
+/* sledeca objava: list iz knjige zakazivanja */
+.listic{margin-top:22px;display:grid;grid-template-columns:86px 1fr;background:var(--povrsina);border-radius:var(--radius-veliki);overflow:hidden;box-shadow:0 1px 0 var(--linija),0 18px 40px -28px rgba(80,30,90,.45)}
+.listic .vreme{background:var(--orhideja);color:var(--na-orhideji);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 6px;position:relative}
+.listic .vreme::after{content:"";position:absolute;right:-7px;top:0;bottom:0;width:14px;background:radial-gradient(circle at 7px 9px,var(--povrsina) 4px,transparent 4.5px) 0 0/14px 18px repeat-y}
+.listic .dan{font-size:13px;opacity:.85;text-transform:lowercase}
+.listic .sat{font-family:var(--display);font-weight:800;font-size:34px;line-height:1}
+.listic .sadrzaj{display:flex;gap:14px;align-items:center;padding:14px 16px 14px 20px;min-height:110px}
+.listic .sadrzaj img,.slicica{width:72px;height:90px;border-radius:var(--radius-mali);object-fit:cover;flex:none;background:var(--rumenilo)}
+.listic .naslov{font-weight:600;font-size:15px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.listic .napomena{font-size:13px;color:var(--tiho);margin-top:4px}
+.listic.prazan .sadrzaj{color:var(--tiho)}
+
+/* mesecni ucinak: zupci cesljа */
+.mesec{margin-top:26px}
+.mesec .red{display:flex;justify-content:space-between;align-items:baseline}
+.mesec .broj{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-.02em}
+.mesec .broj small{font-size:16px;color:var(--tiho);font-weight:500}
+.zupci{display:flex;gap:4px;margin-top:10px;height:34px;align-items:flex-end}
+.zupci i{flex:1;max-width:22px;height:100%;border-radius:4px 4px 2px 2px;background:var(--linija)}
+.zupci i.pun{background:var(--orhideja)}
+.zupci i.pun:nth-child(odd){height:86%}
+.zupci i:not(.pun):nth-child(odd){height:86%}
+
+/* ceka odobrenje */
+.ceka{margin-top:24px;background:var(--cilibar-svetli);border-radius:var(--radius);padding:14px 16px;display:flex;gap:14px;align-items:center}
+.ceka .slike{display:flex}
+.ceka .slike img,.ceka .slike span{width:40px;height:50px;border-radius:7px;object-fit:cover;border:2px solid var(--cilibar-svetli);margin-left:-12px;background:var(--rumenilo)}
+.ceka .slike :first-child{margin-left:0}
+.ceka p{font-size:14px;flex:1}
+.ceka strong{color:var(--cilibar);display:block;font-size:15px}
+
+/* brze radnje */
+.radnje{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.radnja{background:var(--povrsina);border:1px solid var(--linija);border-radius:var(--radius);padding:16px 8px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:600;font-size:14px}
+.radnja svg{width:28px;height:28px;stroke:var(--orhideja)}
+.radnja:active{transform:scale(.97)}
+
+/* plan */
+.dan-blok{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--linija)}
+.dan-blok:last-child{border-bottom:0}
+.dan-oznaka{font-size:13px;color:var(--tiho);line-height:1.25;padding-top:4px}
+.dan-oznaka b{display:block;font-family:var(--display);font-size:22px;color:var(--mastilo);font-weight:700}
+.termin{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.termin:last-child{margin-bottom:0}
+.termin .sat-cip{font-family:var(--display);font-weight:700;font-size:15px;min-width:42px}
+.termin .zauzet{flex:1;text-align:left;display:flex;gap:10px;align-items:center;background:var(--povrsina);border-radius:var(--radius-mali);padding:6px;box-shadow:0 1px 0 var(--linija)}
+.termin .zauzet img,.termin .zauzet .ikona-reels{width:40px;height:50px;border-radius:7px;object-fit:cover;background:var(--rumenilo);flex:none;display:grid;place-items:center}
+.termin .zauzet span{font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.termin .slobodan{flex:1;border:1.5px dashed var(--linija);border-radius:var(--radius-mali);padding:14px 12px;font-size:14px;color:var(--tiho)}
+
+/* objave */
+.mreza{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;border-radius:var(--radius);overflow:hidden}
+.mreza button{position:relative;aspect-ratio:4/5;background:var(--rumenilo)}
+.mreza img{width:100%;height:100%;object-fit:cover}
+.mreza .oznaka{position:absolute;top:6px;right:6px;background:rgba(20,10,25,.6);color:#fff;font-size:11px;font-weight:600;border-radius:6px;padding:2px 6px}
+
+/* brojke */
+.pratioci{display:flex;align-items:baseline;gap:10px}
+.pratioci .veliki{font-family:var(--display);font-weight:800;font-size:64px;letter-spacing:-.04em;line-height:.95}
+.metrike{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--linija);border-radius:var(--radius);overflow:hidden;margin-top:18px}
+.metrike div{background:var(--povrsina);padding:14px 12px}
+.metrike b{display:block;font-family:var(--display);font-size:24px;font-weight:700}
+.metrike span{font-size:13px;color:var(--tiho)}
+.grafikon{background:var(--povrsina);border-radius:var(--radius);padding:16px 14px 10px}
+.grafikon svg{width:100%;height:120px;display:block}
+.grafikon .ose{display:flex;justify-content:space-between;font-size:12px;color:var(--tiho);margin-top:6px}
+.trake div{display:grid;grid-template-columns:88px 1fr 34px;gap:10px;align-items:center;font-size:14px;margin-bottom:8px}
+.trake .traka{height:10px;border-radius:5px;background:var(--linija);overflow:hidden}
+.trake .traka i{display:block;height:100%;background:var(--orhideja);border-radius:5px}
+.trake em{font-style:normal;color:var(--tiho);text-align:right;font-size:13px}
+
+/* donja traka */
+nav.dno{position:fixed;left:0;right:0;bottom:0;background:var(--povrsina);border-top:1px solid var(--linija);display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom));z-index:5}
+nav.dno button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--tiho);padding:4px 0}
+nav.dno svg{width:24px;height:24px;stroke:currentColor}
+nav.dno button[aria-current="page"]{color:var(--orhideja);font-weight:600}
+
+/* donji panel */
+.zavesa{position:fixed;inset:0;background:rgba(20,10,25,.45);opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}
+.zavesa.otvorena{opacity:1;pointer-events:auto}
+.panel{position:fixed;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:var(--povrsina);border-radius:22px 22px 0 0;padding:10px 20px calc(24px + env(safe-area-inset-bottom));transform:translateY(calc(100% + 40px));visibility:hidden;transition:transform .28s cubic-bezier(.2,.8,.2,1),visibility 0s .28s;z-index:11;max-width:560px;margin:0 auto}
+.panel.otvoren{transform:none;visibility:visible;transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.panel .rucka{width:40px;height:5px;border-radius:3px;background:var(--linija);margin:0 auto 16px}
+.panel h3{font-family:var(--display);font-size:22px;font-weight:700;margin-bottom:8px}
+.panel p{color:var(--tiho);margin-bottom:12px}
+.panel ol{margin:0 0 18px 20px;display:grid;gap:8px}
+.panel .velika-slika{width:100%;border-radius:var(--radius);margin-bottom:14px;max-height:52vh;object-fit:cover;background:var(--rumenilo)}
+.panel .opis{white-space:pre-wrap;color:var(--mastilo);font-size:15px}
+.dugme{display:block;width:100%;background:var(--orhideja);color:var(--na-orhideji);border-radius:var(--radius);padding:15px;font-weight:600;font-size:16px;text-align:center}
+.dugme.drugo{background:var(--orhideja-svetla);color:var(--orhideja);margin-top:8px}
+
+/* stanja */
+.prazno{text-align:center;color:var(--tiho);padding:40px 10px}
+.traka-primer{background:var(--orhideja-svetla);color:var(--orhideja);font-size:13px;border-radius:var(--radius-mali);padding:8px 12px;margin-bottom:16px}
+.ucitavanje .kost{background:linear-gradient(90deg,var(--linija),var(--povrsina),var(--linija));background-size:200% 100%;animation:sija 1.2s infinite;border-radius:var(--radius)}
+@keyframes sija{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="omot">
+  <header class="zaglavlje">
+    <div class="znak" aria-label="Blade">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--orhideja)"/><path d="M9 23 L23 9 M13 23h10" stroke="var(--na-orhideji)" stroke-width="2.6" stroke-linecap="round"/></svg>
+      <b>Blade</b>
+    </div>
+    <div id="salonMesto"></div>
+  </header>
+  <div id="primer" class="traka-primer" hidden>Primer prikaza sa izmišljenim podacima. Pravi podaci se vide kad se aplikacija otvori iz Telegrama.</div>
+  <main id="ekran" aria-live="polite">
+    <div class="ucitavanje"><div class="kost" style="height:34px;width:70%"></div><div class="kost" style="height:120px;margin-top:22px"></div><div class="kost" style="height:60px;margin-top:22px"></div></div>
+  </main>
+</div>
+
+<nav class="dno" aria-label="Glavni meni">
+  <button data-tab="pocetna" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>Početna</button>
+  <button data-tab="plan"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Plan</button>
+  <button data-tab="objave"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Objave</button>
+  <button data-tab="brojke"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M21 19H3"/></svg>Brojke</button>
+</nav>
+
+<div class="zavesa" id="zavesa"></div>
+<section class="panel" id="panel" role="dialog" aria-modal="true"><div class="rucka"></div><div id="panelSadrzaj"></div></section>
+
+<script>
+const API = 'https://miroslavmiki.app.n8n.cloud/webhook/blade-app-api';
+const tg = window.Telegram && window.Telegram.WebApp;
+const uTelegramu = !!(tg && tg.initData);
+let podaci = null, tab = 'pocetna', kodIzbor = '';
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const prvaRecenica = t => { const r = String(t || '').split('\n').map(x => x.trim()).filter(x => x && !x.startsWith('#'))[0] || ''; return r.length > 110 ? r.slice(0, 107) + '…' : r; };
+const bezHashtagova = t => String(t || '').split('\n').filter(l => !/^(#\S+\s*)+$/.test(l.trim())).join('\n').trim();
+const broj = n => n == null ? '–' : Number(n).toLocaleString('sr-Latn');
+const haptika = v => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(v || 'light'); } catch (e) {} };
+const datum = iso => { if (!iso) return ''; const d = new Date(iso); return d.toLocaleDateString('sr-Latn', { day: 'numeric', month: 'long' }); };
+const slika = (o, klasa) => o && o.slika ? `<img class="${klasa || ''}" src="${esc(o.slika)}" alt="" loading="lazy">` : `<span class="${klasa || ''} ikona-reels" aria-hidden="true">${o && o.tip === 'reel' ? '🎬' : ''}</span>`;
+
+if (tg) {
+  try {
+    tg.ready(); tg.expand();
+    if (tg.colorScheme === 'dark') document.documentElement.classList.add('tamno');
+    const boja = getComputedStyle(document.documentElement).getPropertyValue('--pozadina').trim();
+    tg.setHeaderColor && tg.setHeaderColor(boja); tg.setBackgroundColor && tg.setBackgroundColor(boja);
+    tg.onEvent && tg.onEvent('themeChanged', () => document.documentElement.classList.toggle('tamno', tg.colorScheme === 'dark'));
+  } catch (e) {}
+} else if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('tamno');
+
+async function ucitaj() {
+  if (!uTelegramu) { podaci = PRIMER; document.getElementById('primer').hidden = false; prikazi(); return; }
+  try {
+    const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ initData: tg.initData, kod: kodIzbor }) });
+    const j = await odg.json();
+    if (j.nepovezan) return ekran(`<div class="prazno"><h1>Još niste povezani</h1><p class="pod">Otvorite link koji ste dobili od nas i pritisnite Start, pa ponovo otvorite aplikaciju.</p></div>`);
+    if (!j.ok) return ekran(`<div class="prazno"><h1>Aplikacija se nije učitala</h1><p class="pod">Zatvorite je i otvorite ponovo iz chata. Ako se ponovi, pišite nam u chatu.</p></div>`);
+    podaci = j; prikazi();
+  } catch (e) {
+    ekran(`<div class="prazno"><h1>Nema veze sa serverom</h1><p class="pod">Proverite internet i pokušajte ponovo.</p><button class="dugme" style="margin-top:18px" onclick="ucitaj()">Pokušaj ponovo</button></div>`);
+  }
+}
+function ekran(html) { document.getElementById('ekran').innerHTML = html; }
+
+function zaglavlje() {
+  const m = document.getElementById('salonMesto');
+  if (podaci.admin && podaci.saloni && podaci.saloni.length) {
+    m.innerHTML = `<select class="salon-izbor" aria-label="Izaberi salon">${podaci.saloni.map(s => `<option value="${esc(s.kod)}"${s.kod === podaci.salon.kod ? ' selected' : ''}>${esc(s.naziv)}</option>`).join('')}</select>`;
+    m.querySelector('select').onchange = e => { kodIzbor = e.target.value; ekran('<div class="ucitavanje"><div class="kost" style="height:200px"></div></div>'); ucitaj(); };
+  } else m.innerHTML = `<div class="salon-ime">${esc(podaci.salon.naziv)}</div>`;
+}
+
+function prikazi() {
+  zaglavlje();
+  document.querySelectorAll('nav.dno button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tab ? 'page' : 'false'));
+  ({ pocetna, plan, objave, brojke })[tab]();
+  window.scrollTo(0, 0);
+}
+
+const objava = n => n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'objave' : 'objava';
+function pozdrav() { const h = new Date().getHours(); return h < 11 ? 'Dobro jutro' : (h < 18 ? 'Dobar dan' : 'Dobro veče'); }
+
+function pocetna() {
+  const p = podaci, b = p.brojke, s = p.salon;
+  const ime = (p.ime || '').split(' ')[0];
+  const sledeci = (p.plan || []).find(x => x.objava);
+  const prviSlobodan = (p.plan || [])[0];
+  let listic;
+  if (sledeci) listic = `<div class="listic"><div class="vreme"><span class="dan">${esc(sledeci.dan.split(' ')[0])}</span><span class="sat">${esc(sledeci.sat)}</span></div>
+    <div class="sadrzaj">${slika(sledeci.objava)}<div><div class="naslov">${esc(prvaRecenica(sledeci.objava.caption))}</div><div class="napomena">Sledeća objava, ${esc(sledeci.dan)}</div></div></div></div>`;
+  else if (prviSlobodan) listic = `<div class="listic prazan"><div class="vreme"><span class="dan">${esc(prviSlobodan.dan.split(' ')[0])}</span><span class="sat">${esc(prviSlobodan.sat)}</span></div>
+    <div class="sadrzaj"><div><div class="naslov" style="color:var(--mastilo)">Termin je slobodan</div><div class="napomena">Pošaljite sliku ili video u chat, mi pripremamo objavu za ${esc(prviSlobodan.dan)}.</div></div></div></div>`;
+  else listic = '';
+  const limit = s.limit || Math.max(b.objavljeno, 8);
+  const zupci = Array.from({ length: Math.min(limit, 24) }, (_, i) => `<i class="${i < b.objavljeno ? 'pun' : ''}"></i>`).join('');
+  const ceka = b.ceka ? `<div class="ceka"><div class="slike">${p.ceka.slice(0, 3).map(o => slika(o)).join('')}</div><p><strong>${b.ceka === 1 ? 'Jedna objava čeka' : b.ceka + ' ' + objava(b.ceka) + (objava(b.ceka) === 'objave' ? ' čekaju' : ' čeka')} vaše odobrenje</strong>Pregled je u chatu, kliknite ✅ ili ❌.</p></div>` : '';
+  ekran(`
+    <h1>${pozdrav()}${ime ? ', ' + esc(ime) : ''}</h1>
+    <p class="pod">${b.spremno === 1 ? 'Jedna objava je spremna i čeka svoj termin.' : (b.spremno > 1 ? b.spremno + ' ' + objava(b.spremno) + (objava(b.spremno) === 'objave' ? ' čekaju' : ' čeka') + ' svoj termin.' : 'Pošaljite sliku i mi pripremamo sledeću objavu.')}</p>
+    ${listic}
+    ${ceka}
+    <section class="mesec" aria-label="Ovog meseca">
+      <div class="red"><span class="broj">${b.objavljeno}<small> / ${limit} objava</small></span><span class="pod" style="margin:0">ovog meseca</span></div>
+      <div class="zupci" aria-hidden="true">${zupci}</div>
+      ${b.reels || b.story ? `<p class="pod">${[b.reels ? 'Reels: ' + b.reels : '', b.story ? 'Story: ' + b.story : ''].filter(Boolean).join(', ')}</p>` : ''}
+    </section>
+    <h2>Pošaljite nešto novo</h2>
+    <div class="radnje">
+      <button class="radnja" data-uputstvo="objava"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>Objava</button>
+      <button class="radnja" data-uputstvo="reels"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 4l2 5M14 4l2 5"/><path d="M10.5 12.5v4l3.5-2z"/></svg>Reels</button>
+      <button class="radnja" data-uputstvo="story"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4 2.2"/><path d="M12 8.5v7M8.5 12h7"/></svg>Story</button>
+    </div>
+    <p class="pod" style="margin-top:18px">Raspored: ${esc(s.raspored)}. Paket ${esc(s.paket)}.</p>`);
+  document.querySelectorAll('[data-uputstvo]').forEach(d => d.onclick = () => uputstvo(d.dataset.uputstvo));
+}
+
+const UPUTSTVA = {
+  objava: { n: 'Nova objava', k: ['Zatvorite aplikaciju i u chatu pošaljite fotografiju (kao sliku, ne kao fajl).', 'Ispod slike napišite kratku napomenu, na primer „balayage, nova klijentkinja“.', 'Za karusel označite do 10 slika i pošaljite ih zajedno.', 'Za minut stiže pregled, kliknite ✅ i objava ide u prvi slobodan termin.'] },
+  reels: { n: 'Reels', k: ['Zatvorite aplikaciju i u chatu pošaljite video od 3 do 90 sekundi (do 20 MB).', 'Ispod napišite šta je na snimku, na primer „feniranje pre i posle“.', 'Za minut stiže pregled, kliknite ✅.'] },
+  story: { n: 'Story', k: ['Zatvorite aplikaciju i u chatu pritisnite dugme 📱 Story.', 'Napišite obaveštenje, na primer „Danas slobodni termini u 14h i 16h“, ili ga izgovorite glasovnom porukom.', 'Stiže gotova grafika; kad kliknete ✅, Story izlazi odmah.'] }
+};
+function uputstvo(vrsta) {
+  haptika(); const u = UPUTSTVA[vrsta];
+  otvoriPanel(`<h3>${u.n}</h3><ol>${u.k.map(x => `<li>${esc(x)}</li>`).join('')}</ol><button class="dugme" id="uChat">Idi u chat</button>`);
+  document.getElementById('uChat').onclick = () => { haptika('medium'); if (tg && uTelegramu) tg.close(); else zatvoriPanel(); };
+}
+
+function plan() {
+  const dani = {};
+  (podaci.plan || []).forEach(t => { (dani[t.dan] = dani[t.dan] || []).push(t); });
+  const kljucevi = Object.keys(dani);
+  const zauzeto = (podaci.plan || []).filter(t => t.objava).length;
+  ekran(`<h1>Plan objava</h1><p class="pod">Naredne dve nedelje: ${zauzeto} od ${(podaci.plan || []).length} termina ima spremnu objavu.</p>
+    <div style="margin-top:14px">${kljucevi.length ? kljucevi.map(k => { const [dan, dm] = k.split(' '); return `<div class="dan-blok"><div class="dan-oznaka"><b>${esc(dm.replace(/\.$/, ''))}</b>${esc(dan)}</div><div>${dani[k].map(t => `<div class="termin"><span class="sat-cip">${esc(t.sat)}</span>${t.objava ? `<button class="zauzet" data-id="${t.objava.id}" data-izvor="plan">${slika(t.objava)}<span>${esc(prvaRecenica(t.objava.caption))}</span></button>` : `<div class="slobodan">Slobodno, pošaljite sliku u chat</div>`}</div>`).join('')}</div></div>`; }).join('') : '<p class="prazno">Nema termina u naredne dve nedelje.</p>'}</div>`);
+  vezi('plan');
+}
+
+function objave() {
+  const o = podaci.objavljeno || [];
+  ekran(`<h1>Objavljeno</h1><p class="pod">${o.length ? 'Poslednje objave na vašem profilu (' + o.length + ').' : ''}</p>
+    ${o.length ? `<div class="mreza" style="margin-top:16px">${o.map(x => `<button data-id="${x.id}" data-izvor="objavljeno" aria-label="${esc(prvaRecenica(x.caption))}">${x.slika ? `<img src="${esc(x.slika)}" alt="" loading="lazy">` : '<span style="display:grid;place-items:center;height:100%;font-size:28px">🎬</span>'}${x.slika_broj > 1 ? `<span class="oznaka">${x.slika_broj} slike</span>` : (x.tip === 'reel' ? '<span class="oznaka">Reels</span>' : '')}</button>`).join('')}</div>`
+      : '<div class="prazno"><p>Ovde će se pojaviti vaše objave čim prva izađe.</p></div>'}`);
+  vezi('objavljeno');
+}
+
+function vezi(izvor) {
+  document.querySelectorAll('[data-id]').forEach(d => d.onclick = () => {
+    haptika();
+    const lista = izvor === 'plan' ? podaci.plan.map(t => t.objava).filter(Boolean) : podaci.objavljeno;
+    const x = lista.find(y => String(y.id) === d.dataset.id); if (!x) return;
+    otvoriPanel(`${x.slika ? `<img class="velika-slika" src="${esc(x.slika)}" alt="">` : ''}<p>${izvor === 'plan' ? 'Spremno za objavu' : 'Objavljeno ' + esc(datum(x.datum))}${x.slika_broj > 1 ? ', karusel od ' + x.slika_broj + ' slike' : ''}</p><div class="opis">${esc(bezHashtagova(x.caption))}</div>`);
+  });
+}
+
+function brojke() {
+  const st = podaci.stat;
+  if (!st) return ekran(`<h1>Brojke</h1><div class="prazno"><p>Statistika će se pojaviti kad povežemo vaš Instagram nalog.</p></div>`);
+  const niz = st.niz || [];
+  const max = Math.max(1, ...niz.map(x => x.v));
+  const W = 300, H = 110;
+  const tacke = niz.map((x, i) => [niz.length > 1 ? i * W / (niz.length - 1) : 0, H - 6 - (x.v / max) * (H - 16)]);
+  const linija = tacke.map((t, i) => (i ? 'L' : 'M') + t[0].toFixed(1) + ' ' + t[1].toFixed(1)).join(' ');
+  const ukupno = niz.reduce((a, x) => a + x.v, 0);
+  const godine = st.godine ? Object.entries(st.godine) : [];
+  const maxG = Math.max(1, ...godine.map(g => g[1]));
+  const pol = st.pol || {}; const z = pol.F || 0, m = pol.M || 0, uk = z + m + (pol.U || 0);
+  ekran(`<h1>Brojke</h1><p class="pod">Instagram, poslednjih 30 dana.</p>
+    <div class="pratioci" style="margin-top:18px"><span class="veliki">${broj(st.pratioci)}</span><span class="pod" style="margin:0">pratilaca</span></div>
+    <div class="metrike">
+      <div><b>${broj(st.doseg)}</b><span>doseg</span></div><div><b>${broj(st.pregledi)}</b><span>pregleda</span></div><div><b>${broj(st.lajkovi)}</b><span>lajkova</span></div>
+      <div><b>${broj(st.komentari)}</b><span>komentara</span></div><div><b>${broj(st.sacuvano)}</b><span>sačuvano</span></div><div><b>${broj(st.posete)}</b><span>aktivnih</span></div>
+    </div>
+    ${niz.length > 1 ? `<h2>Doseg po danima</h2><div class="grafikon"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Doseg po danima, ukupno ${ukupno}">
+      <path d="${linija} L${W} ${H} L0 ${H} Z" fill="var(--orhideja-svetla)"/><path d="${linija}" fill="none" stroke="var(--orhideja)" stroke-width="2.2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>
+      <div class="ose"><span>${esc(datum(niz[0].d))}</span><span>najviše ${broj(max)} u danu</span><span>${esc(datum(niz[niz.length - 1].d))}</span></div></div>` : ''}
+    ${godine.length ? `<h2>Ko vas prati</h2>${uk ? `<p class="pod" style="margin:-4px 0 14px">${Math.round(z / uk * 100)}% žene, ${Math.round(m / uk * 100)}% muškarci</p>` : ''}<div class="trake">${godine.map(([g, v]) => `<div><span>${esc(g)} god.</span><span class="traka"><i style="width:${(v / maxG * 100).toFixed(0)}%"></i></span><em>${v}</em></div>`).join('')}</div>` : ''}
+    ${(st.gradovi || []).length ? `<h2>Odakle su</h2><div class="trake">${st.gradovi.map(([g, v]) => `<div><span>${esc(g)}</span><span class="traka"><i style="width:${(v / st.gradovi[0][1] * 100).toFixed(0)}%"></i></span><em>${v}</em></div>`).join('')}</div>` : ''}`);
+}
+
+function otvoriPanel(html) {
+  document.getElementById('panelSadrzaj').innerHTML = html;
+  document.getElementById('panel').classList.add('otvoren'); document.getElementById('zavesa').classList.add('otvorena');
+  if (tg && tg.BackButton) { tg.BackButton.show(); tg.BackButton.onClick(zatvoriPanel); }
+}
+function zatvoriPanel() {
+  document.getElementById('panel').classList.remove('otvoren'); document.getElementById('zavesa').classList.remove('otvorena');
+  if (tg && tg.BackButton) { tg.BackButton.offClick(zatvoriPanel); tg.BackButton.hide(); }
+}
+document.getElementById('zavesa').onclick = zatvoriPanel;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') zatvoriPanel(); });
+document.querySelectorAll('nav.dno button').forEach(b => b.onclick = () => { if (!podaci) return; haptika(); tab = b.dataset.tab; prikazi(); });
+
+const sl = (h1, h2) => `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${h1}"/><stop offset="1" stop-color="${h2}"/></linearGradient></defs><rect width="80" height="100" fill="url(#g)"/></svg>`)}`;
+const PRIMER = {
+  ok: true, admin: false, ime: 'Jelena',
+  salon: { naziv: 'Studio Lana', kod: 'lana', paket: 'STANDARD', limit: 12, raspored: 'uto, čet, sub u 19h', story: true },
+  brojke: { objavljeno: 7, reels: 2, story: 9, ceka: 1, spremno: 2 },
+  ceka: [{ id: 21, tip: 'post', slika: sl('#C7A27C', '#5B3A29'), slika_broj: 1, caption: 'Topli karamel za jesen', datum: '' }],
+  plan: [
+    { dan: 'utorak 17.11.', sat: '19h', objava: { id: 31, tip: 'post', slika: sl('#E8C9A0', '#8A5A3B'), slika_broj: 3, caption: 'Balayage koji lepo raste i posle tri meseca ✨\nJelena je radila meke prelaze za našu stalnu klijentkinju.\n\n#vracar #balayage' } },
+    { dan: 'četvrtak 19.11.', sat: '19h', objava: { id: 32, tip: 'reel', slika: null, slika_broj: 0, caption: 'Feniranje za 60 sekundi, pre i posle' } },
+    { dan: 'subota 21.11.', sat: '19h', objava: null }, { dan: 'utorak 24.11.', sat: '19h', objava: null },
+    { dan: 'četvrtak 26.11.', sat: '19h', objava: null }, { dan: 'subota 28.11.', sat: '19h', objava: null }],
+  objavljeno: [['#D9B38C', '#6E4630'], ['#2E2A2B', '#7A6A62'], ['#F1D8C9', '#B98476'], ['#B88A5A', '#3D2A1E'], ['#E9D2B4', '#A07850'], ['#4A3B36', '#C29A7A'], ['#F3E3D3', '#C9A27E']].map((c, i) => ({ id: 40 + i, tip: i === 1 ? 'reel' : 'post', slika: sl(c[0], c[1]), slika_broj: i === 2 ? 4 : 1, caption: ['Plava bez žutih tonova, uz Olaplex negu', 'Muško šišanje, Marko', 'Svečane frizure za vikend', 'Čokoladna smeđa', 'Keratin tretman, pre i posle', 'Kratka bob frizura', 'Sjaj posle prvog tretmana'][i] + '\n\n#vracar #frizer', datum: new Date(Date.now() - i * 2.5 * 864e5).toISOString() })),
+  stat: { pratioci: 2384, doseg: 5120, pregledi: 14890, lajkovi: 912, komentari: 64, sacuvano: 141, posete: 388,
+    niz: Array.from({ length: 30 }, (_, i) => ({ d: new Date(Date.now() - (29 - i) * 864e5).toISOString().slice(0, 10), v: Math.round(90 + 70 * Math.sin(i / 3) + i * 6 + (i % 4 === 1 ? 120 : 0)) })),
+    godine: { '18-24': 410, '25-34': 980, '35-44': 640, '45-54': 250, '55-64': 80 }, pol: { F: 1890, M: 410, U: 84 },
+    gradovi: [['Beograd', 1720], ['Pančevo', 96], ['Novi Sad', 71], ['Zemun', 58], ['Smederevo', 31]] }
+};
+ucitaj();
+</script>
+</body>
+</html>
