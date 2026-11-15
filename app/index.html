@@ -224,6 +224,13 @@ textarea.polje:focus-visible,input.polje:focus-visible{outline:2px solid var(--o
 .biraj small{color:var(--tiho);font-weight:400}
 .izabrane{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .izabrane img{width:62px;height:76px;object-fit:cover;border-radius:8px}
+.reels-video{width:100%;max-height:46vh;border-radius:var(--radius);background:#000;margin-bottom:8px;display:block}
+.reels-info{font-size:14px;color:var(--tiho);margin:0 0 12px}
+.reels-info.lose{color:#B4532A;font-weight:600}
+.napredak{height:10px;border-radius:99px;background:var(--tiho-poz);overflow:hidden;margin:16px 0 8px}
+.napredak i{display:block;height:100%;width:0;background:var(--orhideja);transition:width .3s}
+.napredak-tekst{text-align:center;font-size:15px;color:var(--tiho)}
+.sitno-link{display:block;text-align:center;margin-top:14px;font-size:14px;color:var(--tiho)}
 .izabrane .sl{position:relative}
 .ukloni{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;background:var(--mastilo);color:var(--pozadina);font:700 15px/24px var(--telo);text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.25)}
 .dodaj-sl{width:62px;height:76px;border:1.5px dashed #C3C8B4;border-radius:8px;color:var(--orhideja);font:600 26px var(--telo);display:grid;place-items:center;cursor:pointer}
@@ -346,7 +353,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-15.20';
+const VERZIJA = '2026-11-15.21';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -574,7 +581,7 @@ function postavke() {
       ${!uTelegramu && !samostalno ? '<button class="post-link" id="postEkran">Dodaj Razvitak na početni ekran</button>' : ''}
     </div>
     ${nalog}
-    <p class="post-verzija">Razvitak, verzija 2026-11-15.20</p>`);
+    <p class="post-verzija">Razvitak, verzija 2026-11-15.21</p>`);
   const pr = document.getElementById('postRaspored'); if (pr) pr.onclick = () => { zatvoriPanel(); setTimeout(rasporedPanel, 250); };
   const nz = document.getElementById('nazivSalona'), nzb = document.getElementById('sacuvajNaziv');
   if (nz) {
@@ -769,7 +776,7 @@ function pocetna() {
       <button class="radnja" data-uputstvo="reels"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 4l2 5M14 4l2 5"/><path d="M10.5 12.5v4l3.5-2z"/></svg>Reels</button>
       <button class="radnja" data-uputstvo="story"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4 2.2"/><path d="M12 8.5v7M8.5 12h7"/></svg>Story</button>
     </div>`);
-  document.querySelectorAll('[data-uputstvo]').forEach(d => d.onclick = () => ({ objava: novaObjava, story: noviStory, reels: () => uputstvo('reels') })[d.dataset.uputstvo]());
+  document.querySelectorAll('[data-uputstvo]').forEach(d => d.onclick = () => ({ objava: novaObjava, story: noviStory, reels: noviReels })[d.dataset.uputstvo]());
   const oc = document.getElementById('otvoriCeka'); if (oc) oc.onclick = listaCeka;
   const so = document.getElementById('sledecaObjava'); if (so) { so.onclick = () => { haptika(); pregledGotove(sledeci.objava, 'plan', sledeci.dan + ' u ' + sledeci.sat); }; so.onkeydown = e => { if (e.key === 'Enter') so.onclick(); }; }
 }
@@ -1046,6 +1053,90 @@ function novaObjava() {
     try { const j = await akcija({ akcija: 'objava', napomena, slike: JSON.stringify(izabrane.map(u => u.split(',')[1])) }); osvezi(); pregled(j.objava, j.termin); }
     catch (er) { zatvoriPanel(); tost(er.message); }
   };
+}
+/* ---------- Reels iz aplikacije: video u punom kvalitetu ide u Cloudflare R2 ---------- */
+const VIDEO_SERVIS = 'https://razvitak-video.nkosanovicn.workers.dev';
+const VIDEO_MAX_MB = 100;
+function noviReels() {
+  haptika(); let fajl = null, adresa = '';
+  otvoriPanel(`<h3>Novi Reels</h3><p>Izaberite video od 3 do 90 sekundi. Šalje se u punom kvalitetu, a mi pišemo opis.</p>
+    <label class="biraj" id="birajVideo"><input type="file" id="videoFajl" accept="video/*" hidden>Izaberite video<small>do ${VIDEO_MAX_MB} MB, najbolje 1080p</small></label>
+    <div id="videoMesto"></div>
+    <textarea class="polje" id="reelsNapomena" placeholder="Šta je na snimku? Npr. „feniranje pre i posle“"></textarea>
+    <div class="mikrofon-red"><button class="cip mik" id="mikReels" type="button"></button><small>govor se sam pretvara u tekst</small></div>
+    <button class="dugme" id="posaljiReels" style="margin-top:14px" disabled>Izaberite video</button>
+    <a class="sitno-link" href="https://t.me/${BOT}" target="_blank" rel="noopener">ili pošaljite video u Telegram chat (manji kvalitet)</a>`);
+  mikrofon('reelsNapomena', 'mikReels', 'feniranje pre i posle, radila Jelena');
+  const dugme = document.getElementById('posaljiReels');
+  document.getElementById('videoFajl').onchange = e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    if (adresa) URL.revokeObjectURL(adresa);
+    fajl = f; adresa = URL.createObjectURL(f);
+    const mb = f.size / 1048576, prevelik = mb > VIDEO_MAX_MB;
+    document.getElementById('birajVideo').hidden = true;
+    document.getElementById('videoMesto').innerHTML = `<video class="reels-video" id="reelsVideo" src="${adresa}" controls playsinline muted preload="metadata"></video>
+      <p class="reels-info${prevelik ? ' lose' : ''}" id="reelsInfo">${prevelik ? `Video ima ${mb.toFixed(0)} MB, a najviše može ${VIDEO_MAX_MB} MB. Snimite u 1080p ili skratite snimak.` : `${mb.toFixed(1)} MB`} · <label for="videoFajl" style="color:var(--orhideja);font-weight:600;cursor:pointer">izaberi drugi</label></p>`;
+    const v = document.getElementById('reelsVideo');
+    v.onloadedmetadata = () => {
+      const d = v.duration || 0;
+      if (d && (d < 3 || d > 90)) { document.getElementById('reelsInfo').classList.add('lose'); document.getElementById('reelsInfo').insertAdjacentText('afterbegin', `Snimak traje ${Math.round(d)} s, a Reels mora biti od 3 do 90 s. `); fajl = null; dugme.disabled = true; dugme.textContent = 'Izaberite drugi video'; }
+    };
+    dugme.disabled = prevelik; dugme.textContent = prevelik ? 'Video je prevelik' : 'Pošalji Reels';
+    if (prevelik) fajl = null;
+  };
+  dugme.onclick = async () => {
+    if (!fajl) return;
+    if (!pravo()) return tost('U primeru se video ne šalje.');
+    haptika('medium');
+    const napomena = document.getElementById('reelsNapomena').value.trim();
+    let kadar = '';
+    try { kadar = await kadarIzVidea(document.getElementById('reelsVideo')); } catch (e) {}
+    const panel = document.getElementById('panelSadrzaj');
+    panel.innerHTML = `<div class="radi"><h3>Šaljem Reels</h3><div class="napredak"><i id="napredakTraka"></i></div><div class="napredak-tekst" id="napredakTekst">Počinjem…</div></div>`;
+    try {
+      const odg = await posaljiVideo(fajl, p => {
+        const t = document.getElementById('napredakTraka'), x = document.getElementById('napredakTekst');
+        if (t) t.style.width = Math.round(p * 100) + '%';
+        if (x) x.textContent = p < 1 ? `Šaljem video… ${Math.round(p * 100)}%` : 'Video je stigao, pišem opis…';
+      });
+      const j = await akcija({ akcija: 'reels', video_url: odg.url, napomena, kadar });
+      if (adresa) URL.revokeObjectURL(adresa);
+      osvezi(); pregled(j.objava, j.termin);
+    } catch (er) { zatvoriPanel(); tost(er.message || 'Slanje nije uspelo. Pokušajte ponovo.'); }
+  };
+}
+function kadarIzVidea(v) {
+  return new Promise((ok, ne) => {
+    if (!v) return ne(new Error('nema videa'));
+    const snimi = () => {
+      try {
+        const w = Math.min(720, v.videoWidth || 720), h = Math.round(w * ((v.videoHeight || 1280) / (v.videoWidth || 720)));
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(v, 0, 0, w, h);
+        ok(c.toDataURL('image/jpeg', 0.82).split(',')[1]);
+      } catch (e) { ne(e); }
+    };
+    const cilj = Math.min(1.5, (v.duration || 3) / 3);
+    if (Math.abs(v.currentTime - cilj) < 0.05 && v.readyState >= 2) return snimi();
+    v.addEventListener('seeked', snimi, { once: true });
+    setTimeout(() => ne(new Error('kadar nije uhvaćen')), 6000);
+    try { v.currentTime = cilj; } catch (e) { ne(e); }
+  });
+}
+function posaljiVideo(f, napredak) {
+  return new Promise((ok, ne) => {
+    const x = new XMLHttpRequest();
+    x.open('PUT', VIDEO_SERVIS + '/upload');
+    x.setRequestHeader('Content-Type', f.type || 'video/mp4');
+    const p = prijava();
+    if (p.token) x.setRequestHeader('X-Razvitak-Token', p.token);
+    if (p.initData) x.setRequestHeader('X-Razvitak-Init', p.initData);
+    x.setRequestHeader('X-Razvitak-Kod', (podaci && podaci.salon && podaci.salon.kod) || '');
+    x.upload.onprogress = e => { if (e.lengthComputable) napredak(e.loaded / e.total); };
+    x.onload = () => { let j = {}; try { j = JSON.parse(x.responseText); } catch (e) {} if (x.status === 200 && j.ok && j.url) { napredak(1); ok(j); } else ne(new Error(j.greska || 'Video nije poslat. Pokušajte ponovo.')); };
+    x.onerror = () => ne(new Error('Prekinuta veza dok se slao video. Pokušajte ponovo na Wi-Fi mreži.'));
+    x.send(f);
+  });
 }
 function noviStory() {
   haptika();
