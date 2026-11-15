@@ -154,6 +154,17 @@ img.pala{object-fit:contain!important;background:var(--orhideja-svetla)}
 .termin .zauzet img,.termin .zauzet .ikona-reels{width:40px;height:50px;border-radius:7px;object-fit:cover;background:var(--rumenilo);flex:none;display:grid;place-items:center}
 .termin .zauzet span{font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .termin .slobodan{flex:1;border:1.5px dashed var(--linija);border-radius:var(--radius-mali);padding:14px 12px;font-size:14px;color:var(--tiho)}
+button.slobodan{text-align:left;color:var(--orhideja);font-weight:600;background:none}
+.termin .zauzet .pin{font-size:12px;color:var(--orhideja);font-weight:600;display:block;margin-top:2px}
+.izbor-termina{display:grid;gap:8px;margin-top:12px}
+.izbor-termina button{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border:1px solid var(--linija);border-radius:12px;background:var(--povrsina);font:500 15px var(--telo);color:var(--mastilo);text-align:left}
+.izbor-termina button small{color:var(--tiho);font-weight:400}
+.izbor-termina button[aria-current="true"]{border-color:var(--orhideja);font-weight:700}
+.opcije-slota{display:grid;gap:10px;margin-top:14px}
+.premesti{display:grid;gap:8px;margin-top:8px}
+.premesti button{display:flex;gap:10px;align-items:center;text-align:left;padding:6px;border:1px solid var(--linija);border-radius:12px;background:var(--povrsina);font-size:14px}
+.premesti img{width:40px;height:50px;object-fit:cover;border-radius:7px;flex:none}
+.akcije-zakazane{display:grid;gap:10px;margin-top:18px}
 
 /* objave */
 .mreza{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;border-radius:var(--radius);overflow:hidden}
@@ -353,7 +364,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-15.21';
+const VERZIJA = '2026-11-15.22';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -581,7 +592,7 @@ function postavke() {
       ${!uTelegramu && !samostalno ? '<button class="post-link" id="postEkran">Dodaj Razvitak na početni ekran</button>' : ''}
     </div>
     ${nalog}
-    <p class="post-verzija">Razvitak, verzija 2026-11-15.21</p>`);
+    <p class="post-verzija">Razvitak, verzija 2026-11-15.22</p>`);
   const pr = document.getElementById('postRaspored'); if (pr) pr.onclick = () => { zatvoriPanel(); setTimeout(rasporedPanel, 250); };
   const nz = document.getElementById('nazivSalona'), nzb = document.getElementById('sacuvajNaziv');
   if (nz) {
@@ -800,8 +811,9 @@ function plan() {
   ekran(`<h1>Plan objava</h1>
     <button class="raspored-kartica" id="otvoriRaspored"><span><small>Raspored objava</small><b>${esc(podaci.salon.raspored || 'nije podešen')}</b></span><span class="promeni">Promeni</span></button>
     <p class="pod">Naredne dve nedelje: ${zauzeto} od ${(podaci.plan || []).length} termina ima spremnu objavu.</p>
-    <div style="margin-top:14px">${kljucevi.length ? kljucevi.map(k => { const [dan, dm] = k.split(' '); return `<div class="dan-blok"><div class="dan-oznaka"><b>${esc(dm.replace(/\.$/, ''))}</b>${esc(dan)}</div><div>${dani[k].map(t => `<div class="termin"><span class="sat-cip">${esc(t.sat)}</span>${t.objava ? `<button class="zauzet" data-id="${t.objava.id}" data-izvor="plan">${slika(t.objava)}<span>${esc(prvaRecenica(t.objava.caption))}</span></button>` : `<div class="slobodan">Slobodno, pošaljite sliku u chat</div>`}</div>`).join('')}</div></div>`; }).join('') : '<p class="prazno">Nema termina u naredne dve nedelje.</p>'}</div>`);
+    <div style="margin-top:14px">${kljucevi.length ? kljucevi.map(k => { const [dan, dm] = k.split(' '); return `<div class="dan-blok"><div class="dan-oznaka"><b>${esc(dm.replace(/\.$/, ''))}</b>${esc(dan)}</div><div>${dani[k].map(t => `<div class="termin"><span class="sat-cip">${esc(t.sat)}</span>${t.objava ? `<button class="zauzet" data-id="${t.objava.id}" data-izvor="plan">${slika(t.objava)}<span>${t.objava.fiksno ? '📌 ' : ''}${esc(prvaRecenica(t.objava.caption))}</span></button>` : (t.kljuc ? `<button class="slobodan" data-slot="${esc(t.kljuc)}">+ Dodaj objavu za ovaj termin</button>` : `<div class="slobodan">Slobodno</div>`)}</div>`).join('')}</div></div>`; }).join('') : '<p class="prazno">Nema termina u naredne dve nedelje.</p>'}</div>`);
   vezi('plan');
+  document.querySelectorAll('[data-slot]').forEach(b => b.onclick = () => { haptika(); slotPanel(b.dataset.slot); });
   document.getElementById('otvoriRaspored').onclick = rasporedPanel;
 }
 
@@ -828,8 +840,60 @@ function pregledGotove(x, izvor, kada) {
   const galerija = x.tip === 'reel' ? '<div class="galerija"><div class="reels-mesto">🎬 Reels: video se vidi na Instagramu</div></div>'
     : (slike.length ? `<div class="galerija">${slike.map(u => `<img ${sl_atr(u, 1080)} alt="" loading="lazy">`).join('')}</div>` : '');
   const opis = izvor === 'plan' ? 'Izlazi ' + esc(kada || 'u sledećem terminu') : 'Objavljeno ' + esc(datum(x.datum));
-  otvoriPanel(`<h3>${izvor === 'plan' ? 'Spremna objava' : 'Objava'}</h3>${galerija}<p>${opis}${n > 1 ? `, karusel od ${n} ${n < 5 ? 'slike' : 'slika'} (prevucite)` : ''}</p><div class="opis">${opisHtml(x.caption)}</div>${izvor === 'plan' ? '<button class="dugme sporedno" id="gOdmah" type="button" style="width:100%;margin-top:18px">Objavi odmah, bez čekanja termina</button>' : ''}`);
+  otvoriPanel(`<h3>${izvor === 'plan' ? 'Spremna objava' : 'Objava'}</h3>${galerija}<p>${opis}${n > 1 ? `, karusel od ${n} ${n < 5 ? 'slike' : 'slika'} (prevucite)` : ''}</p><div class="opis">${opisHtml(x.caption)}</div>${izvor === 'plan' ? `<div class="akcije-zakazane"><button class="dugme sporedno" id="gTermin" type="button">Promeni termin</button><button class="dugme sporedno" id="gOdmah" type="button">Objavi odmah, bez čekanja termina</button><button class="odmah-link" id="gOtkazi" type="button" style="color:#B4532A">Ne objavljuj</button></div>` : ''}`);
   const go = document.getElementById('gOdmah'); if (go) poveziOdmah(go, x, v => { go.disabled = v; });
+  const gt = document.getElementById('gTermin'); if (gt) gt.onclick = () => { haptika(); izborTermina(x, false); };
+  const gk = document.getElementById('gOtkazi'); if (gk) dvaKlika(gk, 'Sigurno? Kliknite ponovo, objava se neće objaviti', async () => {
+    gk.disabled = true; gk.textContent = 'Otkazujem…';
+    try { const j = await akcija({ akcija: 'red', red_id: x.id, nacin: 'otkazi' }); zatvoriPanel(); tost(j.poruka || 'Neće biti objavljeno.'); osvezi(); }
+    catch (er) { tost(er.message); gk.disabled = false; gk.textContent = 'Ne objavljuj'; }
+  });
+}
+const DANI_U = ['', 'ponedeljak', 'utorak', 'sredu', 'četvrtak', 'petak', 'subotu', 'nedelju'];
+function tekstTermina(kljuc, bezU) {
+  if (!kljuc) return '';
+  const d = new Date(kljuc.slice(0, 10) + 'T12:00:00'), h = Number(kljuc.slice(11, 13));
+  const danas = new Date(); danas.setHours(12, 0, 0, 0);
+  const razlika = Math.round((d - danas) / 864e5);
+  const dan = razlika === 0 ? 'danas' : razlika === 1 ? 'sutra' : 'u ' + DANI_U[d.getDay() === 0 ? 7 : d.getDay()] + ' ' + d.getDate() + '.' + (d.getMonth() + 1) + '.';
+  return (bezU ? dan.replace(/^u /, '') : dan) + ' u ' + h + 'h';
+}
+function dvaKlika(dugme, pitanje, radnja) {
+  const tekst = dugme.textContent; let t = 0;
+  dugme.onclick = () => {
+    if (!t) { haptika(); dugme.textContent = pitanje; t = setTimeout(() => { t = 0; dugme.textContent = tekst; }, 4000); return; }
+    clearTimeout(t); t = 0; haptika('medium'); radnja();
+  };
+}
+function izborTermina(o, odobri) {
+  const plan = podaci.plan || [];
+  const moj = plan.find(t => t.objava && String(t.objava.id) === String(o.id));
+  const slobodni = plan.filter(t => t.kljuc && (!t.objava || (moj && t.kljuc === moj.kljuc)));
+  otvoriPanel(`<h3>${odobri ? 'Odobri i izaberi termin' : 'Promeni termin'}</h3><p>Izaberite kada objava izlazi. Prikazani su slobodni termini iz vašeg rasporeda.</p>
+    <div class="izbor-termina">${slobodni.map(t => `<button data-k="${esc(t.kljuc)}" aria-current="${!!(moj && t.kljuc === moj.kljuc)}"><span>${esc(tekstTermina(t.kljuc))}</span>${moj && t.kljuc === moj.kljuc ? '<small>sada</small>' : ''}</button>`).join('') || '<p class="prazno">Nema slobodnih termina u naredne dve nedelje. Dodajte još dana u Rasporedu.</p>'}
+    <button data-k=""><span>Prvi slobodan termin</span><small>po redu</small></button></div>`);
+  document.querySelectorAll('[data-k]').forEach(b => b.onclick = async () => {
+    haptika('medium'); document.querySelectorAll('[data-k]').forEach(x => x.disabled = true);
+    try { const j = await akcija({ akcija: 'red', red_id: o.id, nacin: 'termin', termin_za: b.dataset.k, odobri: odobri ? '1' : '' }); zatvoriPanel(); tost(j.poruka || 'Sačuvano.'); osvezi(); }
+    catch (er) { tost(er.message); document.querySelectorAll('[data-k]').forEach(x => x.disabled = false); }
+  });
+}
+function slotPanel(kljuc) {
+  const kandidati = [...(podaci.ceka || []).filter(o => o.tip !== 'story_tekst').map(o => ({ ...o, _c: 1 })), ...(podaci.plan || []).filter(t => t.objava && !t.objava.fiksno).map(t => t.objava)];
+  otvoriPanel(`<h3>Objava za ${esc(tekstTermina(kljuc, true))}</h3>
+    <div class="opcije-slota"><button class="dugme" id="sNova">Nova objava (slike ili grafika)</button><button class="dugme sporedno" id="sReels">Novi Reels</button></div>
+    ${kandidati.length ? `<h4 style="margin:20px 0 4px">Ili premestite postojeću</h4><div class="premesti">${kandidati.map(o => `<button data-pm="${o.id}" data-c="${o._c ? 1 : ''}">${o.slika ? `<img ${sl_atr(o.slika, 120)} alt="">` : ''}<span>${esc(prvaRecenica(o.caption))}<br><small style="color:var(--tiho)">${o._c ? 'čeka odobrenje, biće odobrena' : 'spremna'}</small></span></button>`).join('')}</div>` : ''}`);
+  document.getElementById('sNova').onclick = () => novaObjava(kljuc);
+  document.getElementById('sReels').onclick = () => noviReels(kljuc);
+  document.querySelectorAll('[data-pm]').forEach(b => b.onclick = async () => {
+    haptika('medium'); document.querySelectorAll('[data-pm]').forEach(x => x.disabled = true);
+    try { const j = await akcija({ akcija: 'red', red_id: b.dataset.pm, nacin: 'termin', termin_za: kljuc, odobri: b.dataset.c ? '1' : '' }); zatvoriPanel(); tost(j.poruka || 'Premešteno.'); osvezi(); }
+    catch (er) { tost(er.message); document.querySelectorAll('[data-pm]').forEach(x => x.disabled = false); }
+  });
+}
+async function zakaziNovu(o, kljuc) {
+  if (!kljuc || !o || !o.id) return '';
+  try { await akcija({ akcija: 'red', red_id: o.id, nacin: 'termin', termin_za: kljuc }); o.termin_za = kljuc; return tekstTermina(kljuc); } catch (e) { tost('Objava je napravljena, ali termin nije sačuvan: ' + e.message); return ''; }
 }
 function galerijaUredi(slike) {
   return slike.map((u, i) => `<div class="sl"><img ${sl_atr(u, 1080)} alt="">${slike.length > 1 ? `<button class="ukloni" type="button" data-skini="${i}" aria-label="Ukloni ovu sliku">×</button>` : ''}</div>`).join('')
@@ -953,18 +1017,19 @@ function pregled(o, termin) {
   const slike = (o.slike && o.slike.length ? o.slike : (o.slika ? [o.slika] : []));
   otvoriPanel(`<h3>${story ? 'Predlog Story-ja' : 'Predlog objave'}</h3>
     ${slike.length ? `<div class="galerija${story ? ' uspravno' : ''}" id="galPregled">${o.tip === 'post' ? galerijaUredi(slike) : slike.map(u => `<img ${sl_atr(u, 1080)} alt="">`).join('')}</div>${o.tip === 'post' ? '<input type="file" id="dodajNaPredlog" accept="image/*" multiple hidden>' : ''}` : ''}
-    ${termin ? `<p>Ako odobrite, izlazi ${esc(termin)}.</p>` : (story ? '<p>Kad odobrite, Story izlazi odmah.</p>' : '')}
+    ${termin || o.termin_za ? `<p>Ako odobrite, izlazi ${esc(termin || tekstTermina(o.termin_za))}.</p>` : (story ? '<p>Kad odobrite, Story izlazi odmah.</p>' : '')}
     ${story ? '' : `<div class="opis" id="opisPregled">${opisHtml(o.caption)}</div>`}
     ${story ? '' : `<div class="cipovi"><button class="cip" data-iz="kr">Kraće</button><button class="cip" data-iz="op">Opuštenije</button><button class="cip" data-iz="dt">Drugi tekst</button></div>
     <div class="svoja-izmena"><textarea class="polje" id="svojaIzmena" rows="2" placeholder="${kartica ? 'Šta da promenimo? U opisu ili na slikama, npr. „neka Milica pita koliko traje balayage“' : 'Šta da promenimo u opisu? Npr. „dodaj da radimo i nedeljom“'}"></textarea>
     <div class="mikrofon-red"><button class="cip mik" id="mikIzmena" type="button"></button></div>
     <button class="dugme sporedno" id="posaljiIzmenu" type="button" disabled>Primeni izmenu</button></div>`}
-    <div class="dugmad dole"><button class="dugme" id="aOk">${story ? 'Objavi Story' : 'Objavi'}</button><button class="dugme ne" id="aNe">Ne objavljuj</button></div>${story ? '' : '<button class="odmah-link" id="aOdmah" type="button">Objavi odmah, bez čekanja termina</button>'}`);
+    <div class="dugmad dole"><button class="dugme" id="aOk">${story ? 'Objavi Story' : 'Objavi'}</button><button class="dugme ne" id="aNe">Ne objavljuj</button></div>${story ? '' : '<button class="odmah-link" id="aTermin" type="button">Odobri za drugi dan</button><button class="odmah-link" id="aOdmah" type="button" style="margin-top:2px">Objavi odmah, bez čekanja termina</button>'}`);
   const sva = () => document.querySelectorAll('#panelSadrzaj button');
   const zakljucaj = v => sva().forEach(b => b.disabled = v);
   document.getElementById('aOk').onclick = async e => { haptika('medium'); const b = e.currentTarget; b.textContent = story ? 'Objavljujem…' : 'Šaljem…'; zakljucaj(true);
     try { const j = await akcija({ akcija: 'ok', red_id: o.id }); zatvoriPanel(); tost(j.poruka || 'Odobreno.'); osvezi(); } catch (er) { tost(er.message); zakljucaj(false); b.textContent = story ? 'Objavi Story' : 'Objavi'; } };
   const ao = document.getElementById('aOdmah'); if (ao) poveziOdmah(ao, o, zakljucaj);
+  const at = document.getElementById('aTermin'); if (at) at.onclick = () => { haptika(); izborTermina(o, true); };
   if (o.tip === 'post') urediSlike(o);
   document.getElementById('aNe').onclick = async e => { haptika(); zakljucaj(true);
     try { const j = await akcija({ akcija: 'ne', red_id: o.id }); zatvoriPanel(); tost(j.poruka || 'Neće biti objavljeno.'); osvezi(); } catch (er) { tost(er.message); zakljucaj(false); } };
@@ -1005,9 +1070,10 @@ async function smanji(fajl) {
   c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
   return c.toDataURL('image/jpeg', 0.85);
 }
-function novaObjava() {
+function novaObjava(terminZa) {
+  if (typeof terminZa !== 'string') terminZa = '';
   haptika(); let izabrane = [];
-  otvoriPanel(`<h3>Nova objava</h3><p>Izaberite jednu sliku ili do 10 za karusel. Bez slike napišite temu, a mi pravimo grafiku sa tekstom.</p>
+  otvoriPanel(`<h3>Nova objava${terminZa ? ' za ' + esc(tekstTermina(terminZa, true)) : ''}</h3><p>Izaberite jednu sliku ili do 10 za karusel. Bez slike napišite temu, a mi pravimo grafiku sa tekstom.</p>
     <label class="biraj" id="birajSlike"><input type="file" id="fajlovi" accept="image/*" multiple hidden>Izaberite slike<small>iz galerije ili kamere</small></label>
     <input type="file" id="josFajlova" accept="image/*" multiple hidden>
     <div class="izabrane" id="izabrane"></div>
@@ -1044,28 +1110,28 @@ function novaObjava() {
       radi('Smišljamo tekst za objavu…');
       const ranije = new Set((podaci.ceka || []).map(x => String(x.id)));
       try { const j = await akcija({ akcija: 'grafika', napomena });
-        if (j.u_izradi) return cekajNovo(() => (podaci.ceka || []).find(x => !ranije.has(String(x.id))), 'Crtam slajdove u bojama salona. Obično traje 1 do 2 minuta, pa se predlog sam otvori. Možete i zatvoriti, biće u „Čeka odobrenje“.');
-        osvezi(); pregled(j.objava, j.termin); }
+        if (j.u_izradi) return cekajNovo(() => { const n = (podaci.ceka || []).find(x => !ranije.has(String(x.id))); if (n && terminZa && !n.termin_za) { n.termin_za = terminZa; zakaziNovu({ id: n.id }, terminZa); } return n; }, 'Crtam slajdove u bojama salona. Obično traje 1 do 2 minuta, pa se predlog sam otvori. Možete i zatvoriti, biće u „Čeka odobrenje“.');
+        const tz = await zakaziNovu(j.objava, terminZa); osvezi(); pregled(j.objava, tz || j.termin); }
       catch (er) { zatvoriPanel(); tost(er.message); }
       return;
     }
     radi(izabrane.length > 1 ? 'Šaljem slike i pišem opis za karusel. Traje oko pola minuta.' : 'Šaljem sliku i pišem opis. Traje oko pola minuta.');
-    try { const j = await akcija({ akcija: 'objava', napomena, slike: JSON.stringify(izabrane.map(u => u.split(',')[1])) }); osvezi(); pregled(j.objava, j.termin); }
+    try { const j = await akcija({ akcija: 'objava', napomena, slike: JSON.stringify(izabrane.map(u => u.split(',')[1])) }); const tz = await zakaziNovu(j.objava, terminZa); osvezi(); pregled(j.objava, tz || j.termin); }
     catch (er) { zatvoriPanel(); tost(er.message); }
   };
 }
 /* ---------- Reels iz aplikacije: video u punom kvalitetu ide u Cloudflare R2 ---------- */
 const VIDEO_SERVIS = 'https://razvitak-video.nkosanovicn.workers.dev';
 const VIDEO_MAX_MB = 100;
-function noviReels() {
+function noviReels(terminZa) {
+  if (typeof terminZa !== 'string') terminZa = '';
   haptika(); let fajl = null, adresa = '';
-  otvoriPanel(`<h3>Novi Reels</h3><p>Izaberite video od 3 do 90 sekundi. Šalje se u punom kvalitetu, a mi pišemo opis.</p>
+  otvoriPanel(`<h3>Novi Reels${terminZa ? ' za ' + esc(tekstTermina(terminZa, true)) : ''}</h3><p>Izaberite video od 3 do 90 sekundi. Šalje se u punom kvalitetu, a mi pišemo opis.</p>
     <label class="biraj" id="birajVideo"><input type="file" id="videoFajl" accept="video/*" hidden>Izaberite video<small>do ${VIDEO_MAX_MB} MB, najbolje 1080p</small></label>
     <div id="videoMesto"></div>
     <textarea class="polje" id="reelsNapomena" placeholder="Šta je na snimku? Npr. „feniranje pre i posle“"></textarea>
     <div class="mikrofon-red"><button class="cip mik" id="mikReels" type="button"></button><small>govor se sam pretvara u tekst</small></div>
-    <button class="dugme" id="posaljiReels" style="margin-top:14px" disabled>Izaberite video</button>
-    <a class="sitno-link" href="https://t.me/${BOT}" target="_blank" rel="noopener">ili pošaljite video u Telegram chat (manji kvalitet)</a>`);
+    <button class="dugme" id="posaljiReels" style="margin-top:14px" disabled>Izaberite video</button>`);
   mikrofon('reelsNapomena', 'mikReels', 'feniranje pre i posle, radila Jelena');
   const dugme = document.getElementById('posaljiReels');
   document.getElementById('videoFajl').onchange = e => {
@@ -1101,7 +1167,7 @@ function noviReels() {
       });
       const j = await akcija({ akcija: 'reels', video_url: odg.url, napomena, kadar });
       if (adresa) URL.revokeObjectURL(adresa);
-      osvezi(); pregled(j.objava, j.termin);
+      const tz = await zakaziNovu(j.objava, terminZa); osvezi(); pregled(j.objava, tz || j.termin);
     } catch (er) { zatvoriPanel(); tost(er.message || 'Slanje nije uspelo. Pokušajte ponovo.'); }
   };
 }
@@ -1288,6 +1354,7 @@ async function dodajNaEkran() {
 /* demo bez Telegrama */
 const cekaj = ms => new Promise(r => setTimeout(r, ms));
 async function demoAkcija(p) {
+  if (p.akcija === 'red') { await cekaj(600); return { ok: true, poruka: p.nacin === 'otkazi' ? 'U redu, ova objava neće biti objavljena.' : 'Zakazano (u primeru se ništa ne menja).' }; }
   if (p.akcija === 'slike') { await cekaj(600); return { ok: true, slike: JSON.parse(p.zadrzi || '[]') }; }
   if (p.akcija === 'odmah') { await cekaj(700); return { ok: true, poruka: 'U primeru se ništa ne objavljuje na Instagramu.' }; }
   await cekaj(['objava', 'grafika'].includes(p.akcija) ? 1800 : 900);
