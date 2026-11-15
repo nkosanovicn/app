@@ -240,6 +240,16 @@ body.bez-menija{padding-bottom:24px}
 .ikonica-dugme{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;border:1px solid var(--linija);background:var(--povrsina)}
 .ikonica-dugme svg{width:19px;height:19px;stroke:var(--tiho)}
 body.bez-menija .ikonica-dugme{display:none}
+.ns-forma{display:grid;gap:12px;margin-top:14px}
+.ns-forma label{display:grid;gap:6px;font-weight:600;font-size:14px}
+.ns-forma input.polje,.ns-forma select.polje{min-height:0;height:46px;padding:10px 12px;resize:none}
+select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radius);font:inherit;color:var(--mastilo);background:var(--pozadina)}
+.ns-izbor{display:flex;flex-wrap:wrap;gap:8px}
+.ns-izbor .cip[aria-pressed="true"]{background:var(--mastilo);color:var(--pozadina);border-color:var(--mastilo)}
+.ns-poruka{white-space:pre-wrap;background:var(--tiho-poz);border:1px solid var(--linija);border-radius:var(--radius);padding:12px;font-size:14px;line-height:1.45;margin:12px 0;max-height:260px;overflow:auto}
+.ns-dugmad{display:grid;gap:10px}
+.dodaj-salon{width:100%;margin-top:18px}
+.ns-dugmad a.dugme{text-decoration:none;display:flex;align-items:center;justify-content:center}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--tiho-poz);border:1px solid var(--linija);border-radius:12px;padding:3px}
 .seg button{padding:9px 4px;border-radius:9px;font-weight:600;font-size:14px;color:var(--tiho)}
 .seg button[aria-pressed="true"]{background:var(--povrsina);color:var(--mastilo);box-shadow:0 1px 3px rgba(0,0,0,.12)}
@@ -315,7 +325,7 @@ body.bez-menija .ikonica-dugme{display:none}
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-14.13';
+const VERZIJA = '2026-11-15.15';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -530,7 +540,7 @@ function postavke() {
       ${!uTelegramu && !samostalno ? '<button class="post-link" id="postEkran">Dodaj Razvitak na početni ekran</button>' : ''}
     </div>
     ${nalog}
-    <p class="post-verzija">Razvitak, verzija 2026-11-14.10</p>`);
+    <p class="post-verzija">Razvitak, verzija 2026-11-15.15</p>`);
   const pr = document.getElementById('postRaspored'); if (pr) pr.onclick = () => { zatvoriPanel(); setTimeout(rasporedPanel, 250); };
   const nz = document.getElementById('nazivSalona'), nzb = document.getElementById('sacuvajNaziv');
   if (nz) {
@@ -609,6 +619,7 @@ function saloniEkran() {
   if (!saloniLista) return ekran(`<h1>Saloni</h1><p class="pod">Učitavam salone…</p><div class="ucitavanje"><div class="kost" style="height:150px;margin-top:22px"></div><div class="kost" style="height:150px;margin-top:14px"></div></div>`);
   const sad = podaci.salon.kod;
   ekran(`<h1>Saloni</h1><p class="pod">Izaberite salon za koji radite. Brojke su za ovaj mesec.</p>
+  <button class="dugme dodaj-salon" id="dodajSalon">+ Novi salon</button>
   <div class="saloni">${saloniLista.map(s => {
     const b = s.brojke, l = s.limiti || {};
     const napomene = [s.paket ? 'Paket ' + esc(s.paket) : '', kadaPre(s.poslednje), !s.povezan ? '<span class="upozorenje">Telegram nije povezan</span>' : '', b.greske ? `<span class="upozorenje">${b.greske} ${b.greske === 1 ? 'greška' : 'greške'} pri objavi</span>` : ''].filter(Boolean).join('. ');
@@ -621,8 +632,59 @@ function saloniEkran() {
       </div>
       <div class="salon-radnje"><button class="cip" data-radnja="objava" data-kod="${esc(s.kod)}">Nova objava</button><button class="cip" data-radnja="story" data-kod="${esc(s.kod)}">Story</button></div>
     </article>`; }).join('')}</div>`);
+  document.getElementById('dodajSalon').onclick = () => { haptika(); noviSalon(); };
   document.querySelectorAll('[data-otvori]').forEach(d => d.onclick = () => { haptika(); izaberiSalon(d.dataset.otvori); });
   document.querySelectorAll('[data-radnja]').forEach(d => d.onclick = () => { haptika(); izaberiSalon(d.dataset.kod, d.dataset.radnja === 'objava' ? novaObjava : noviStory); });
+}
+/* ---------- admin: novi salon ---------- */
+function noviSalon() {
+  const DEL = ['Frizerski salon', 'Kozmetički salon', 'Salon za nokte', 'Barber shop', 'Trepavice i obrve', 'Kombinovani salon lepote'];
+  const PAK = [['START', 'Start'], ['STANDARD', 'Standard'], ['PREMIUM', 'Premium'], ['TEST', 'Probni']];
+  otvoriPanel(`<h3>Novi salon</h3>
+    <p>Popunite osnovno. Opis salona, boje i raspored sistem postavi sam, a salon ih posle menja u aplikaciji.</p>
+    <div class="ns-forma">
+      <label>Naziv salona<input class="polje" id="nsNaziv" maxlength="60" placeholder="npr. Studio Ana" autocomplete="off"></label>
+      <label>Delatnost<select class="polje" id="nsDel"><option value="">Izaberite…</option>${DEL.map(d => `<option>${d}</option>`).join('')}</select></label>
+      <label>Grad<input class="polje" id="nsGrad" maxlength="60" placeholder="npr. Novi Sad" autocomplete="off"></label>
+      <label>Instagram nalog (može i kasnije)<input class="polje" id="nsIg" maxlength="80" placeholder="npr. @studioana" autocomplete="off" autocapitalize="off"></label>
+      <div><b style="font-size:14px">Paket</b><div class="ns-izbor" style="margin-top:6px">${PAK.map(([k, n]) => `<button class="cip" type="button" data-pak="${k}" aria-pressed="${k === 'STANDARD'}">${n}</button>`).join('')}</div></div>
+      <button class="dugme" id="nsNapravi" disabled>Napravi salon</button>
+    </div>`);
+  let paket = 'STANDARD';
+  const polja = ['nsNaziv', 'nsDel', 'nsGrad'].map(id => document.getElementById(id));
+  const dugme = document.getElementById('nsNapravi');
+  const proveri = () => { dugme.disabled = !(polja[0].value.trim().length >= 2 && polja[1].value && polja[2].value.trim().length >= 2); };
+  polja.forEach(p => { p.addEventListener('input', proveri); p.addEventListener('change', proveri); });
+  document.querySelectorAll('[data-pak]').forEach(b => b.onclick = () => { haptika(); paket = b.dataset.pak; document.querySelectorAll('[data-pak]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); });
+  dugme.onclick = async () => {
+    haptika('medium'); if (!pravo()) return tost('U primeru se salon ne pravi.');
+    dugme.disabled = true; dugme.textContent = 'Pravim salon… (oko 15 sekundi)';
+    try {
+      const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), deo: 'novi_salon', naziv: polja[0].value, delatnost: polja[1].value, grad: polja[2].value, instagram: document.getElementById('nsIg').value, paket }) });
+      if (odg.status === 401 && !uTelegramu) { zatvoriPanel(); return istekla(); }
+      let j = {}; try { j = await odg.json(); } catch (e) {}
+      if (!j.ok) throw new Error(j.greska || 'Salon nije napravljen. Pokušajte ponovo.');
+      saloniVreme = 0; ucitajSalone(true);
+      noviSalonGotov(j);
+    } catch (er) { tost(er.message || 'Nema veze sa serverom.'); dugme.disabled = false; dugme.textContent = 'Napravi salon'; }
+  };
+}
+function noviSalonGotov(j) {
+  haptika('medium');
+  otvoriPanel(`<h3>${esc(j.naziv)} je napravljen ✅</h3>
+    <p>Pošaljite ovu poruku vlasniku salona. Kad klikne link i poveže Instagram, javiće vam se bot.</p>
+    ${j.uploadpost === 'greska' ? `<p style="color:#B4532A;font-weight:600">Upload-Post profil nije napravljen${j.uploadpost_greska ? ': ' + esc(j.uploadpost_greska) : ''}. Javite mi pre nego što salon poveže Instagram.</p>` : ''}
+    <div class="ns-poruka" id="nsPoruka">${esc(j.poruka)}</div>
+    <div class="ns-dugmad">
+      <button class="dugme" id="nsKopiraj">Kopiraj poruku</button>
+      <a class="dugme sporedno" href="viber://forward?text=${encodeURIComponent(j.poruka)}">Pošalji na Viber</a>
+      <a class="dugme sporedno" href="https://wa.me/?text=${encodeURIComponent(j.poruka)}" target="_blank" rel="noopener">Pošalji na WhatsApp</a>
+    </div>`);
+  document.getElementById('nsKopiraj').onclick = async () => {
+    haptika();
+    try { await navigator.clipboard.writeText(j.poruka); tost('Poruka je kopirana.'); }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(document.getElementById('nsPoruka')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); tost('Označio sam tekst, kopirajte ga ručno.'); }
+  };
 }
 async function izaberiSalon(kod, posle) {
   if (podaci && podaci.salon.kod === kod) { tab = 'pocetna'; prikazi(); if (posle) posle(); return; }
@@ -805,7 +867,7 @@ function pregled(o, termin) {
   document.getElementById('aNe').onclick = async e => { haptika(); zakljucaj(true);
     try { const j = await akcija({ akcija: 'ne', red_id: o.id }); zatvoriPanel(); tost(j.poruka || 'Neće biti objavljeno.'); osvezi(); } catch (er) { tost(er.message); zakljucaj(false); } };
   const izmeni = async (c, polja) => { haptika(); const staro = c.textContent; c.textContent = 'Pišem…'; zakljucaj(true);
-    try { const j = await akcija({ ...polja, red_id: o.id }); if (j.slike_u_izradi) { zatvoriPanel(); tost(j.poruka || 'Pravim nove slike, stižu za 1 do 2 minuta.'); [100000, 160000].forEach(ms => setTimeout(() => osvezi(), ms)); return; } o.caption = j.caption || o.caption; document.getElementById('opisPregled').innerHTML = opisHtml(o.caption); tost('Evo nove verzije.'); if (polja.akcija === 'tx') { const p = document.getElementById('svojaIzmena'); if (p) p.value = ''; } } catch (er) { tost(er.message); }
+    try { const j = await akcija({ ...polja, red_id: o.id }); if (j.slike_u_izradi) { const staro = (o.slike && o.slike.length ? o.slike : [o.slika]).join(','); return cekajNovo(() => { const n = (podaci.ceka || []).find(x => String(x.id) === String(o.id)); return n && (n.slike && n.slike.length ? n.slike : [n.slika]).join(',') !== staro ? n : null; }, 'Crtam nove slajdove. Obično traje 1 do 2 minuta, pa se predlog sam otvori. Možete i zatvoriti, biće u „Čeka odobrenje“.'); } o.caption = j.caption || o.caption; document.getElementById('opisPregled').innerHTML = opisHtml(o.caption); tost('Evo nove verzije.'); if (polja.akcija === 'tx') { const p = document.getElementById('svojaIzmena'); if (p) p.value = ''; } } catch (er) { tost(er.message); }
     c.textContent = staro; zakljucaj(false); osveziIzmenu(); };
   document.querySelectorAll('[data-iz]').forEach(c => c.onclick = () => izmeni(c, { akcija: c.dataset.iz }));
   const poljeIzmene = document.getElementById('svojaIzmena'), dugmeIzmene = document.getElementById('posaljiIzmenu');
@@ -815,6 +877,21 @@ function pregled(o, termin) {
     poljeIzmene.addEventListener('input', osveziIzmenu); osveziIzmenu();
     dugmeIzmene.onclick = () => izmeni(dugmeIzmene, { akcija: 'tx', tekst: poljeIzmene.value.trim() });
   }
+}
+let cekanjeId = 0;
+const ceka_se = () => document.getElementById('panel').classList.contains('otvoren') && !!document.querySelector('#panelSadrzaj .radi');
+async function cekajNovo(proveri, tekst) {
+  const moje = ++cekanjeId;
+  radi(tekst);
+  const kraj = Date.now() + 4 * 60 * 1000;
+  while (Date.now() < kraj) {
+    await cekaj(12000);
+    if (moje !== cekanjeId || !ceka_se()) return;
+    await osvezi();
+    const nadjeno = proveri();
+    if (nadjeno && moje === cekanjeId && ceka_se()) { haptika('medium'); return pregled(nadjeno); }
+  }
+  if (moje === cekanjeId && ceka_se()) { zatvoriPanel(); tost('Još se pravi. Pogledajte za minut u „Čeka odobrenje“.'); }
 }
 function radi(t) { document.getElementById('panelSadrzaj').innerHTML = `<div class="radi"><i></i><div>${esc(t)}</div></div>`; }
 async function smanji(fajl) {
@@ -850,8 +927,11 @@ function novaObjava() {
   dugme.onclick = async () => {
     haptika('medium'); const napomena = polje.value.trim();
     if (!izabrane.length) {
-      radi('Smišljamo tekst i crtamo grafiku u bojama salona. Traje do jednog minuta.');
-      try { const j = await akcija({ akcija: 'grafika', napomena }); osvezi(); pregled(j.objava, j.termin); }
+      radi('Smišljamo tekst za objavu…');
+      const ranije = new Set((podaci.ceka || []).map(x => String(x.id)));
+      try { const j = await akcija({ akcija: 'grafika', napomena });
+        if (j.u_izradi) return cekajNovo(() => (podaci.ceka || []).find(x => !ranije.has(String(x.id))), 'Crtam slajdove u bojama salona. Obično traje 1 do 2 minuta, pa se predlog sam otvori. Možete i zatvoriti, biće u „Čeka odobrenje“.');
+        osvezi(); pregled(j.objava, j.termin); }
       catch (er) { zatvoriPanel(); tost(er.message); }
       return;
     }
