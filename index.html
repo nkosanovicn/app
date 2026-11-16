@@ -102,6 +102,26 @@ section{padding:72px 0}
 .kraj{text-align:center;padding:84px 0}
 .kraj p.uvod{margin:12px auto 0}
 .kraj .akcije{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+/* forma za upit */
+.upit{max-width:460px;margin:30px auto 0;text-align:left;background:var(--povrsina);border:1px solid var(--linija);border-radius:22px;padding:26px 24px 22px;display:grid;gap:6px}
+.upit label{font-weight:600;font-size:15px;margin-top:10px}
+.upit label:first-of-type{margin-top:0}
+.upit label span{font-weight:400;color:var(--tiho)}
+.upit input{width:100%;font:inherit;font-size:17px;color:var(--mastilo);background:var(--pozadina);border:1px solid var(--linija);border-radius:12px;padding:13px 14px}
+.upit input:focus-visible{outline:2px solid var(--orhideja);outline-offset:1px;border-color:var(--orhideja)}
+.upit input[aria-invalid="true"]{border-color:#B3261E}
+.upit .dugme{width:100%;margin-top:16px;border:0;cursor:pointer;font-family:var(--telo)}
+.upit .dugme:disabled{opacity:.6;cursor:default}
+.upit-greska{color:#B3261E;font-size:15px;margin-top:8px}
+.upit-sitno{font-size:13px;color:var(--tiho);text-align:center;margin-top:8px}
+.izabran-paket{font-size:15px;background:var(--orhideja-svetla);border-radius:10px;padding:8px 12px;margin-bottom:6px}
+.upit[hidden],.upit-hvala[hidden],.upit-greska[hidden],.izabran-paket[hidden]{display:none}
+.zamka{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.upit-hvala{max-width:460px;margin:30px auto 0;background:var(--orhideja-svetla);border-radius:22px;padding:28px 24px}
+.upit-hvala p{color:var(--tiho);margin-top:8px}
+.upit-hvala a{color:var(--orhideja-tamna);font-weight:600}
+.upit-ili{margin-top:22px;font-size:15px;color:var(--tiho)}
+.upit-ili a{color:var(--orhideja-tamna);font-weight:600}
 footer{border-top:1px solid var(--linija);padding:26px 0;font-size:14px;color:var(--tiho)}
 footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
@@ -138,7 +158,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <a href="#kako">Kako radi</a>
       <a href="#paketi">Paketi</a>
       <a href="#pitanja">Pitanja</a>
-      <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Pišite nam</a>
+      <a class="dugme" href="#upit">Pišite nam</a>
     </nav>
   </div>
 </header>
@@ -149,7 +169,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <div>
         <h1>Salon je pun. Instagram više neće biti prazan.<span>Pošaljete sliku iz salona, mi napišemo opis i objavimo u pravom terminu. Vi samo kliknete Objavi.</span></h1>
         <div class="akcije">
-          <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Zakažite razgovor</a>
+          <a class="dugme" href="#upit">Zakažite razgovor</a>
           <a class="dugme svetlo" href="app/">Probajte aplikaciju</a>
         </div>
       </div>
@@ -163,7 +183,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <section id="kako">
     <div class="sir">
       <h2>Kako radi</h2>
-      <p class="uvod">Sve ide preko Telegrama, besplatne aplikacije za poruke. Nema novih lozinki ni kurseva o Instagramu.</p>
+      <p class="uvod">Sve radite iz naše aplikacije u telefonu. Bez kurseva o Instagramu i bez komplikovanih podešavanja.</p>
       <ol class="tok">
         <li><h3>Pošaljete sliku</h3><p>Fotografiju rada, više slika za karusel ili kratak video. Može i jedna rečenica napomene, npr. „balayage, nova klijentkinja“.</p></li>
         <li><h3>Dobijete predlog</h3><p>Za minut stiže gotov opis u stilu vašeg salona, sa hashtagovima i pozivom na zakazivanje. Ako želite drugačije, jedan klik: kraće, opuštenije ili sasvim novo.</p></li>
@@ -200,21 +220,21 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <div class="cena" data-m="1890" data-t="1690" data-g="1490"><span>1.890</span> <small>din/mes</small></div>
           <div class="popust" aria-live="polite" hidden></div>
           <ul><li>8 objava mesečno</li><li>Opis u stilu vašeg salona i hashtagovi</li><li>Odobravanje pre objave</li></ul>
-          <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Izaberite Start</a>
+          <a class="dugme" href="#upit" data-paket="Start">Izaberite Start</a>
         </div>
         <div class="paket istaknut">
           <div class="naziv">Standard <span class="oznaka">Najčešći izbor</span></div>
           <div class="cena" data-m="3590" data-t="3190" data-g="2890"><span>3.590</span> <small>din/mes</small></div>
           <div class="popust" aria-live="polite" hidden></div>
           <ul><li>12 objava mesečno</li><li>8 Story-ja mesečno</li><li>4 dodatne objave kad nemate slike</li><li>Podsetnik kad je vreme za post</li><li>Sve iz paketa Start</li></ul>
-          <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Izaberite Standard</a>
+          <a class="dugme" href="#upit" data-paket="Standard">Izaberite Standard</a>
         </div>
         <div class="paket">
           <div class="naziv">Premium</div>
           <div class="cena" data-m="5790" data-t="5190" data-g="4590"><span>5.790</span> <small>din/mes</small></div>
           <div class="popust" aria-live="polite" hidden></div>
           <ul><li>20 objava mesečno</li><li>20 Story-ja mesečno</li><li>4 Reels-a od vaših videa</li><li>Mesečni izveštaj o rezultatima</li><li>Sve iz paketa Standard</li></ul>
-          <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Izaberite Premium</a>
+          <a class="dugme" href="#upit" data-paket="Premium">Izaberite Premium</a>
         </div>
       </div>
     </div>
@@ -227,7 +247,6 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <details><summary>Da li treba da znam nešto o Instagramu?</summary><p>Ne. Vi šaljete slike i klikćete Objavi. Opise, hashtagove i termine radimo mi.</p></details>
         <details><summary>Da li nešto može da izađe bez mog odobrenja?</summary><p>Ne, osim ako sami ne tražite da objave idu bez pregleda. Svaki predlog prvo vidite i odobrite.</p></details>
         <details><summary>Šta ako mi se opis ne dopada?</summary><p>Jednim klikom dobijete kraću, opušteniju ili potpuno novu verziju. Ili napišete šta da promenimo. Ako kažete da nešto uvek važi, npr. „nikad ne pišite cene“, to pamtimo za sve buduće objave.</p></details>
-        <details><summary>Zašto Telegram?</summary><p>Besplatan je, radi na svakom telefonu i u njemu je naša aplikacija. Instalirate ga jednom, otvorite link koji vam pošaljemo i to je to.</p></details>
         <details><summary>Kada se vide rezultati?</summary><p>Prve objave izlaze već prve nedelje. Rast pratilaca i poruka od novih mušterija obično se vidi posle dva do tri meseca redovnog objavljivanja, zato savetujemo da počnete sa 3 meseca. Tada dobijate i popust.</p></details>
         <details><summary>Mogu li da otkažem?</summary><p>Da. Mesečni paket otkazujete kad želite, bez ugovorne obaveze i bez penala. Paket za 3 meseca je plaćen unapred i traje do kraja ta tri meseca.</p></details>
         <details><summary>Koliko traje uključivanje?</summary><p>Razgovor od 15 minuta o vašem salonu i povezivanje Instagram naloga. Prva objava može da izađe već iste nedelje.</p></details>
@@ -236,15 +255,30 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     </div>
   </section>
 
-  <section class="kraj">
+  <section class="kraj" id="upit">
     <div class="sir">
       <img class="pecat" src="razvitak-logo.svg" alt="Razvitak" width="150" height="150">
       <h2>Probajte na svom salonu</h2>
-      <p class="uvod">Pošaljite nam poruku i dogovorimo kratak razgovor. Pokazaćemo vam kako bi izgledala prva objava za vaš salon.</p>
-      <div class="akcije">
-        <a class="dugme" href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Pišite nam na Instagramu</a>
-        <a class="dugme svetlo" href="https://t.me/kaodajebitno_bot" target="_blank" rel="noopener">Pišite nam na Telegramu</a>
+      <p class="uvod">Ostavite Instagram salona i email. Javićemo vam se i pokazati kako bi izgledala prva objava za vaš salon.</p>
+      <form class="upit" id="formaUpit" novalidate>
+        <p class="izabran-paket" id="izabranPaket" hidden></p>
+        <label for="uInstagram">Instagram salona</label>
+        <input id="uInstagram" name="instagram" type="text" placeholder="@vas.salon" autocomplete="off" autocapitalize="off" spellcheck="false" required maxlength="80">
+        <label for="uEmail">Email</label>
+        <input id="uEmail" name="email" type="email" placeholder="ime@primer.rs" autocomplete="email" required maxlength="120">
+        <label for="uTelefon">Telefon <span>(nije obavezno)</span></label>
+        <input id="uTelefon" name="telefon" type="tel" placeholder="06x xxx xxxx" autocomplete="tel" maxlength="30">
+        <div class="zamka" aria-hidden="true"><label for="uSajt">Sajt</label><input id="uSajt" name="sajt" type="text" tabindex="-1" autocomplete="off"></div>
+        <input type="hidden" name="paket" id="uPaket">
+        <p class="upit-greska" id="upitGreska" role="alert" hidden></p>
+        <button class="dugme" type="submit" id="upitDugme">Pošaljite upit</button>
+        <p class="upit-sitno">Vaše podatke koristimo samo da vam se javimo povodom upita.</p>
+      </form>
+      <div class="upit-hvala" id="upitHvala" hidden tabindex="-1">
+        <h3>Hvala, upit je stigao.</h3>
+        <p>Javićemo vam se uskoro na email<span id="hvalaTel"></span>. Do tada možete da pogledate <a href="app/?demo=1">primer aplikacije</a>.</p>
       </div>
+      <p class="upit-ili">Više volite poruku? <a href="https://www.instagram.com/razvitak.studio/" target="_blank" rel="noopener">Pišite nam na Instagramu</a></p>
     </div>
   </section>
 </main>
@@ -265,6 +299,38 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     });
   };
   document.querySelectorAll('[data-period]').forEach(b => b.onclick = () => izbor(b.dataset.period));
+})();
+</script>
+<script>
+(() => {
+  const ADRESA = 'https://miroslavmiki.app.n8n.cloud/webhook/razvitak-upit';
+  const forma = document.getElementById('formaUpit'), dugme = document.getElementById('upitDugme'), greska = document.getElementById('upitGreska');
+  const pokazi = (poruka, polje) => { greska.textContent = poruka; greska.hidden = false; forma.querySelectorAll('input').forEach(i => i.removeAttribute('aria-invalid')); if (polje) { polje.setAttribute('aria-invalid', 'true'); polje.focus(); } };
+  document.querySelectorAll('[data-paket]').forEach(a => a.addEventListener('click', () => {
+    document.getElementById('uPaket').value = a.dataset.paket;
+    const z = document.getElementById('izabranPaket'); z.textContent = 'Zanima vas paket ' + a.dataset.paket + '.'; z.hidden = false;
+  }));
+  forma.querySelectorAll('input').forEach(i => i.addEventListener('input', () => i.removeAttribute('aria-invalid')));
+  forma.addEventListener('submit', async e => {
+    e.preventDefault(); greska.hidden = true;
+    const ig = document.getElementById('uInstagram'), em = document.getElementById('uEmail'), tel = document.getElementById('uTelefon');
+    const igVr = ig.value.trim().replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/^@/, '').replace(/[/?#].*$/, '');
+    if (!/^[a-zA-Z0-9._]{1,30}$/.test(igVr)) return pokazi('Upišite Instagram nalog salona, npr. @vas.salon', ig);
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(em.value.trim())) return pokazi('Upišite ispravnu email adresu.', em);
+    if (tel.value.trim() && tel.value.replace(/[^0-9]/g, '').length < 6) return pokazi('Broj telefona nije potpun. Možete ga i izostaviti.', tel);
+    dugme.disabled = true; dugme.textContent = 'Šaljem…';
+    try {
+      const odg = await fetch(ADRESA, { method: 'POST', body: new URLSearchParams(new FormData(forma)) });
+      const j = await odg.json();
+      if (!j.ok) throw new Error(j.greska || 'Upit nije poslat.');
+      forma.hidden = true;
+      document.getElementById('hvalaTel').textContent = tel.value.trim() ? ' ili telefon' : '';
+      const h = document.getElementById('upitHvala'); h.hidden = false; h.focus();
+    } catch (er) {
+      pokazi(er.message && er.message !== 'Failed to fetch' ? er.message : 'Upit nije poslat. Proverite internet i pokušajte ponovo, ili nam pišite na Instagramu.');
+      dugme.disabled = false; dugme.textContent = 'Pošaljite upit';
+    }
+  });
 })();
 </script>
 </body>
