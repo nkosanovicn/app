@@ -252,7 +252,20 @@ textarea.polje:focus-visible,input.polje:focus-visible{outline:2px solid var(--o
 .galerija .dodaj-sl{flex:none;width:110px;height:auto;min-height:160px;border-radius:var(--radius);font-size:15px;text-align:center;padding:10px}
 .galerija.radi{opacity:.5;pointer-events:none}
 .radi{display:flex;flex-direction:column;align-items:center;gap:14px;padding:30px 0;text-align:center;color:var(--tiho)}
-.radi i{width:42px;height:42px;border-radius:50%;border:3px solid var(--orhideja-svetla);border-top-color:var(--orhideja);animation:vrti .9s linear infinite}
+.bio-kartica{border:1px solid var(--linija);border-radius:12px;padding:10px;margin-top:8px;background:var(--pozadina)}
+.bio-kartica textarea.polje{min-height:0;border:0;padding:2px;background:transparent;resize:none;line-height:1.45}
+.bio-dno{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.bio-broj{font-size:13px;color:var(--tiho);font-variant-numeric:tabular-nums}
+.bio-broj.preko{color:#B3261E;font-weight:600}
+.post-grupa .post-link.sporedno{font-size:14px;color:var(--tiho);font-weight:500}
+.krug{position:relative;width:132px;height:132px}
+.krug svg{width:100%;height:100%;transform:rotate(-90deg)}
+.krug circle{fill:none;stroke-width:9}
+.krug .podloga{stroke:var(--orhideja-svetla)}
+.krug .luk{stroke:var(--orhideja);stroke-linecap:round;transition:stroke-dashoffset .35s ease}
+.krug b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:var(--mastilo);font-variant-numeric:tabular-nums}
+.krug b small{font-size:16px;font-weight:600;margin-left:1px}
+.radi .radi-tekst{max-width:300px;line-height:1.45}
 @keyframes vrti{to{transform:rotate(360deg)}}
 .tost{pointer-events:none;position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translate(-50%,-20px);background:var(--mastilo);color:var(--pozadina);padding:12px 18px;border-radius:12px;font-size:15px;opacity:0;transition:all .25s;z-index:20;max-width:90vw;text-align:center}
 .tost.vidljiv{opacity:1;transform:translate(-50%,0)}
@@ -265,7 +278,7 @@ body.bez-menija{padding-bottom:24px}
 .prijava h1{font-size:34px}
 .prijava .pod{font-size:16px;margin:12px 0 28px;max-width:34ch}
 .prijava .dugme + .dugme{margin-top:10px}
-.prijava a.dugme{text-decoration:none}
+.prijava a.dugme,a.dugme{text-decoration:none}
 .koraci{list-style:none;display:grid;gap:14px;margin:6px 0 26px;counter-reset:k}
 .koraci li{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;counter-increment:k}
 .koraci li::before{content:counter(k);width:30px;height:30px;border-radius:50%;background:var(--orhideja-svetla);color:var(--orhideja);font-weight:700;display:grid;place-items:center;font-size:14px}
@@ -313,6 +326,16 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 .ig-nalog a{font-size:14px;color:var(--tiho);text-decoration:none}
 .ig-nalog small{display:block;font-size:13px;color:var(--tiho);margin-top:2px}
 .ig-nalog small.upozorenje{color:#B4532A;font-weight:600}
+.rdani{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.rdan{border:1px solid var(--linija);border-radius:12px;background:var(--povrsina);overflow:hidden}
+.rdan.aktivan{border-color:var(--orhideja)}
+.rdan-glava{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;text-align:left;font-size:15px}
+.rdan-ime{font-weight:600;flex:0 0 96px}
+.rdan-sati{flex:1;color:var(--tiho);font-variant-numeric:tabular-nums}
+.rdan.aktivan .rdan-sati{color:inherit;font-weight:600}
+.rdan-strelica{font-size:18px;color:var(--tiho);width:16px;text-align:center}
+.rdan-telo{padding:0 12px 12px}
+.rdan-bez{margin-top:10px}
 .sati{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .sati button{padding:10px 0;border-radius:10px;border:1px solid var(--linija);font-size:14px;font-weight:600;color:var(--tiho);background:var(--povrsina);font-variant-numeric:tabular-nums}
 .sati button[aria-pressed="true"]{background:var(--orhideja);border-color:var(--orhideja);color:var(--na-orhideji)}
@@ -364,7 +387,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-15.22';
+const VERZIJA = '2026-11-16.25';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -510,52 +533,78 @@ function prikazi(bezSkrola) {
 }
 
 const objava = n => n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'objave' : 'objava';
-/* ---------- raspored objava (dani i do 3 vremena dnevno) ---------- */
+/* ---------- raspored objava (svaki dan svoje vreme, do 3 dnevno) ---------- */
 function rasporedPanel() {
   haptika();
   const s = podaci.salon, l = s.limiti || {};
-  let rDani = Array.isArray(s.dani) && s.dani.length ? s.dani.map(Number) : [1, 2, 3, 4, 5, 6, 7];
-  let rSati = Array.isArray(s.sati) && s.sati.length ? s.sati.map(Number) : (s.sat ? [Number(s.sat)] : [10, 19]);
-  const pocetno = rDani.join(',') + '|' + rSati.join(',');
+  const IME = ['Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak', 'Subota', 'Nedelja'];
+  const DN = ['pon', 'uto', 'sre', 'čet', 'pet', 'sub', 'ned'];
   const SATI = Array.from({ length: 16 }, (_, i) => i + 7);
-  otvoriPanel(`<h3>Raspored objava</h3><p>Izaberite dane i vreme kada objave izlaze. Objava izlazi samo kad je spremna i odobrena.</p>
-    <div class="post-grupa" style="margin-top:8px"><h4>Dani</h4>
-      <div class="dani" role="group" aria-label="Dani objava">${['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'].map((d, i) => `<button data-dan="${i + 1}" aria-pressed="${rDani.includes(i + 1)}">${d}</button>`).join('')}</div></div>
-    <div class="post-grupa"><h4>Vreme (najviše 3 dnevno)</h4>
-      <div class="sati" role="group" aria-label="Vreme objava">${SATI.map(h => `<button data-sat="${h}" aria-pressed="${rSati.includes(h)}">${String(h).padStart(2, '0')}:00</button>`).join('')}</div></div>
+  let mapa = {};
+  if (s.raspored_mapa && typeof s.raspored_mapa === 'object' && Object.keys(s.raspored_mapa).length) {
+    for (const [d, h] of Object.entries(s.raspored_mapa)) mapa[Number(d)] = h.map(Number);
+  } else {
+    const dani = Array.isArray(s.dani) && s.dani.length ? s.dani.map(Number) : [1, 2, 3, 4, 5, 6, 7];
+    const sati = Array.isArray(s.sati) && s.sati.length ? s.sati.map(Number) : (s.sat ? [Number(s.sat)] : [10, 19]);
+    for (const d of dani) mapa[d] = sati.slice();
+  }
+  const tekst = m => Object.keys(m).map(Number).filter(d => m[d].length).sort((x, y) => x - y).map(d => d + ':' + m[d].join(',')).join(';');
+  const pocetno = tekst(mapa);
+  let otvoren = 0, poslednji = (Object.values(mapa)[0] || [19]).slice();
+  const ih = a => a.map(h => h + 'h').join(', ').replace(/, ([^,]*)$/, ' i $1');
+  otvoriPanel(`<h3>Raspored objava</h3><p>Dodirnite dan i izaberite vreme za taj dan. Svaki dan može imati svoje vreme, najviše 3 objave dnevno.</p>
+    <div class="rdani" id="rdani"></div>
     <p class="post-napomena" id="rasporedInfo"></p>
     <button class="dugme" id="sacuvajRaspored" disabled style="margin-top:14px">Sačuvaj raspored</button>`);
-  const info = () => {
-    const nedeljno = rDani.length * rSati.length, mesecno = Math.round(nedeljno * 4.3), lim = Number(l.objave || s.limit) || 0;
-    const sati = rSati.slice().sort((a, b) => a - b).map(h => h + 'h').join(', ');
-    document.getElementById('rasporedInfo').textContent = !rSati.length ? 'Izaberite bar jedno vreme.' : !rDani.length ? 'Izaberite bar jedan dan.'
-      : `Objave u ${sati}. To je ${nedeljno} termina nedeljno, oko ${mesecno} mesečno.` + (lim ? (mesecno < lim ? ` Paket ima ${lim} objava, pa neke neće stati u raspored.` : (mesecno > lim * 1.6 ? ` Paket ima ${lim} objava, pa će neki termini ostati prazni.` : '')) : '');
-    document.getElementById('sacuvajRaspored').disabled = !rDani.length || !rSati.length || (rDani.join(',') + '|' + rSati.slice().sort((a, b) => a - b).join(',')) === pocetno;
+  const crtaj = () => {
+    document.getElementById('rdani').innerHTML = IME.map((ime, i) => {
+      const d = i + 1, h = mapa[d] || [], otv = otvoren === d;
+      return `<div class="rdan${h.length ? ' aktivan' : ''}">
+        <button class="rdan-glava" data-rdan="${d}" aria-expanded="${otv}"><span class="rdan-ime">${ime}</span><span class="rdan-sati">${h.length ? ih(h) : 'bez objava'}</span><span class="rdan-strelica" aria-hidden="true">${otv ? '−' : '+'}</span></button>
+        ${otv ? `<div class="rdan-telo"><div class="sati" role="group" aria-label="Vreme za ${ime}">${SATI.map(x => `<button data-rsat="${x}" aria-pressed="${h.includes(x)}">${String(x).padStart(2, '0')}:00</button>`).join('')}</div>
+          ${h.length ? `<button class="post-link rdan-bez" data-rbez="${d}">Bez objava ovog dana</button>` : ''}</div>` : ''}
+      </div>`;
+    }).join('');
+    document.querySelectorAll('[data-rdan]').forEach(b => b.onclick = () => {
+      haptika(); const d = Number(b.dataset.rdan);
+      otvoren = otvoren === d ? 0 : d;
+      if (otvoren && !(mapa[d] || []).length) mapa[d] = poslednji.slice();
+      crtaj();
+    });
+    document.querySelectorAll('[data-rsat]').forEach(b => b.onclick = () => {
+      haptika(); const x = Number(b.dataset.rsat), h = mapa[otvoren] || [];
+      if (h.includes(x)) mapa[otvoren] = h.filter(y => y !== x);
+      else if (h.length >= 3) return tost('Najviše 3 objave dnevno. Prvo isključite jedno vreme.');
+      else mapa[otvoren] = [...h, x].sort((p, q) => p - q);
+      if (mapa[otvoren].length) poslednji = mapa[otvoren].slice();
+      crtaj();
+    });
+    const bz = document.querySelector('[data-rbez]');
+    if (bz) bz.onclick = () => { haptika(); mapa[otvoren] = []; otvoren = 0; crtaj(); };
+    info();
   };
-  document.querySelectorAll('[data-dan]').forEach(b => b.onclick = () => {
-    haptika(); const d = Number(b.dataset.dan);
-    rDani = rDani.includes(d) ? rDani.filter(x => x !== d) : [...rDani, d].sort((a, c) => a - c);
-    b.setAttribute('aria-pressed', rDani.includes(d)); info();
-  });
-  document.querySelectorAll('[data-sat]').forEach(b => b.onclick = () => {
-    haptika(); const h = Number(b.dataset.sat);
-    if (rSati.includes(h)) rSati = rSati.filter(x => x !== h);
-    else if (rSati.length >= 3) return tost('Najviše 3 objave dnevno. Prvo isključite jedno vreme.');
-    else rSati = [...rSati, h].sort((a, c) => a - c);
-    b.setAttribute('aria-pressed', rSati.includes(h)); info();
-  });
-  info();
+  const info = () => {
+    const nedeljno = Object.values(mapa).reduce((z, h) => z + h.length, 0), mesecno = Math.round(nedeljno * 4.3), lim = Number(l.objave || s.limit) || 0;
+    document.getElementById('rasporedInfo').textContent = !nedeljno ? 'Izaberite bar jedan dan i vreme.'
+      : `To je ${nedeljno} termina nedeljno, oko ${mesecno} mesečno.` + (lim ? (mesecno < lim ? ` Paket ima ${lim} objava, pa neke neće stati u raspored.` : (mesecno > lim * 1.6 ? ` Paket ima ${lim} objava, pa će neki termini ostati prazni.` : '')) : '');
+    document.getElementById('sacuvajRaspored').disabled = !nedeljno || tekst(mapa) === pocetno;
+  };
+  crtaj();
   const sr = document.getElementById('sacuvajRaspored');
   sr.onclick = async () => {
     haptika('medium'); sr.disabled = true; sr.textContent = 'Čuvam…';
+    const r = tekst(mapa);
     try {
       if (pravo()) {
-        const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: s.kod, deo: 'raspored', dani: rDani.join(','), sati: rSati.join(',') }) });
+        const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: s.kod, deo: 'raspored', raspored: r }) });
         if (odg.status === 401 && !uTelegramu) { zatvoriPanel(); return istekla(); }
         const j = await odg.json(); if (!j.ok) throw new Error(j.greska || 'Raspored nije sačuvan.');
       }
-      const DN = ['pon', 'uto', 'sre', 'čet', 'pet', 'sub', 'ned'];
-      s.dani = rDani; s.sati = rSati; s.raspored = rDani.map(d => DN[d - 1]).join(', ') + ' u ' + rSati.map(h => h + 'h').join(', ').replace(/, ([^,]*)$/, ' i $1');
+      const m = {}; for (const deo of r.split(';')) { const [d, h] = deo.split(':'); m[d] = h.split(',').map(Number); }
+      const dani = Object.keys(m).map(Number);
+      const grupe = []; for (const d of dani) { const k = m[d].join(','); const g = grupe.find(x => x.k === k); if (g) g.d.push(d); else grupe.push({ k, d: [d], h: m[d] }); }
+      s.raspored_mapa = m; s.dani = dani; s.sati = [...new Set(dani.flatMap(d => m[d]))].sort((p, q) => p - q);
+      s.raspored = grupe.map(g => g.d.map(n => DN[n - 1]).join(', ') + ' u ' + ih(g.h)).join('; ');
       zatvoriPanel(); tost('Raspored je sačuvan.'); if (tab === 'plan') prikazi(true); osvezi();
     } catch (er) { tost(er.message || 'Nema veze sa serverom.'); sr.disabled = false; sr.textContent = 'Sačuvaj raspored'; }
   };
@@ -585,14 +634,16 @@ function postavke() {
     ${s ? `<div class="post-grupa"><h4>Naziv salona u aplikaciji</h4><div class="naziv-red"><input class="polje" id="nazivSalona" maxlength="60" value="${esc(s.naziv || '')}" aria-label="Naziv salona"><button class="cip" id="sacuvajNaziv" disabled>Sačuvaj</button></div><p class="post-napomena">Ovaj naziv se vidi u aplikaciji i u dnu grafika koje pravimo.</p></div>` : ''}
     <div class="post-grupa"><h4>Instagram nalog</h4><div id="igNalog" class="ig-nalog"><span class="ig-slika"></span><div><b>Učitavam…</b></div></div>
       <button class="post-link" id="poveziIg">Poveži ili osveži Instagram</button>
-      <p class="post-napomena">Posle promene imena ili slike na Instagramu, ovde ga povežite ponovo da se podaci osveže.</p></div>
+      <p class="post-napomena">Posle promene imena ili slike na Instagramu, ovde ga povežite ponovo da se podaci osveže.</p>
+      ${s ? '<button class="post-link sporedno" id="postBio">Predlog opisa profila</button>' : ''}</div>
     ${paket}
     <div class="post-grupa"><h4>Pomoć</h4>
       <a class="post-link" href="https://t.me/${BOT}" target="_blank" rel="noopener" id="postChat">Pišite nam u chat</a>
       ${!uTelegramu && !samostalno ? '<button class="post-link" id="postEkran">Dodaj Razvitak na početni ekran</button>' : ''}
     </div>
     ${nalog}
-    <p class="post-verzija">Razvitak, verzija 2026-11-15.22</p>`);
+    <p class="post-verzija">Razvitak, verzija ${VERZIJA}</p>`);
+  const pb = document.getElementById('postBio'); if (pb) pb.onclick = () => { zatvoriPanel(); setTimeout(bioPanel, 250); };
   const pr = document.getElementById('postRaspored'); if (pr) pr.onclick = () => { zatvoriPanel(); setTimeout(rasporedPanel, 250); };
   const nz = document.getElementById('nazivSalona'), nzb = document.getElementById('sacuvajNaziv');
   if (nz) {
@@ -649,6 +700,68 @@ function postavke() {
   const po = document.getElementById('postOdjava'); if (po) po.onclick = () => { if (confirm('Odjaviti se sa Razvitka na ovom uređaju?')) { zatvoriPanel(); odjava(); } };
 }
 document.getElementById('postavkeDugme').onclick = postavke;
+
+/* ---------- opis profila (bio): Instagram ne dozvoljava izmenu preko API-ja, pa predlažemo i kopiramo ---------- */
+async function kopirajTekst(tx) {
+  try { await navigator.clipboard.writeText(tx); return true; }
+  catch (e) {
+    try { const a = document.createElement('textarea'); a.value = tx; a.style.position = 'fixed'; a.style.opacity = '0'; document.body.appendChild(a); a.select(); const ok = document.execCommand('copy'); a.remove(); return ok; } catch (er) { return false; }
+  }
+}
+const duzina = s => [...String(s)].length;
+function bioPanel(zelja = '') {
+  haptika();
+  const s = podaci.salon;
+  otvoriPanel(`<h3>Opis profila</h3><p>Napravićemo nekoliko predloga za opis (bio) i ime profila. Instagram ne dozvoljava da ga menjamo umesto vas, pa izaberete predlog, kopirate ga i nalepite na Instagramu.</p>
+    <textarea class="polje" id="bioZelja" rows="2" maxlength="300" placeholder="Šta da istaknemo? Nije obavezno. Npr. „radimo i subotom“ ili „zakazivanje preko DM-a“">${esc(zelja)}</textarea>
+    <button class="dugme" id="bioDugme" style="margin-top:12px">Predloži opis</button>`);
+  document.getElementById('bioDugme').onclick = async () => {
+    haptika('medium');
+    const z = document.getElementById('bioZelja').value.trim();
+    radi('Pišem predloge za opis profila…', 15);
+    try {
+      let j;
+      if (pravo()) {
+        const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod: s.kod, deo: 'bio', zelja: z }) });
+        if (odg.status === 401 && !uTelegramu) { zatvoriPanel(); return istekla(); }
+        j = await odg.json();
+      } else {
+        await cekaj(1800);
+        j = { ok: true, opisi: ['✂️ Frizerski salon u Novom Sadu\nBalayage, šišanje i nega kose\n📅 Zakažite termin porukom u DM', 'Kosa kakvu ste želeli ✨\nBojenje, šišanje i feniranje\nNovi Sad\n💬 Pišite nam u DM', 'Frizer · Novi Sad\nZakazivanje u DM 📩'], imena: ['Studio Lana | Frizer Novi Sad', 'Studio Lana Frizerski salon'] };
+      }
+      if (!j.ok) throw new Error(j.greska || 'Predlog nije uspeo. Pokušajte ponovo.');
+      await gotovo();
+      bioRezultat(j, z);
+    } catch (er) { tost(er.message || 'Nema veze sa serverom.'); bioPanel(z); }
+  };
+}
+function bioRezultat(j, zelja) {
+  const kartica = (tx, i, max, vrsta) => `<div class="bio-kartica">
+      <textarea class="polje bio-tekst" data-max="${max}" id="${vrsta}${i}" rows="1">${esc(tx)}</textarea>
+      <div class="bio-dno"><span class="bio-broj" data-za="${vrsta}${i}"></span><button class="cip" data-kopiraj="${vrsta}${i}">Kopiraj</button></div></div>`;
+  otvoriPanel(`<h3>Predlozi za profil</h3><p>Možete da doradite tekst pre kopiranja.</p>
+    <div class="post-grupa" style="margin-top:10px"><h4>Opis (bio), do 150 znakova</h4>${j.opisi.map((o, i) => kartica(o, i, 150, 'bio')).join('')}</div>
+    ${j.imena && j.imena.length ? `<div class="post-grupa"><h4>Ime profila, do 30 znakova</h4>${j.imena.map((o, i) => kartica(o, i, 30, 'ime')).join('')}<p class="post-napomena">Ime je polje po kom vas ljudi pronalaze u pretrazi, zato sadrži delatnost i grad. Korisničko ime (@) ostaje isto.</p></div>` : ''}
+    <div class="post-grupa"><h4>Kako da ga promenite</h4>
+      <p class="post-napomena" style="margin-top:0">1. Kopirajte predlog koji vam se sviđa.<br>2. Otvorite Instagram, pa Uredi profil.<br>3. Dodirnite Opis (ili Ime), obrišite stari tekst i nalepite novi.<br>4. Sačuvajte kvačicom gore desno.</p>
+      <a class="dugme" href="https://www.instagram.com/accounts/edit/" target="_blank" rel="noopener" id="bioInstagram" style="margin-top:10px">Otvori Instagram</a></div>
+    <button class="post-link" id="bioNovo">Napravi nove predloge</button>`);
+  const broj = id => {
+    const a = document.getElementById(id), b = document.querySelector(`[data-za="${id}"]`), m = Number(a.dataset.max), n = duzina(a.value);
+    b.textContent = n + ' / ' + m; b.classList.toggle('preko', n > m);
+  };
+  const visina = a => { a.style.height = 'auto'; a.style.height = a.scrollHeight + 'px'; };
+  document.querySelectorAll('.bio-tekst').forEach(a => { broj(a.id); visina(a); a.addEventListener('input', () => { broj(a.id); visina(a); }); });
+  document.querySelectorAll('[data-kopiraj]').forEach(b => b.onclick = async () => {
+    haptika(); const a = document.getElementById(b.dataset.kopiraj);
+    if (duzina(a.value) > Number(a.dataset.max)) return tost('Tekst je predugačak za Instagram. Skratite ga.');
+    if (await kopirajTekst(a.value)) { document.querySelectorAll('[data-kopiraj]').forEach(x => x.textContent = 'Kopiraj'); b.textContent = 'Kopirano ✓'; tost('Kopirano. Sada ga nalepite na Instagramu.'); }
+    else tost('Kopiranje nije uspelo. Označite tekst i kopirajte ga ručno.');
+  });
+  const oi = document.getElementById('bioInstagram');
+  if (oi && uTelegramu && tg.openLink) oi.onclick = e => { e.preventDefault(); tg.openLink(oi.href); };
+  document.getElementById('bioNovo').onclick = () => bioPanel(zelja);
+}
 
 /* ---------- admin: svi saloni ---------- */
 let saloniLista = null, saloniVreme = 0;
@@ -1047,9 +1160,9 @@ function pregled(o, termin) {
 }
 let cekanjeId = 0;
 const ceka_se = () => document.getElementById('panel').classList.contains('otvoren') && !!document.querySelector('#panelSadrzaj .radi');
-async function cekajNovo(proveri, tekst) {
+async function cekajNovo(proveri, tekst, sek = 90) {
   const moje = ++cekanjeId;
-  radi(tekst);
+  radi(tekst, sek, radiP < 0.9 && document.getElementById('krugLuk') ? radiP : 0);
   const kraj = Date.now() + 4 * 60 * 1000;
   let prvi = true;
   while (Date.now() < kraj) {
@@ -1057,11 +1170,36 @@ async function cekajNovo(proveri, tekst) {
     if (moje !== cekanjeId || !ceka_se()) return;
     await osvezi();
     const nadjeno = proveri();
-    if (nadjeno && moje === cekanjeId && ceka_se()) { haptika('medium'); return pregled(nadjeno); }
+    if (nadjeno && moje === cekanjeId && ceka_se()) { await gotovo(); return pregled(nadjeno); }
   }
   if (moje === cekanjeId && ceka_se()) { zatvoriPanel(); tost('Još se pravi. Pogledajte za minut u „Čeka odobrenje“.'); }
 }
-function radi(t) { document.getElementById('panelSadrzaj').innerHTML = `<div class="radi"><i></i><div>${esc(t)}</div></div>`; }
+/* krug koji se puni: procena po vremenu (server ne javlja pravi napredak), staje na 95% dok ne stigne rezultat */
+let radiTajmer = 0, radiP = 0;
+const OBIM = 2 * Math.PI * 58;
+function postaviKrug(p) {
+  radiP = Math.max(0, Math.min(1, p));
+  const l = document.getElementById('krugLuk'), b = document.getElementById('krugBroj');
+  if (l) l.style.strokeDashoffset = OBIM * (1 - radiP);
+  if (b) b.innerHTML = Math.floor(radiP * 100) + '<small>%</small>';
+}
+function radi(t, sek = 30, od = 0) {
+  clearInterval(radiTajmer);
+  document.getElementById('panelSadrzaj').innerHTML = `<div class="radi" role="progressbar" aria-label="${esc(t)}"><div class="krug"><svg viewBox="0 0 132 132" aria-hidden="true"><circle class="podloga" cx="66" cy="66" r="58"/><circle class="luk" id="krugLuk" cx="66" cy="66" r="58" stroke-dasharray="${OBIM}" stroke-dashoffset="${OBIM}"/></svg><b id="krugBroj">0<small>%</small></b></div><div class="radi-tekst" id="radiTekst">${esc(t)}</div></div>`;
+  postaviKrug(od);
+  if (sek <= 0) return;
+  const pocetak = Date.now();
+  radiTajmer = setInterval(() => {
+    if (!document.getElementById('krugLuk')) return clearInterval(radiTajmer);
+    const s = (Date.now() - pocetak) / 1000;
+    postaviKrug(od + (0.95 - od) * (1 - Math.exp(-2.25 * s / sek)));
+  }, 250);
+}
+async function gotovo() {
+  clearInterval(radiTajmer);
+  if (!document.getElementById('krugLuk')) return;
+  postaviKrug(1); haptika('medium'); await cekaj(450);
+}
 async function smanji(fajl) {
   const url = URL.createObjectURL(fajl);
   const img = await new Promise((ok, ne) => { const i = new Image(); i.onload = () => ok(i); i.onerror = ne; i.src = url; });
@@ -1107,16 +1245,16 @@ function novaObjava(terminZa) {
   dugme.onclick = async () => {
     haptika('medium'); const napomena = polje.value.trim();
     if (!izabrane.length) {
-      radi('Smišljamo tekst za objavu…');
+      radi('Smišljamo tekst za objavu…', 20);
       const ranije = new Set((podaci.ceka || []).map(x => String(x.id)));
       try { const j = await akcija({ akcija: 'grafika', napomena });
         if (j.u_izradi) return cekajNovo(() => { const n = (podaci.ceka || []).find(x => !ranije.has(String(x.id))); if (n && terminZa && !n.termin_za) { n.termin_za = terminZa; zakaziNovu({ id: n.id }, terminZa); } return n; }, 'Crtam slajdove u bojama salona. Obično traje 1 do 2 minuta, pa se predlog sam otvori. Možete i zatvoriti, biće u „Čeka odobrenje“.');
-        const tz = await zakaziNovu(j.objava, terminZa); osvezi(); pregled(j.objava, tz || j.termin); }
+        const tz = await zakaziNovu(j.objava, terminZa); await gotovo(); osvezi(); pregled(j.objava, tz || j.termin); }
       catch (er) { zatvoriPanel(); tost(er.message); }
       return;
     }
-    radi(izabrane.length > 1 ? 'Šaljem slike i pišem opis za karusel. Traje oko pola minuta.' : 'Šaljem sliku i pišem opis. Traje oko pola minuta.');
-    try { const j = await akcija({ akcija: 'objava', napomena, slike: JSON.stringify(izabrane.map(u => u.split(',')[1])) }); const tz = await zakaziNovu(j.objava, terminZa); osvezi(); pregled(j.objava, tz || j.termin); }
+    radi(izabrane.length > 1 ? 'Šaljem slike i pišem opis za karusel. Traje oko pola minuta.' : 'Šaljem sliku i pišem opis. Traje oko pola minuta.', izabrane.length > 1 ? 35 : 25);
+    try { const j = await akcija({ akcija: 'objava', napomena, slike: JSON.stringify(izabrane.map(u => u.split(',')[1])) }); const tz = await zakaziNovu(j.objava, terminZa); await gotovo(); osvezi(); pregled(j.objava, tz || j.termin); }
     catch (er) { zatvoriPanel(); tost(er.message); }
   };
 }
@@ -1158,16 +1296,13 @@ function noviReels(terminZa) {
     let kadar = '';
     try { kadar = await kadarIzVidea(document.getElementById('reelsVideo')); } catch (e) {}
     const panel = document.getElementById('panelSadrzaj');
-    panel.innerHTML = `<div class="radi"><h3>Šaljem Reels</h3><div class="napredak"><i id="napredakTraka"></i></div><div class="napredak-tekst" id="napredakTekst">Počinjem…</div></div>`;
+    radi('Šaljem video u punom kvalitetu…', 0);
     try {
-      const odg = await posaljiVideo(fajl, p => {
-        const t = document.getElementById('napredakTraka'), x = document.getElementById('napredakTekst');
-        if (t) t.style.width = Math.round(p * 100) + '%';
-        if (x) x.textContent = p < 1 ? `Šaljem video… ${Math.round(p * 100)}%` : 'Video je stigao, pišem opis…';
-      });
+      const odg = await posaljiVideo(fajl, p => postaviKrug(p * 0.75));
+      radi('Video je stigao, pišem opis…', 25, 0.75);
       const j = await akcija({ akcija: 'reels', video_url: odg.url, napomena, kadar });
       if (adresa) URL.revokeObjectURL(adresa);
-      const tz = await zakaziNovu(j.objava, terminZa); osvezi(); pregled(j.objava, tz || j.termin);
+      const tz = await zakaziNovu(j.objava, terminZa); await gotovo(); osvezi(); pregled(j.objava, tz || j.termin);
     } catch (er) { zatvoriPanel(); tost(er.message || 'Slanje nije uspelo. Pokušajte ponovo.'); }
   };
 }
@@ -1213,8 +1348,8 @@ function noviStory() {
   mikrofon('storyTekst', 'mikStory', 'Danas imamo slobodne termine u 14 i 16 časova, pišite nam u DM');
   document.getElementById('napraviStory').onclick = async () => {
     const tekst = document.getElementById('storyTekst').value.trim(); if (!tekst) return tost('Napišite tekst za Story.');
-    haptika('medium'); radi('Pravim Story grafiku…');
-    try { const j = await akcija({ akcija: 'story', tekst }); osvezi(); pregled(j.objava); } catch (er) { zatvoriPanel(); tost(er.message); }
+    haptika('medium'); radi('Pravim Story grafiku…', 25);
+    try { const j = await akcija({ akcija: 'story', tekst }); await gotovo(); osvezi(); pregled(j.objava); } catch (er) { zatvoriPanel(); tost(er.message); }
   };
 }
 async function osvezi() {
