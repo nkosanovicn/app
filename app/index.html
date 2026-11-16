@@ -372,7 +372,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
     </div>
     <div class="desno"><div id="salonMesto"></div><button class="ikonica-dugme" id="postavkeDugme" aria-label="Podešavanja"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
   </header>
-  <div id="primer" class="traka-primer" hidden>Primer prikaza sa izmišljenim podacima. Pravi podaci se vide kad se aplikacija otvori iz Telegrama.</div>
+  <div id="primer" class="traka-primer" hidden>Primer prikaza sa izmišljenim podacima. Pravi podaci se vide kad se prijavite.</div>
   <main id="ekran" aria-live="polite">
     <div class="ucitavanje"><div class="kost" style="height:34px;width:70%"></div><div class="kost" style="height:120px;margin-top:22px"></div><div class="kost" style="height:60px;margin-top:22px"></div></div>
   </main>
@@ -392,7 +392,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-16.26';
+const VERZIJA = '2026-11-16.27';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
