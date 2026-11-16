@@ -243,6 +243,11 @@ textarea.polje:focus-visible,input.polje:focus-visible{outline:2px solid var(--o
 .napredak-tekst{text-align:center;font-size:15px;color:var(--tiho)}
 .sitno-link{display:block;text-align:center;margin-top:14px;font-size:14px;color:var(--tiho)}
 .izabrane .sl{position:relative}
+.sl .igraj,.igraj-sl .igraj{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:13px;line-height:30px;text-align:center;pointer-events:none}
+.galerija .sl .igraj{width:48px;height:48px;line-height:48px;font-size:20px}
+.igraj-sl{position:relative;flex:none;width:78%;scroll-snap-align:center}
+.igraj-sl:only-child{width:100%}
+.igraj-sl img{width:100%}
 .ukloni{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;background:var(--mastilo);color:var(--pozadina);font:700 15px/24px var(--telo);text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.25)}
 .dodaj-sl{width:62px;height:76px;border:1.5px dashed #C3C8B4;border-radius:8px;color:var(--orhideja);font:600 26px var(--telo);display:grid;place-items:center;cursor:pointer}
 .galerija .sl{position:relative;flex:none;width:78%;scroll-snap-align:center}
@@ -387,7 +392,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-16.25';
+const VERZIJA = '2026-11-16.26';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -951,7 +956,7 @@ function pregledGotove(x, izvor, kada) {
   const slike = x.slike && x.slike.length ? x.slike : (x.slika ? [x.slika] : []);
   const n = x.slika_broj || slike.length;
   const galerija = x.tip === 'reel' ? '<div class="galerija"><div class="reels-mesto">🎬 Reels: video se vidi na Instagramu</div></div>'
-    : (slike.length ? `<div class="galerija">${slike.map(u => `<img ${sl_atr(u, 1080)} alt="" loading="lazy">`).join('')}</div>` : '');
+    : (slike.length ? `<div class="galerija">${slike.map(u => (x.videi || []).includes(u) ? `<div class="igraj-sl"><img ${sl_atr(u, 1080)} alt="" loading="lazy">${IGRAJ}</div>` : `<img ${sl_atr(u, 1080)} alt="" loading="lazy">`).join('')}</div>` : '');
   const opis = izvor === 'plan' ? 'Izlazi ' + esc(kada || 'u sledećem terminu') : 'Objavljeno ' + esc(datum(x.datum));
   otvoriPanel(`<h3>${izvor === 'plan' ? 'Spremna objava' : 'Objava'}</h3>${galerija}<p>${opis}${n > 1 ? `, karusel od ${n} ${n < 5 ? 'slike' : 'slika'} (prevucite)` : ''}</p><div class="opis">${opisHtml(x.caption)}</div>${izvor === 'plan' ? `<div class="akcije-zakazane"><button class="dugme sporedno" id="gTermin" type="button">Promeni termin</button><button class="dugme sporedno" id="gOdmah" type="button">Objavi odmah, bez čekanja termina</button><button class="odmah-link" id="gOtkazi" type="button" style="color:#B4532A">Ne objavljuj</button></div>` : ''}`);
   const go = document.getElementById('gOdmah'); if (go) poveziOdmah(go, x, v => { go.disabled = v; });
@@ -1008,8 +1013,9 @@ async function zakaziNovu(o, kljuc) {
   if (!kljuc || !o || !o.id) return '';
   try { await akcija({ akcija: 'red', red_id: o.id, nacin: 'termin', termin_za: kljuc }); o.termin_za = kljuc; return tekstTermina(kljuc); } catch (e) { tost('Objava je napravljena, ali termin nije sačuvan: ' + e.message); return ''; }
 }
-function galerijaUredi(slike) {
-  return slike.map((u, i) => `<div class="sl"><img ${sl_atr(u, 1080)} alt="">${slike.length > 1 ? `<button class="ukloni" type="button" data-skini="${i}" aria-label="Ukloni ovu sliku">×</button>` : ''}</div>`).join('')
+const IGRAJ = '<span class="igraj" aria-label="video">▶</span>';
+function galerijaUredi(slike, videi = []) {
+  return slike.map((u, i) => `<div class="sl"><img ${sl_atr(u, 1080)} alt="">${videi.includes(u) ? IGRAJ : ''}${slike.length > 1 ? `<button class="ukloni" type="button" data-skini="${i}" aria-label="Ukloni ovu sliku">×</button>` : ''}</div>`).join('')
     + (slike.length < 10 ? '<label class="dodaj-sl" for="dodajNaPredlog">+<br>Dodaj sliku</label>' : '');
 }
 function urediSlike(o) {
@@ -1020,14 +1026,14 @@ function urediSlike(o) {
     gal.classList.add('radi');
     try {
       const j = await akcija({ akcija: 'slike', red_id: o.id, zadrzi: JSON.stringify(zadrzi), nove: JSON.stringify(nove) });
-      o.slike = j.slike || zadrzi; o.slika = o.slike[0]; o.slika_broj = o.slike.length;
-      gal.innerHTML = galerijaUredi(o.slike); veziDugmad(); tost(poruka); osvezi();
+      o.slike = j.slike || zadrzi; o.slika = o.slike[0]; o.slika_broj = o.slike.length; o.videi = j.videi || (o.videi || []).filter(u => o.slike.includes(u));
+      gal.innerHTML = galerijaUredi(o.slike, o.videi); veziDugmad(); tost(poruka); osvezi();
     } catch (er) { tost(er.message); }
     gal.classList.remove('radi');
   };
   const veziDugmad = () => gal.querySelectorAll('[data-skini]').forEach(b => b.onclick = () => {
     haptika(); const sve = trenutne(); const i = Number(b.dataset.skini);
-    posalji(sve.filter((_, k) => k !== i), [], 'Slika je uklonjena.');
+    posalji(sve.filter((_, k) => k !== i), [], (o.videi || []).includes(sve[i]) ? 'Video je uklonjen.' : 'Slika je uklonjena.');
   });
   veziDugmad();
   if (ulaz) ulaz.onchange = async e => {
@@ -1129,7 +1135,7 @@ function pregled(o, termin) {
   const story = o.tip === 'story_tekst', kartica = o.tip === 'post_kartica';
   const slike = (o.slike && o.slike.length ? o.slike : (o.slika ? [o.slika] : []));
   otvoriPanel(`<h3>${story ? 'Predlog Story-ja' : 'Predlog objave'}</h3>
-    ${slike.length ? `<div class="galerija${story ? ' uspravno' : ''}" id="galPregled">${o.tip === 'post' ? galerijaUredi(slike) : slike.map(u => `<img ${sl_atr(u, 1080)} alt="">`).join('')}</div>${o.tip === 'post' ? '<input type="file" id="dodajNaPredlog" accept="image/*" multiple hidden>' : ''}` : ''}
+    ${slike.length ? `<div class="galerija${story ? ' uspravno' : ''}" id="galPregled">${o.tip === 'post' ? galerijaUredi(slike, o.videi || []) : slike.map(u => `<img ${sl_atr(u, 1080)} alt="">`).join('')}</div>${o.tip === 'post' ? '<input type="file" id="dodajNaPredlog" accept="image/*" multiple hidden>' : ''}` : ''}
     ${termin || o.termin_za ? `<p>Ako odobrite, izlazi ${esc(termin || tekstTermina(o.termin_za))}.</p>` : (story ? '<p>Kad odobrite, Story izlazi odmah.</p>' : '')}
     ${story ? '' : `<div class="opis" id="opisPregled">${opisHtml(o.caption)}</div>`}
     ${story ? '' : `<div class="cipovi"><button class="cip" data-iz="kr">Kraće</button><button class="cip" data-iz="op">Opuštenije</button><button class="cip" data-iz="dt">Drugi tekst</button></div>
@@ -1211,9 +1217,9 @@ async function smanji(fajl) {
 function novaObjava(terminZa) {
   if (typeof terminZa !== 'string') terminZa = '';
   haptika(); let izabrane = [];
-  otvoriPanel(`<h3>Nova objava${terminZa ? ' za ' + esc(tekstTermina(terminZa, true)) : ''}</h3><p>Izaberite jednu sliku ili do 10 za karusel. Bez slike napišite temu, a mi pravimo grafiku sa tekstom.</p>
-    <label class="biraj" id="birajSlike"><input type="file" id="fajlovi" accept="image/*" multiple hidden>Izaberite slike<small>iz galerije ili kamere</small></label>
-    <input type="file" id="josFajlova" accept="image/*" multiple hidden>
+  otvoriPanel(`<h3>Nova objava${terminZa ? ' za ' + esc(tekstTermina(terminZa, true)) : ''}</h3><p>Izaberite jednu sliku ili do 10 slika i videa za karusel. Bez slike napišite temu, a mi pravimo grafiku sa tekstom.</p>
+    <label class="biraj" id="birajSlike"><input type="file" id="fajlovi" accept="image/*,video/*" multiple hidden>Izaberite slike ili video<small>iz galerije ili kamere</small></label>
+    <input type="file" id="josFajlova" accept="image/*,video/*" multiple hidden>
     <div class="izabrane" id="izabrane"></div>
     <textarea class="polje" id="napomena" placeholder="Uz slike: kratka napomena, npr. „balayage, nova klijentkinja“. Bez slike: tema, npr. „3 razloga da negujete kosu zimi“."></textarea>
     <div class="mikrofon-red"><button class="cip mik" id="mikNapomena" type="button"></button><small>govor se sam pretvara u tekst</small></div>
@@ -1223,12 +1229,12 @@ function novaObjava(terminZa) {
   const osveziDugme = () => {
     const tema = polje.value.trim().length >= 4;
     dugme.disabled = !izabrane.length && !tema;
-    dugme.textContent = izabrane.length > 1 ? `Napravi karusel (${izabrane.length} slike)` : (izabrane.length ? 'Napravi objavu' : (tema ? 'Napravi objavu bez slike' : 'Izaberite sliku ili napišite temu'));
+    dugme.textContent = izabrane.length > 1 ? `Napravi karusel (${izabrane.length})` : (izabrane.length ? 'Napravi objavu' : (tema ? 'Napravi objavu bez slike' : 'Izaberite sliku ili napišite temu'));
   };
   polje.addEventListener('input', osveziDugme); osveziDugme();
   const nacrtaj = () => {
     document.getElementById('birajSlike').hidden = izabrane.length > 0;
-    document.getElementById('izabrane').innerHTML = izabrane.map((u, i) => `<div class="sl"><img src="${u}" alt=""><button class="ukloni" type="button" data-ukloni="${i}" aria-label="Ukloni sliku">×</button></div>`).join('')
+    document.getElementById('izabrane').innerHTML = izabrane.map((u, i) => `<div class="sl"><img src="${u.src}" alt="">${u.fajl ? IGRAJ : ''}<button class="ukloni" type="button" data-ukloni="${i}" aria-label="Ukloni">×</button></div>`).join('')
       + (izabrane.length && izabrane.length < 10 ? '<label class="dodaj-sl" for="josFajlova" aria-label="Dodaj još slika">+</label>' : '');
     document.querySelectorAll('[data-ukloni]').forEach(b => b.onclick = () => { haptika(); izabrane.splice(Number(b.dataset.ukloni), 1); nacrtaj(); });
     osveziDugme();
@@ -1236,9 +1242,19 @@ function novaObjava(terminZa) {
   const dodaj = async e => {
     const mesta = 10 - izabrane.length;
     const f = [...e.target.files].slice(0, mesta);
-    if (e.target.files.length > mesta) tost('Najviše 10 slika u jednoj objavi.');
-    izabrane = izabrane.concat(await Promise.all(f.map(smanji)));
-    e.target.value = ''; nacrtaj();
+    if (e.target.files.length > mesta) tost('Najviše 10 slika i videa u jednoj objavi.');
+    e.target.value = '';
+    for (const x of f) {
+      if (!String(x.type).startsWith('video')) { try { izabrane.push({ src: await smanji(x) }); } catch (er) { tost('Jedna slika nije mogla da se učita.'); } continue; }
+      const mb = x.size / 1048576;
+      if (mb > VIDEO_MAX_MB) { tost(`Video ima ${mb.toFixed(0)} MB, a najviše može ${VIDEO_MAX_MB} MB.`); continue; }
+      try {
+        const k = await kadarIzFajla(x);
+        if (k.trajanje > KARUSEL_VIDEO_S) { tost(`Video u karuselu može da traje najviše ${KARUSEL_VIDEO_S} sekundi, a ovaj traje ${Math.round(k.trajanje)}. Za duži snimak napravite Reels.`); continue; }
+        izabrane.push({ src: k.src, fajl: x });
+      } catch (er) { tost(er.message || 'Video nije mogao da se učita.'); }
+    }
+    nacrtaj();
   };
   document.getElementById('fajlovi').onchange = dodaj;
   document.getElementById('josFajlova').onchange = dodaj;
@@ -1253,8 +1269,21 @@ function novaObjava(terminZa) {
       catch (er) { zatvoriPanel(); tost(er.message); }
       return;
     }
-    radi(izabrane.length > 1 ? 'Šaljem slike i pišem opis za karusel. Traje oko pola minuta.' : 'Šaljem sliku i pišem opis. Traje oko pola minuta.', izabrane.length > 1 ? 35 : 25);
-    try { const j = await akcija({ akcija: 'objava', napomena, slike: JSON.stringify(izabrane.map(u => u.split(',')[1])) }); const tz = await zakaziNovu(j.objava, terminZa); await gotovo(); osvezi(); pregled(j.objava, tz || j.termin); }
+    const sVideom = izabrane.filter(u => u.fajl);
+    if (sVideom.length && !pravo()) return tost('U primeru se video ne šalje.');
+    const videi = [];
+    try {
+      if (sVideom.length) {
+        radi(sVideom.length > 1 ? 'Šaljem videe u punom kvalitetu…' : 'Šaljem video u punom kvalitetu…', 0);
+        const ukupno = sVideom.reduce((z, u) => z + u.fajl.size, 0) || 1; let poslato = 0;
+        for (const u of sVideom) {
+          const odg = await posaljiVideo(u.fajl, p => postaviKrug((poslato + p * u.fajl.size) / ukupno * 0.6));
+          poslato += u.fajl.size; videi.push({ i: izabrane.indexOf(u), url: odg.url });
+        }
+        radi('Video je stigao, pišem opis za karusel…', 30, 0.6);
+      } else radi(izabrane.length > 1 ? 'Šaljem slike i pišem opis za karusel. Traje oko pola minuta.' : 'Šaljem sliku i pišem opis. Traje oko pola minuta.', izabrane.length > 1 ? 35 : 25);
+    } catch (er) { zatvoriPanel(); return tost(er.message || 'Slanje nije uspelo. Pokušajte ponovo.'); }
+    try { const j = await akcija({ akcija: 'objava', napomena, slike: JSON.stringify(izabrane.map(u => u.src.split(',')[1])), videi: JSON.stringify(videi) }); const tz = await zakaziNovu(j.objava, terminZa); await gotovo(); osvezi(); pregled(j.objava, tz || j.termin); }
     catch (er) { zatvoriPanel(); tost(er.message); }
   };
 }
@@ -1305,6 +1334,29 @@ function noviReels(terminZa) {
       const tz = await zakaziNovu(j.objava, terminZa); await gotovo(); osvezi(); pregled(j.objava, tz || j.termin);
     } catch (er) { zatvoriPanel(); tost(er.message || 'Slanje nije uspelo. Pokušajte ponovo.'); }
   };
+}
+const KARUSEL_VIDEO_S = 60;
+function kadarIzFajla(f) {
+  return new Promise((ok, ne) => {
+    const url = URL.createObjectURL(f), v = document.createElement('video');
+    v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto';
+    v.style.cssText = 'position:fixed;left:-9999px;width:2px;height:2px;opacity:0';
+    document.body.appendChild(v);
+    let gotovo = false;
+    const kraj = (er, rez) => { if (gotovo) return; gotovo = true; clearTimeout(t); v.remove(); URL.revokeObjectURL(url); er ? ne(er) : ok(rez); };
+    const t = setTimeout(() => kraj(new Error('Video nije mogao da se učita. Probajte drugi snimak.')), 12000);
+    v.onloadedmetadata = () => { try { v.currentTime = Math.min(1, (v.duration || 3) / 3); } catch (e) { kraj(e); } };
+    v.onseeked = () => {
+      try {
+        const max = 1440, k = Math.min(1, max / Math.max(v.videoWidth || 1080, v.videoHeight || 1920));
+        const c = document.createElement('canvas'); c.width = Math.round((v.videoWidth || 1080) * k); c.height = Math.round((v.videoHeight || 1920) * k);
+        c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+        kraj(null, { src: c.toDataURL('image/jpeg', 0.85), trajanje: v.duration || 0 });
+      } catch (e) { kraj(new Error('Video nije mogao da se učita. Probajte drugi snimak.')); }
+    };
+    v.onerror = () => kraj(new Error('Ovaj video telefon ne može da otvori. Probajte drugi snimak.'));
+    v.src = url; v.load();
+  });
 }
 function kadarIzVidea(v) {
   return new Promise((ok, ne) => {
