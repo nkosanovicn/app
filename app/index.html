@@ -7,9 +7,9 @@
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Razvitak: Instagram vašeg salona na jednom mestu.">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="ikona-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json?v=44">
+<link rel="icon" type="image/png" sizes="192x192" href="ikona-192.png?v=44">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=44">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Razvitak">
@@ -523,7 +523,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
   <button data-tab="plan"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Plan</button>
   <button data-tab="objave"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Objave</button>
   <button data-tab="saloni" hidden><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l1.5-5h13L20 10M4 10v9h16v-9M4 10c0 1.7 1.3 2.5 2.7 2.5S9.3 11.7 9.3 10c0 1.7 1.3 2.5 2.7 2.5s2.7-.8 2.7-2.5c0 1.7 1.3 2.5 2.6 2.5S20 11.7 20 10M10 19v-4h4v4"/></svg>Saloni</button>
-  <button data-tab="brojke"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M21 19H3"/></svg>Brojke</button>
+  <button data-tab="brojke"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M21 19H3"/></svg>Analitika</button>
 </nav>
 
 <div class="zavesa" id="zavesa"></div>
@@ -532,7 +532,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-17.42';
+const VERZIJA = '2026-11-17.44';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -592,7 +592,7 @@ async function ucitajStat() {
     if (!podaci || podaci.salon.kod !== kod) return;
     podaci.stat = j.stat; sacuvajKes();
     if (tab === 'brojke') brojke();
-  } catch (e) { statVreme = 0; if (tab === 'brojke' && podaci && podaci.stat === undefined) ekran(`<h1>Brojke</h1><div class="prazno"><p>Statistika se nije učitala.</p><button class="dugme" style="margin-top:18px" onclick="brojke()">Pokušaj ponovo</button></div>`); }
+  } catch (e) { statVreme = 0; if (tab === 'brojke' && podaci && podaci.stat === undefined) ekran(`<h1>Analitika</h1><div class="prazno"><p>Statistika se nije učitala.</p><button class="dugme" style="margin-top:18px" onclick="brojke()">Pokušaj ponovo</button></div>`); }
 }
 function istekla() { obrisiKes(); token = ''; skladiste.stavi('blade_token', ''); podaci = null; ekranPrijave('Prijava je istekla ili ste se odjavili. Prijavite se ponovo.'); }
 
@@ -1033,10 +1033,6 @@ function pocetna() {
     ${ceka}
     ${(() => { const p = narednaPraznici(1, 21)[0]; return p ? `<button class="praznik-podsetnik" id="prazniKartica"><span class="em" aria-hidden="true">${p.em}</span><span><strong>${esc(p.ime)} je ${zaDana(p)}</strong>Napravite objavu na vreme, jednim dodirom.</span></button>` : ''; })()}
     ${idejeKartica()}
-    <section class="mesec" aria-label="Ovog meseca">
-      <h2 style="margin-top:0">Ovog meseca</h2>
-      ${dodatno(b, s, limit)}
-    </section>
     <h2>Pošaljite nešto novo</h2>
     <div class="radnje">
       <button class="radnja" data-uputstvo="objava"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>Objava</button>
@@ -1286,6 +1282,12 @@ function stilPanel() {
 }
 function idejeKartica() {
   const s = stilPo(podaci.salon.stil);
+  const banka = (podaci.ideje || []).map(x => x.tema).filter(Boolean);
+  if (banka.length) {
+    const st = s || STILOVI[0];
+    return `<section class="st-ideje" aria-label="Ideje za objave" style="${stilVar(st)}"><div class="st-ideje-glava"><h2>Ideje za vaš profil</h2><button class="tekst-dugme" id="stPromeni">${s ? 'Tema: ' + s.ime : 'Izaberite temu'}</button></div>
+    ${banka.slice(0, 3).map(x => `<button class="st-ideja" data-ideja="${esc(x)}"><span>${esc(x)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`).join('')}</section>`;
+  }
   if (!s) return `<button class="st-poziv" id="stPoziv"><span class="st-paleta" aria-hidden="true">${['vedro', 'nezno', 'toplo', 'odvazno'].map(x => `<i style="background:${DIZ_TEME[x].p[1][0]}"></i>`).join('')}</span><span><strong>Izaberite temu profila</strong>Izgled grafika, ton tekstova i ideje za objave, jednim izborom.</span></button>`;
   const dan = Math.floor(Date.now() / 864e5), n = s.ideje.length;
   const tri = [0, 1, 2].map(k => s.ideje[(dan + k * 2) % n]);
@@ -1511,8 +1513,14 @@ function preIPosle(terminZa) {
 }
 
 function objave() {
-  const o = podaci.objavljeno || [];
-  ekran(`<h1>Objavljeno</h1><p class="pod">${o.length ? 'Poslednje objave na vašem profilu (' + o.length + ').' : ''}</p>
+  const o = podaci.objavljeno || [], b = podaci.brojke || {}, s = podaci.salon || {};
+  const limit = s.limit || Math.max(b.objavljeno || 0, 8);
+  ekran(`<h1>Objavljeno</h1>
+    <section class="mesec" aria-label="Ovog meseca" style="margin-top:14px">
+      <h2 style="margin-top:0">Ovog meseca</h2>
+      ${dodatno(b, s, limit)}
+    </section>
+    <p class="pod" style="margin-top:18px">${o.length ? 'Poslednje objave na vašem profilu (' + o.length + ').' : ''}</p>
     ${o.length ? `<div class="mreza" style="margin-top:16px">${o.map(x => `<button data-id="${x.id}" data-izvor="objavljeno" aria-label="${esc(prvaRecenica(x.caption))}">${x.slika ? `<img ${sl_atr(x.slika, 400)} alt="" loading="lazy">` : '<span style="display:grid;place-items:center;height:100%;font-size:28px">🎬</span>'}${x.slika_broj > 1 ? `<span class="oznaka">${x.slika_broj} slike</span>` : (x.tip === 'reel' ? '<span class="oznaka">Reels</span>' : '')}</button>`).join('')}</div>`
       : '<div class="prazno"><p>Ovde će se pojaviti vaše objave čim prva izađe.</p></div>'}`);
   vezi('objavljeno');
@@ -1637,8 +1645,8 @@ function poveziOdmah(dugme, o, zakljucaj) {
 function brojke() {
   const st = podaci.stat;
   ucitajStat();
-  if (st === undefined) return ekran(`<h1>Brojke</h1><p class="pod">Učitavam Instagram statistiku…</p><div class="ucitavanje"><div class="kost" style="height:70px;margin-top:22px"></div><div class="kost" style="height:120px;margin-top:16px"></div><div class="kost" style="height:110px;margin-top:16px"></div></div>`);
-  if (!st) return ekran(`<h1>Brojke</h1><div class="prazno"><p>Statistika će se pojaviti kad povežemo vaš Instagram nalog.</p></div>`);
+  if (st === undefined) return ekran(`<h1>Analitika</h1><p class="pod">Učitavam Instagram statistiku…</p><div class="ucitavanje"><div class="kost" style="height:70px;margin-top:22px"></div><div class="kost" style="height:120px;margin-top:16px"></div><div class="kost" style="height:110px;margin-top:16px"></div></div>`);
+  if (!st) return ekran(`<h1>Analitika</h1><div class="prazno"><p>Statistika će se pojaviti kad povežemo vaš Instagram nalog.</p></div>`);
   const niz = st.niz || [];
   const max = Math.max(1, ...niz.map(x => x.v));
   const W = 300, H = 110;
@@ -1659,7 +1667,7 @@ function brojke() {
   const prosek = poDanu.map((v, i) => brDana[i] ? v / brDana[i] : 0), najDan = prosek.indexOf(Math.max(...prosek));
   const DANI_INSTR = ['ponedeljkom', 'utorkom', 'sredom', 'četvrtkom', 'petkom', 'subotom', 'nedeljom'];
   const imaNedelju = niz.filter(x => x.v > 0).length >= 6 && niz.length >= 21;
-  ekran(`<h1>Brojke</h1><p class="pod">Instagram, poslednjih 30 dana.</p>
+  ekran(`<h1>Analitika</h1><p class="pod">Instagram, poslednjih 30 dana.</p>
     <div class="uradili"><h2>Ovog meseca smo za vas objavili</h2><div class="uradili-red"><div><b>${bb.objavljeno || 0}</b><span>${objava(bb.objavljeno || 0)}</span></div><div><b>${bb.story || 0}</b><span>Story</span></div><div><b>${bb.reels || 0}</b><span>Reels</span></div></div>
       ${minuta ? `<p>Uštedeli ste oko <strong>${sati} ${satiRec}</strong> rada na Instagramu. Računamo oko pola sata po objavi.</p>` : '<p>Prve objave ovog meseca su u pripremi.</p>'}</div>
     <div class="pratioci" style="margin-top:18px"><span class="veliki">${broj(st.pratioci)}</span><span class="pod" style="margin:0">pratilaca</span></div>
