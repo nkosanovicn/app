@@ -16,13 +16,13 @@
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600&display=swap&subset=latin-ext" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --pozadina:#FFFFFF; --povrsina:#FFFFFF; --mastilo:#1E211A; --tiho:#6B6E66; --linija:#E8E9E4; --tiho-poz:#F5F6F2;
   --orhideja:#5F7033; --orhideja-svetla:#EFF2E6; --rumenilo:#F6EFDD; --zlato:#D9A63A; --menta:#2F8F6B; --cilibar:#B26E00; --cilibar-svetli:#FCF0DC;
   --na-orhideji:#FFFFFF; --radius-veliki:22px; --radius:14px; --radius-mali:9px;
-  --display:"Fredoka", system-ui, sans-serif; --telo:"Figtree", system-ui, sans-serif;
+  --display:"Space Grotesk", system-ui, sans-serif; --telo:"DM Sans", system-ui, sans-serif; --broj:"DM Mono", ui-monospace, monospace;
 }
 :root.tamno{
   --pozadina:#111210; --povrsina:#191A17; --mastilo:#ECEDE8; --tiho:#9C9F95; --linija:#2C2E29; --tiho-poz:#1F201C;
@@ -419,6 +419,8 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 .najbolji img{width:56px;height:70px;border-radius:8px;object-fit:cover;flex:none}
 .najbolji b{font-size:15px}
 .najbolji small{display:block;color:var(--tiho);font-size:13px;margin-top:4px;line-height:1.4}
+/* brojevi u retro monospace fontu */
+.listic .sat,.mesec .broj,.salon-brojke b,.pratioci .veliki,.metrike b,.uradili-red b,.termin .sat-cip,.dan-oznaka b{font-family:var(--broj);font-weight:500;letter-spacing:-.03em}
 /* tema Instagram profila */
 .sp2{aspect-ratio:4/5;overflow:hidden;position:relative;display:block}
 .sp2-in{position:absolute;left:0;top:0;width:1080px;height:1350px;transform-origin:0 0}
@@ -489,7 +491,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 <path d="M258.0 258.0 L288.0 254.0 L286.0 284.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
       <b>Razvitak</b>
     </div>
-    <div class="desno"><div id="salonMesto"></div><button class="ikonica-dugme" id="postavkeDugme" aria-label="Podešavanja"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
+    <div class="desno"><div id="salonMesto"></div><button class="ikonica-dugme" id="temaDugme" aria-label="Svetla ili tamna tema"></button><button class="ikonica-dugme" id="postavkeDugme" aria-label="Podešavanja"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
   </header>
   <div id="primer" class="traka-primer" hidden>Primer prikaza sa izmišljenim podacima. Pravi podaci se vide kad se prijavite.</div>
   <main id="ekran" aria-live="polite">
@@ -511,7 +513,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-17.33';
+const VERZIJA = '2026-11-17.39';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -550,7 +552,10 @@ function uzmiKes() {
 }
 function obrisiKes() { try { Object.keys(localStorage).filter(k => k.startsWith('blade_kes_')).forEach(k => localStorage.removeItem(k)); } catch (e) {} }
 let statVreme = 0;
+const cistOpis = t => String(t ?? '').replace(/\\r\\n|\\n/g, '\n');
 function primi(j) {
+  ['ceka', 'objavljeno'].forEach(k => (j[k] || []).forEach(o => { if (o && o.caption) o.caption = cistOpis(o.caption); }));
+  (j.plan || []).forEach(t => { if (t && t.objava && t.objava.caption) t.objava.caption = cistOpis(t.objava.caption); });
   const isti = podaci && podaci.salon && j.salon && podaci.salon.kod === j.salon.kod;
   const stat = isti ? podaci.stat : undefined;
   podaci = j;
@@ -598,10 +603,16 @@ function primeniTemu() {
   const boja = getComputedStyle(document.documentElement).getPropertyValue('--pozadina').trim();
   const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', boja);
   if (uTelegramu) { try { tg.setHeaderColor && tg.setHeaderColor(boja); tg.setBackgroundColor && tg.setBackgroundColor(boja); } catch (e) {} }
+  if (typeof temaIkona === 'function') temaIkona();
 }
 if (uTelegramu) { try { tg.ready(); tg.expand(); tg.onEvent && tg.onEvent('themeChanged', primeniTemu); } catch (e) {} }
 else { try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', primeniTemu); } catch (e) {} }
 primeniTemu();
+var SUNCE = '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+var MESEC = '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>';
+function temaIkona() { const d = document.getElementById('temaDugme'); if (!d) return; const tamno = document.documentElement.classList.contains('tamno'); d.innerHTML = tamno ? SUNCE : MESEC; d.setAttribute('aria-label', tamno ? 'Uključi svetlu temu' : 'Uključi tamnu temu'); }
+temaIkona();
+document.getElementById('temaDugme').onclick = () => { haptika(); const tamno = document.documentElement.classList.contains('tamno'); try { localStorage.setItem('razvitak_tema', tamno ? 'svetla' : 'tamna'); } catch (e) {} primeniTemu(); };
 
 async function ucitaj() {
   if (!uTelegramu && demo) return prikaziPrimer();
@@ -741,31 +752,17 @@ function postavke() {
 
   const iz = temaIzbor();
   const seg = (k, t) => `<button data-tema="${k}" aria-pressed="${iz === k}">${t}</button>`;
-  const paket = s ? `<div class="post-grupa"><h4>Vaš paket</h4>
-      <div class="post-red"><span>Paket</span><span>${esc(s.paket || '')}</span></div>
-      <div class="post-red"><span>Objave mesečno</span><span>${Number(l.objave || s.limit) || 'po dogovoru'}</span></div>
-      ${Number(l.reels) ? `<div class="post-red"><span>Reels mesečno</span><span>${l.reels}</span></div>` : ''}
-      ${Number(l.story) ? `<div class="post-red"><span>Story mesečno</span><span>${l.story}</span></div>` : ''}
-      <p class="post-napomena">Za promenu paketa pišite nam u chat.</p></div>
-    <div class="post-grupa"><h4>Raspored objava</h4><button class="post-link" id="postRaspored">${esc(s.raspored || 'Podesite raspored')}</button></div>` : '';
+  const paket = s ? `<div class="post-grupa"><h4>Raspored objava</h4><button class="post-link" id="postRaspored">${esc(s.raspored || 'Podesite raspored')}</button></div>` : '';
   const nalog = uTelegramu ? '' : (demo || !token
     ? `<div class="post-grupa"><h4>Nalog</h4><button class="dugme" id="postPrijava">Prijavite se</button></div>`
-    : `<div class="post-grupa"><h4>Nalog</h4>${podaci && podaci.ime ? `<div class="post-red"><span>Prijavljeni ste kao</span><span>${esc(podaci.ime)}</span></div>` : ''}
-        <button class="dugme opasno" id="postOdjava">Odjavi se sa ovog uređaja</button>
-        <p class="post-napomena">Za odjavu sa svih uređaja odjednom pošaljite botu reč „odjava“.</p></div>`);
+    : `<div class="post-grupa"><h4>Nalog</h4>
+        <button class="dugme opasno" id="postOdjava">Odjavi se sa ovog uređaja</button></div>`);
   otvoriPanel(`<h3>Podešavanja</h3>
-    <div class="post-grupa" style="margin-top:14px"><h4>Izgled</h4><div class="seg" role="group" aria-label="Tema">${seg('auto', uTelegramu ? 'Kao Telegram' : 'Kao telefon')}${seg('svetla', 'Svetla')}${seg('tamna', 'Tamna')}</div></div>
-    ${s ? `<div class="post-grupa"><h4>Naziv salona u aplikaciji</h4><div class="naziv-red"><input class="polje" id="nazivSalona" maxlength="60" value="${esc(s.naziv || '')}" aria-label="Naziv salona"><button class="cip" id="sacuvajNaziv" disabled>Sačuvaj</button></div><p class="post-napomena">Ovaj naziv se vidi u aplikaciji i u dnu grafika koje pravimo.</p></div>` : ''}
-    ${s ? `<div class="post-grupa"><h4>Tema Instagram profila</h4><button class="post-link" id="postStil">${esc((stilPo(s.stil) || {}).ime || 'Izaberite temu')}</button><p class="post-napomena">Izgled grafika, ton tekstova i ideje za objave.</p></div>` : ''}
-    <div class="post-grupa"><h4>Instagram nalog</h4><div id="igNalog" class="ig-nalog"><span class="ig-slika"></span><div><b>Učitavam…</b></div></div>
+    ${s ? `<div class="post-grupa" style="margin-top:14px"><button class="post-link" id="postStil">${esc((stilPo(s.stil) || {}).ime || 'Izaberite temu')}</button></div>` : ''}
+    <div class="post-grupa"><div id="igNalog" class="ig-nalog"><span class="ig-slika"></span><div><b>Učitavam…</b></div></div>
       <button class="post-link" id="poveziIg">Poveži ili osveži Instagram</button>
-      <p class="post-napomena">Posle promene imena ili slike na Instagramu, ovde ga povežite ponovo da se podaci osveže.</p>
       ${s ? '<button class="post-link sporedno" id="postBio">Predlog opisa profila</button>' : ''}</div>
     ${paket}
-    <div class="post-grupa"><h4>Pomoć</h4>
-      <a class="post-link" href="https://t.me/${BOT}" target="_blank" rel="noopener" id="postChat">Pišite nam u chat</a>
-      ${!uTelegramu && !samostalno ? '<button class="post-link" id="postEkran">Dodaj Razvitak na početni ekran</button>' : ''}
-    </div>
     ${nalog}
     <p class="post-verzija">Razvitak, verzija ${VERZIJA}</p>`);
   const ps = document.getElementById('postStil'); if (ps) ps.onclick = () => { zatvoriPanel(); setTimeout(stilPanel, 250); };
@@ -1012,8 +1009,6 @@ function pocetna() {
   const limit = s.limit || Math.max(b.objavljeno, 8);
   const ceka = b.ceka ? `<button class="ceka" id="otvoriCeka"><div class="slike">${p.ceka.slice(0, 3).map(o => slika(o)).join('')}</div><p><strong>${b.ceka === 1 ? 'Jedna objava čeka' : b.ceka + ' ' + objava(b.ceka) + (objava(b.ceka) === 'objave' ? ' čekaju' : ' čeka')} vaše odobrenje</strong>Pogledajte i odobrite ovde.</p></button>` : '';
   ekran(`
-    <h1>${pozdrav()}${ime ? ', ' + esc(ime) : ''}</h1>
-    <p class="pod">${b.spremno === 1 ? 'Jedna objava je spremna i čeka svoj termin.' : (b.spremno > 1 ? b.spremno + ' ' + objava(b.spremno) + (objava(b.spremno) === 'objave' ? ' čekaju' : ' čeka') + ' svoj termin.' : 'Pošaljite sliku i mi pripremamo sledeću objavu.')}</p>
     ${listic}
     ${ceka}
     ${(() => { const p = narednaPraznici(1, 21)[0]; return p ? `<button class="praznik-podsetnik" id="prazniKartica"><span class="em" aria-hidden="true">${p.em}</span><span><strong>${esc(p.ime)} je ${zaDana(p)}</strong>Napravite objavu na vreme, jednim dodirom.</span></button>` : ''; })()}
@@ -1040,13 +1035,13 @@ function pocetna() {
 const DIZ_TEME = {
   elegantno: { n: 'Cormorant Garamond', nw: 600, t: 'Jost', tw: 500, r: 8, kurziv: true, motiv: 'luk',
     p: [['#4B2C3F', '#F4EDE4', '#D9B98B'], ['#F4EDE4', '#4B2C3F', '#B5838D'], ['#B5838D', '#FFF8F2', '#4B2C3F'], ['#2A1822', '#F4EDE4', '#D9B98B'], ['#E9DCCB', '#4B2C3F', '#9A6B4F']] },
-  toplo: { n: 'Fraunces', nw: 600, t: 'Figtree', tw: 500, r: 36, motiv: 'mrlje',
+  toplo: { n: 'Fraunces', nw: 600, t: 'Bricolage Grotesque', tw: 500, r: 36, motiv: 'mrlje',
     p: [['#F6EBDD', '#4A2F22', '#C77B4A'], ['#6B4632', '#FFF4E6', '#E2B16E'], ['#E2B16E', '#3E281C', '#8A8C4F'], ['#8A8C4F', '#FFF8EC', '#F2D3A0'], ['#E9B4A0', '#3E281C', '#6B4632']] },
-  vedro: { n: 'Fredoka', nw: 600, t: 'Figtree', tw: 600, r: 48, motiv: 'konfete',
+  vedro: { n: 'Lilita One', nw: 400, t: 'Rubik', tw: 500, r: 48, motiv: 'konfete',
     p: [['#FBF6E9', '#2E3A16', '#F08A73'], ['#5F7033', '#FFFFFF', '#F5C542'], ['#8EC5E8', '#173048', '#F08A73'], ['#F5C542', '#2E3A16', '#5F7033'], ['#F08A73', '#FFFFFF', '#FBF6E9']] },
-  nezno: { n: 'Playfair Display', nw: 600, t: 'Nunito', tw: 600, r: 44, kurziv: true, motiv: 'mehurici',
+  nezno: { n: 'DM Serif Display', nw: 400, t: 'Quicksand', tw: 600, r: 44, kurziv: true, motiv: 'mehurici',
     p: [['#FFF1F4', '#7A3B55', '#E89AB3'], ['#F4C9D4', '#6B2E48', '#FFFFFF'], ['#D9CBEF', '#3F2D5C', '#FFFFFF'], ['#A35D78', '#FFF5F8', '#F4C9D4'], ['#F7DCCB', '#6B3A2E', '#A35D78']] },
-  cisto: { n: 'Manrope', nw: 800, t: 'Manrope', tw: 500, r: 14, motiv: 'linije',
+  cisto: { n: 'Space Grotesk', nw: 700, t: 'DM Sans', tw: 500, r: 14, motiv: 'linije',
     p: [['#F5F4F1', '#22262A', '#4A6FA5'], ['#22262A', '#F5F4F1', '#C9B79C'], ['#C9B79C', '#22262A', '#FFFFFF'], ['#4A6FA5', '#FFFFFF', '#F5F4F1'], ['#E4E6E8', '#22262A', '#33383C']] },
   odvazno: { n: 'Anton', nw: 400, t: 'Archivo', tw: 600, r: 6, velika: true, motiv: 'pruge',
     p: [['#1D2125', '#F2F2F2', '#F28C28'], ['#F28C28', '#1D2125', '#F2F2F2'], ['#F2F2F2', '#1D2125', '#E0412F'], ['#E8F05A', '#1D2125', '#1D2125'], ['#2B3036', '#F2F2F2', '#E8F05A']] }
@@ -1054,7 +1049,7 @@ const DIZ_TEME = {
 function dizHex(a, b, p) { const x = h => { const v = parseInt(String(h).replace('#', '').slice(0, 6), 16) || 0; return [v >> 16 & 255, v >> 8 & 255, v & 255]; }; const A = x(a), B = x(b); return '#' + A.map((c, i) => Math.round(c * p + B[i] * (1 - p)).toString(16).padStart(2, '0')).join('').toUpperCase(); }
 function dizVlastita(b, a) {
   b = /^#[0-9a-f]{6}$/i.test(b || '') ? b : '#5F7033'; a = /^#[0-9a-f]{6}$/i.test(a || '') ? a : '#D9A63A';
-  return { n: 'Fredoka', nw: 600, t: 'Figtree', tw: 600, r: 48, motiv: '',
+  return { n: 'Space Grotesk', nw: 700, t: 'DM Sans', tw: 500, r: 40, motiv: '',
     p: [[dizHex(b, '#FFFFFF', 0.12), dizHex(b, '#000000', 0.75), b], [b, '#FFFFFF', a], [dizHex(b, '#000000', 0.55), '#FFFFFF', a]] };
 }
 function dizFontovi(id) {
@@ -1127,6 +1122,8 @@ function dizStrana(stilId, vrsta, d, naziv, info, kl) {
 .${kl} .karta.nagnuta{transform:rotate(-2.2deg)}
 .${kl} .karta .veliki{color:${tamnaPoz ? tx : '#262626'}}
 .${kl} .karta .crta{margin:40px 0 30px}
+.${kl} .karta .eti{color:${tamnaPoz ? tx : '#262626'};border-color:${Math.abs(sv(ak) - sv(tamnaPoz ? kart : '#FFFFFF')) < 0.25 ? (tamnaPoz ? tx : '#262626') : ak}}
+.${kl} .karta .kurz{color:${Math.abs(sv(ak) - sv(tamnaPoz ? kart : '#FFFFFF')) < 0.25 ? (tamnaPoz ? tx : '#262626') : ak}}
 .${kl} .krug{width:150px;height:150px;border-radius:50%;background:${ak};color:${naAk};display:grid;place-items:center;font:${T.nw} 84px ${NF};margin-bottom:56px}
 .${kl} .duh{position:absolute;right:-30px;bottom:-120px;font-family:${NF};font-weight:${T.nw};font-size:900px;line-height:1;color:${tx};opacity:.07}
 .${kl} .pilula{display:inline-block;background:${ak};color:${naAk};font:700 38px ${TF};padding:26px 54px;border-radius:999px;margin-top:20px}
@@ -1171,19 +1168,19 @@ const STILOVI = [
     primer: 'Vaše vreme kod nas ne merimo minutima, nego rezultatom.\nZakažite termin porukom u DM.',
     ideje: ['Šta se dešava tokom jednog termina, korak po korak', 'Detalj izbliza i priča iza tog rada', 'Pitanje klijentkinje i stručan odgovor', 'Kako da rezultat traje duže kod kuće', 'Atmosfera salona: mesto gde se odmara', 'Tretman meseca i kome najviše odgovara'] },
   { id: 'toplo', ime: 'Toplo', opis: 'Prisno, kao razgovor uz kafu. Za salone u kojima se klijenti znaju po imenu.',
-    b: '#6B4632', a: '#E2B16E', n: 'Fraunces', nw: 600, t: 'Figtree', tw: 500, r: 28,
+    b: '#6B4632', a: '#E2B16E', n: 'Fraunces', nw: 600, t: 'Bricolage Grotesque', tw: 500, r: 28,
     primer: 'Danas je kod nas mirisalo na kafu i sveže feniranu kosu ☕\nSvratite, ima mesta i za vas.',
     ideje: ['Jedan dan u salonu, od jutarnje kafe do poslednjeg termina', 'Najčešće pitanje ove nedelje i naš odgovor', 'Zašto volimo baš ovu uslugu', 'Mali savet koji možete da probate već večeras', 'Hvala klijentima: šta nam znači kad se vraćate', 'Slobodni termini ove nedelje'] },
   { id: 'vedro', ime: 'Vedro', opis: 'Razigrano i prijateljski, sa malo humora. Objave koje ljudi komentarišu.',
-    b: '#5F7033', a: '#D9A63A', n: 'Fredoka', nw: 600, t: 'Figtree', tw: 500, r: 56,
+    b: '#5F7033', a: '#D9A63A', n: 'Lilita One', nw: 400, t: 'Rubik', tw: 500, r: 56,
     primer: 'Iskreno, koliko puta ste ove nedelje rekli „sutra ću na šišanje“? 😄\nJavite se u DM, sutra je danas.',
     ideje: ['Anketa: koju od dve nijanse biste izabrali?', 'Mit ili istina o nezi koji svi ponavljaju', '3 greške koje svi pravimo kod kuće', 'Pitanje klijentkinje i naš odgovor', 'Iza kulisa: kako izgleda gužva u subotu', 'Slobodni termini ove nedelje'] },
   { id: 'nezno', ime: 'Nežno', opis: 'Ženstveno i nežno, pastelne boje. Za nokte, trepavice, kozmetiku i mlađu publiku.',
-    b: '#A35D78', a: '#F4C9D4', n: 'Playfair Display', nw: 600, t: 'Nunito', tw: 600, r: 40,
+    b: '#A35D78', a: '#F4C9D4', n: 'DM Serif Display', nw: 400, t: 'Quicksand', tw: 600, r: 40, kurziv: true,
     primer: 'Mali detalji, a toliko menjaju 🤍\nPrijavite se za termin porukom, čuvamo ga za vas.',
     ideje: ['Novi oblik ili nijansa koju sada svi traže', 'Kako se pripremiti za prvi termin', 'Nega posle tretmana u 3 koraka', 'Pitanje klijentkinje i nežan, stručan odgovor', 'Kombinacija meseca: boja i oblik', 'Slobodni termini ove nedelje'] },
   { id: 'cisto', ime: 'Čisto', opis: 'Jasno i jednostavno, bez ukrasa. Jedna poruka po objavi, lako se čita.',
-    b: '#33383C', a: '#C9B79C', n: 'Manrope', nw: 800, t: 'Manrope', tw: 500, r: 14,
+    b: '#33383C', a: '#C9B79C', n: 'Space Grotesk', nw: 700, t: 'DM Sans', tw: 500, r: 14,
     primer: 'Šišanje traje 45 minuta. Rezultat traje mesec dana.\nTermin zakažite porukom.',
     ideje: ['Usluga i šta tačno dobijate, jasno nabrojano', 'Koliko često dolaziti i zašto', 'Pre i posle, bez mnogo reči', 'Jedan savet, jedna rečenica', 'Odgovor na najčešće pitanje', 'Slobodni termini ove nedelje'] },
   { id: 'odvazno', ime: 'Odvažno', opis: 'Tamno, krupna slova, samouveren ton. Za barbershop i moderne studije.',
@@ -1726,7 +1723,7 @@ function pregled(o, termin) {
   document.getElementById('aNe').onclick = async e => { haptika(); zakljucaj(true);
     try { const j = await akcija({ akcija: 'ne', red_id: o.id }); zatvoriPanel(); tost(j.poruka || 'Neće biti objavljeno.'); osvezi(); } catch (er) { tost(er.message); zakljucaj(false); } };
   const izmeni = async (c, polja) => { haptika(); const staro = c.textContent; c.textContent = 'Pišem…'; zakljucaj(true);
-    try { const j = await akcija({ ...polja, red_id: o.id }); if (j.slike_u_izradi) { const staro = (o.slike && o.slike.length ? o.slike : [o.slika]).join(','); return cekajNovo(() => { const n = (podaci.ceka || []).find(x => String(x.id) === String(o.id)); return n && (n.slike && n.slike.length ? n.slike : [n.slika]).join(',') !== staro ? n : null; }, 'Crtam nove slajdove. Obično traje 1 do 2 minuta, pa se predlog sam otvori. Možete i zatvoriti, biće u „Čeka odobrenje“.'); } o.caption = j.caption || o.caption; document.getElementById('opisPregled').innerHTML = opisHtml(o.caption); tost('Evo nove verzije.'); if (polja.akcija === 'tx') { const p = document.getElementById('svojaIzmena'); if (p) p.value = ''; } } catch (er) { tost(er.message); }
+    try { const j = await akcija({ ...polja, red_id: o.id }); if (j.slike_u_izradi) { const staro = (o.slike && o.slike.length ? o.slike : [o.slika]).join(','); return cekajNovo(() => { const n = (podaci.ceka || []).find(x => String(x.id) === String(o.id)); return n && (n.slike && n.slike.length ? n.slike : [n.slika]).join(',') !== staro ? n : null; }, 'Crtam nove slajdove. Obično traje 1 do 2 minuta, pa se predlog sam otvori. Možete i zatvoriti, biće u „Čeka odobrenje“.'); } o.caption = cistOpis(j.caption || o.caption); document.getElementById('opisPregled').innerHTML = opisHtml(o.caption); tost('Evo nove verzije.'); if (polja.akcija === 'tx') { const p = document.getElementById('svojaIzmena'); if (p) p.value = ''; } } catch (er) { tost(er.message); }
     c.textContent = staro; zakljucaj(false); osveziIzmenu(); };
   document.querySelectorAll('[data-iz]').forEach(c => c.onclick = () => izmeni(c, { akcija: c.dataset.iz }));
   const poljeIzmene = document.getElementById('svojaIzmena'), dugmeIzmene = document.getElementById('posaljiIzmenu');
