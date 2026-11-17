@@ -351,6 +351,74 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 .post-verzija{font-size:12px;color:var(--tiho);text-align:center;margin-top:26px}
 .podnozje{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:22px;padding-top:12px;border-top:1px solid var(--linija)}
 .traka-primer button{color:inherit;font-weight:700;font-size:inherit;text-decoration:underline;padding:0}
+
+/* plan: profil i kalendar */
+.plan-seg{margin:12px 0 4px}
+.ig-glava{display:flex;gap:12px;align-items:center;margin:14px 0 10px}
+.ig-avatar{width:48px;height:48px;border-radius:50%;background:var(--orhideja);color:var(--na-orhideji);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:20px;box-shadow:0 0 0 2px var(--pozadina),0 0 0 4px var(--zlato);flex:none}
+.ig-glava b{display:block;font-size:15px}
+.ig-glava small{color:var(--tiho);font-size:13px}
+.mreza.ig-mreza{gap:2px;border-radius:12px}
+.mreza.ig-mreza>*{position:relative;aspect-ratio:3/4;background:var(--rumenilo);display:block;overflow:hidden}
+.mreza.ig-mreza img{width:100%;height:100%;object-fit:cover}
+.ig-mreza .buduca::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 3px var(--zlato);pointer-events:none}
+.ig-mreza .kad{position:absolute;left:6px;top:6px;background:var(--zlato);color:#2A2410;font-size:11px;font-weight:700;border-radius:6px;padding:2px 6px}
+.ig-mreza .vise{position:absolute;top:5px;right:7px;color:#fff;font-size:14px;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.ig-mreza .bez-slike{display:grid;place-items:center;height:100%;font-size:26px}
+.kal{background:var(--povrsina);border:1px solid var(--linija);border-radius:var(--radius);padding:10px;margin-top:14px}
+.kal-glava{display:flex;justify-content:space-between;align-items:center;padding:0 2px 8px}
+.kal-glava b{font-family:var(--display);font-size:18px;font-weight:700}
+.kal-str{width:40px;height:40px;border-radius:50%;font-size:24px;line-height:1;color:var(--orhideja)}
+.kal-mreza{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.kal-ime{font-size:11px;color:var(--tiho);text-align:center;padding:2px 0 6px}
+.kal-dan{position:relative;min-height:46px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:14px}
+.kal-dan b{font-weight:500}
+.kal-dan.danas b{color:var(--orhideja);font-weight:800}
+.kal-dan[aria-pressed="true"]{background:var(--orhideja);color:var(--na-orhideji)}
+.kal-dan[aria-pressed="true"] b{color:inherit}
+.kal-dan em{position:absolute;top:2px;right:2px;font-size:9px;font-style:normal;line-height:1}
+.tacke{display:flex;gap:3px;height:6px}
+.tacke i,.kal-legenda i{width:6px;height:6px;border-radius:50%;display:inline-block}
+.t-zak{background:var(--zlato)}
+.t-obj{background:var(--tiho)}
+.t-slo{border:1.5px solid var(--tiho)}
+.kal-dan[aria-pressed="true"] .t-zak,.kal-dan[aria-pressed="true"] .t-obj{background:currentColor}
+.kal-dan[aria-pressed="true"] .t-slo{border-color:currentColor}
+.kal-legenda{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:12px;color:var(--tiho);margin-top:10px}
+.kal-legenda span{display:flex;align-items:center;gap:5px}
+.kal-detalj{display:grid;gap:8px}
+.kal-stavka{display:flex;gap:10px;align-items:center;text-align:left;background:var(--povrsina);border:1px solid var(--linija);border-radius:var(--radius-mali);padding:8px;width:100%}
+.kal-stavka img{width:44px;height:55px;border-radius:7px;object-fit:cover;flex:none;background:var(--rumenilo)}
+.kal-stavka span{font-size:14px;line-height:1.35}
+.kal-stavka small{display:block;font-size:12px;color:var(--tiho);margin-bottom:2px}
+.kal-slobodno{border:1.5px dashed var(--linija);border-radius:var(--radius-mali);padding:13px 12px;font-size:14px;color:var(--orhideja);font-weight:600;text-align:left;width:100%}
+.praznik-kartica{display:flex;gap:12px;background:var(--rumenilo);border-radius:var(--radius);padding:14px}
+.praznik-kartica .em{font-size:28px;line-height:1}
+.praznik-kartica b{display:block;font-size:15px}
+.praznik-kartica .kada{font-weight:500;color:var(--tiho);font-size:13px}
+.praznik-kartica small{display:block;color:var(--tiho);font-size:13px;margin:4px 0 10px;line-height:1.4}
+.praznik-podsetnik{margin-top:14px;width:100%;display:flex;gap:12px;align-items:center;text-align:left;background:var(--rumenilo);border-radius:var(--radius);padding:14px 16px;font-size:14px;color:var(--tiho)}
+.praznik-podsetnik strong{display:block;font-size:15px;color:var(--mastilo)}
+.praznik-podsetnik .em{font-size:26px;line-height:1}
+.radnje{grid-template-columns:repeat(4,1fr);gap:8px}
+.radnja{font-size:13px;padding:14px 4px 12px;text-align:center;line-height:1.2}
+/* pre i posle */
+.pp-izbor{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.pp-slot{border:1.5px dashed var(--linija);border-radius:var(--radius);padding:24px 8px;text-align:center;font-weight:600;color:var(--orhideja);cursor:pointer}
+.pp-slot.ima{border-style:solid;border-color:var(--orhideja);background:var(--orhideja-svetla)}
+.pp-platno{width:100%;height:auto;border-radius:var(--radius);margin-top:12px;display:block}
+.pp-platno[hidden]{display:none}
+/* brojke */
+.uradili{background:var(--orhideja);color:var(--na-orhideji);border-radius:var(--radius-veliki);padding:18px;margin-top:18px}
+.uradili h2{margin:0 0 12px;font-size:15px;color:inherit;opacity:.9}
+.uradili-red{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.uradili-red b{display:block;font-family:var(--display);font-size:34px;font-weight:800;line-height:1}
+.uradili-red span{font-size:13px;opacity:.85}
+.uradili p{font-size:14px;margin-top:12px}
+.najbolji{display:flex;gap:12px;align-items:center;background:var(--povrsina);border:1px solid var(--linija);border-radius:var(--radius);padding:12px}
+.najbolji img{width:56px;height:70px;border-radius:8px;object-fit:cover;flex:none}
+.najbolji b{font-size:15px}
+.najbolji small{display:block;color:var(--tiho);font-size:13px;margin-top:4px;line-height:1.4}
 </style>
 </head>
 <body>
@@ -392,7 +460,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-16.27';
+const VERZIJA = '2026-11-17.30';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -895,6 +963,7 @@ function pocetna() {
     <p class="pod">${b.spremno === 1 ? 'Jedna objava je spremna i čeka svoj termin.' : (b.spremno > 1 ? b.spremno + ' ' + objava(b.spremno) + (objava(b.spremno) === 'objave' ? ' čekaju' : ' čeka') + ' svoj termin.' : 'Pošaljite sliku i mi pripremamo sledeću objavu.')}</p>
     ${listic}
     ${ceka}
+    ${(() => { const p = narednaPraznici(1, 21)[0]; return p ? `<button class="praznik-podsetnik" id="prazniKartica"><span class="em" aria-hidden="true">${p.em}</span><span><strong>${esc(p.ime)} je ${zaDana(p)}</strong>Napravite objavu na vreme, jednim dodirom.</span></button>` : ''; })()}
     <section class="mesec" aria-label="Ovog meseca">
       <h2 style="margin-top:0">Ovog meseca</h2>
       ${dodatno(b, s, limit)}
@@ -903,9 +972,11 @@ function pocetna() {
     <div class="radnje">
       <button class="radnja" data-uputstvo="objava"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>Objava</button>
       <button class="radnja" data-uputstvo="reels"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 4l2 5M14 4l2 5"/><path d="M10.5 12.5v4l3.5-2z"/></svg>Reels</button>
+      <button class="radnja" data-uputstvo="prepre"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M12 4v16"/><path d="M6.5 15l2-2.5 2 2.5M14 9.5h4"/></svg>Pre i posle</button>
       <button class="radnja" data-uputstvo="story"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5" stroke-dasharray="4 2.2"/><path d="M12 8.5v7M8.5 12h7"/></svg>Story</button>
     </div>`);
-  document.querySelectorAll('[data-uputstvo]').forEach(d => d.onclick = () => ({ objava: novaObjava, story: noviStory, reels: noviReels })[d.dataset.uputstvo]());
+  document.querySelectorAll('[data-uputstvo]').forEach(d => d.onclick = () => ({ objava: novaObjava, story: noviStory, reels: noviReels, prepre: preIPosle })[d.dataset.uputstvo]());
+  const pz = document.getElementById('prazniKartica'); if (pz) pz.onclick = () => napraviZaPraznik(narednaPraznici(1, 21)[0]);
   const oc = document.getElementById('otvoriCeka'); if (oc) oc.onclick = listaCeka;
   const so = document.getElementById('sledecaObjava'); if (so) { so.onclick = () => { haptika(); pregledGotove(sledeci.objava, 'plan', sledeci.dan + ' u ' + sledeci.sat); }; so.onkeydown = e => { if (e.key === 'Enter') so.onclick(); }; }
 }
@@ -921,18 +992,205 @@ function uputstvo(vrsta) {
   const uc = document.getElementById('uChat'); if (uc) uc.onclick = () => { haptika('medium'); tg.close(); };
 }
 
+/* ---------- plan: lista, profil (mreža) i kalendar ---------- */
+let planPogled = (() => { try { return sessionStorage.getItem('razvitak_plan') || 'lista'; } catch (e) { return 'lista'; } })();
+let mrezaKes = { kod: null, vreme: 0, lista: null };
+let kalMesec = null, kalDan = null;
+const MESECI = ['januar', 'februar', 'mart', 'april', 'maj', 'jun', 'jul', 'avgust', 'septembar', 'oktobar', 'novembar', 'decembar'];
+const MESECI_GEN = ['januara', 'februara', 'marta', 'aprila', 'maja', 'juna', 'jula', 'avgusta', 'septembra', 'oktobra', 'novembra', 'decembra'];
+const DANI_K = ['pon', 'uto', 'sre', 'čet', 'pet', 'sub', 'ned'];
+const kljucDana = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+function datumTermina(t) {
+  if (t.kada) return new Date(t.kada);
+  const m = String(t.dan || '').match(/(\d+)\.(\d+)\./); if (!m) return null;
+  const sad = new Date(); const x = new Date(sad.getFullYear(), Number(m[2]) - 1, Number(m[1]), parseInt(t.sat, 10) || 10);
+  if (x < new Date(sad.getTime() - 60 * 864e5)) x.setFullYear(x.getFullYear() + 1);
+  return x;
+}
+const jeLepota = () => !podaci.salon.delatnost || /salon|frizer|kozmet|nokt|manik|pedik|barber|brij|trepav|obrv|masa|lepot|šmink|smink|spa|depil|nega/i.test(podaci.salon.delatnost);
+function praznici(g) {
+  const d = (m, dan) => new Date(g, m - 1, dan);
+  const uskrs = (() => { const a = g % 4, b = g % 7, c = g % 19, dd = (19 * c + 15) % 30, e = (2 * a + 4 * b - dd + 34) % 7; const x = new Date(g, Math.floor((dd + e + 114) / 31) - 1, ((dd + e + 114) % 31) + 1); x.setDate(x.getDate() + 13); return x; })();
+  const bozic = new Date(g + 1, 0, 7); const oci = new Date(bozic); oci.setDate(oci.getDate() - (bozic.getDay() || 7));
+  const materice = new Date(oci); materice.setDate(materice.getDate() - 7);
+  const crni = (() => { const x = new Date(g, 10, 1); return new Date(g, 10, (4 - x.getDay() + 7) % 7 + 1 + 22); })();
+  const sve = [
+    [d(1, 1), 'Nova godina', '🎆', 'Čestitka za Novu godinu i zahvalnost klijentima za prethodnu godinu', 1],
+    [d(1, 7), 'Božić', '🎄', 'Čestitka za Božić i radno vreme za praznike', 1],
+    [d(1, 14), 'Srpska Nova godina', '✨', 'Čestitka za Srpsku Novu godinu', 1],
+    [d(2, 14), 'Dan zaljubljenih', '❤️', 'Dan zaljubljenih: poklon vaučer za voljenu osobu i poziv da se termin zakaže na vreme', 0],
+    [d(3, 8), 'Dan žena', '🌷', 'Dan žena (8. mart): čestitka ženama, poklon vaučer i poziv da se termin pred praznik zakaže na vreme', 0],
+    [uskrs, 'Uskrs', '🥚', 'Čestitka za Uskrs i radno vreme za praznike', 1],
+    [d(5, 15), 'Sezona maturskih večeri', '🎓', 'Maturske večeri: priprema za maturu i poziv da se termini zakažu na vreme', 0],
+    [d(6, 1), 'Svadbena sezona', '💍', 'Svadbena sezona: priprema mladih i gostiju i zakazivanje na vreme', 0],
+    [d(6, 21), 'Početak leta', '☀️', 'Početak leta: letnji izgled i nega tokom leta', 0],
+    [d(9, 1), 'Početak jeseni', '🍂', 'Povratak u rutinu posle leta: obnova i nega posle leta', 0],
+    [crni, 'Crni petak', '🛍️', 'Crni petak: posebna ponuda (u napomeni napišite tačnu ponudu)', 1],
+    [d(12, 1), 'Praznični termini', '🎉', 'Zakažite na vreme termin za praznike i doček, decembar se brzo popuni', 0],
+    [materice, 'Materice', '💐', 'Materice: čestitka majkama i poklon vaučer za mamu', 0],
+    [d(12, 31), 'Doček Nove godine', '🥂', 'Spremni za doček: poslednji termini u godini i čestitka', 0]
+  ];
+  const lep = jeLepota();
+  return sve.filter(p => p[4] || lep).map(([dat, ime, em, tema]) => ({ dat, ime, em, tema, k: kljucDana(dat) }));
+}
+function narednaPraznici(n, dana) {
+  const danas = new Date(); danas.setHours(0, 0, 0, 0); const g = danas.getFullYear();
+  return [...praznici(g), ...praznici(g + 1)].filter(p => p.dat >= danas && (!dana || p.dat - danas <= dana * 864e5)).sort((a, b) => a.dat - b.dat).slice(0, n);
+}
+const zaDana = p => { const danas = new Date(); danas.setHours(0, 0, 0, 0); const n = Math.round((p.dat - danas) / 864e5); return n === 0 ? 'danas' : (n === 1 ? 'sutra' : 'za ' + n + ' dana'); };
+function slotPre(datum) {
+  const kraj = new Date(datum); kraj.setHours(23, 59, 0, 0);
+  const slobodni = (podaci.plan || []).filter(t => t.kljuc && !t.objava).map(t => ({ t, d: datumTermina(t) })).filter(x => x.d && x.d <= kraj && x.d > new Date());
+  return slobodni.length ? slobodni[slobodni.length - 1].t.kljuc : '';
+}
+function napraviZaPraznik(p) { haptika(); novaObjava(slotPre(p.dat), p.tema); }
+
 function plan() {
+  ekran(`<h1>Plan objava</h1>
+    <button class="raspored-kartica" id="otvoriRaspored"><span><small>Raspored objava</small><b>${esc(podaci.salon.raspored || 'nije podešen')}</b></span><span class="promeni">Promeni</span></button>
+    <div class="seg plan-seg" role="group" aria-label="Prikaz plana">${[['lista', 'Lista'], ['mreza', 'Profil'], ['kalendar', 'Kalendar']].map(([k, n]) => `<button data-pogled="${k}" aria-pressed="${planPogled === k}">${n}</button>`).join('')}</div>
+    <div id="planTelo"></div>`);
+  document.getElementById('otvoriRaspored').onclick = rasporedPanel;
+  document.querySelectorAll('[data-pogled]').forEach(b => b.onclick = () => { if (planPogled === b.dataset.pogled) return; haptika(); planPogled = b.dataset.pogled; try { sessionStorage.setItem('razvitak_plan', planPogled); } catch (e) {} plan(); });
+  if (!['lista', 'mreza', 'kalendar'].includes(planPogled)) planPogled = 'lista';
+  ({ lista: planLista, mreza: planMreza, kalendar: planKalendar })[planPogled]();
+}
+function planLista() {
   const dani = {};
   (podaci.plan || []).forEach(t => { (dani[t.dan] = dani[t.dan] || []).push(t); });
   const kljucevi = Object.keys(dani);
   const zauzeto = (podaci.plan || []).filter(t => t.objava).length;
-  ekran(`<h1>Plan objava</h1>
-    <button class="raspored-kartica" id="otvoriRaspored"><span><small>Raspored objava</small><b>${esc(podaci.salon.raspored || 'nije podešen')}</b></span><span class="promeni">Promeni</span></button>
-    <p class="pod">Naredne dve nedelje: ${zauzeto} od ${(podaci.plan || []).length} termina ima spremnu objavu.</p>
-    <div style="margin-top:14px">${kljucevi.length ? kljucevi.map(k => { const [dan, dm] = k.split(' '); return `<div class="dan-blok"><div class="dan-oznaka"><b>${esc(dm.replace(/\.$/, ''))}</b>${esc(dan)}</div><div>${dani[k].map(t => `<div class="termin"><span class="sat-cip">${esc(t.sat)}</span>${t.objava ? `<button class="zauzet" data-id="${t.objava.id}" data-izvor="plan">${slika(t.objava)}<span>${t.objava.fiksno ? '📌 ' : ''}${esc(prvaRecenica(t.objava.caption))}</span></button>` : (t.kljuc ? `<button class="slobodan" data-slot="${esc(t.kljuc)}">+ Dodaj objavu za ovaj termin</button>` : `<div class="slobodan">Slobodno</div>`)}</div>`).join('')}</div></div>`; }).join('') : '<p class="prazno">Nema termina u naredne dve nedelje.</p>'}</div>`);
+  document.getElementById('planTelo').innerHTML = `<p class="pod">Naredne dve nedelje: ${zauzeto} od ${(podaci.plan || []).length} termina ima spremnu objavu.</p>
+    <div style="margin-top:14px">${kljucevi.length ? kljucevi.map(k => { const [dan, dm] = k.split(' '); return `<div class="dan-blok"><div class="dan-oznaka"><b>${esc(dm.replace(/\.$/, ''))}</b>${esc(dan)}</div><div>${dani[k].map(t => `<div class="termin"><span class="sat-cip">${esc(t.sat)}</span>${t.objava ? `<button class="zauzet" data-id="${t.objava.id}" data-izvor="plan">${slika(t.objava)}<span>${t.objava.fiksno ? '📌 ' : ''}${esc(prvaRecenica(t.objava.caption))}</span></button>` : (t.kljuc ? `<button class="slobodan" data-slot="${esc(t.kljuc)}">+ Dodaj objavu za ovaj termin</button>` : `<div class="slobodan">Slobodno</div>`)}</div>`).join('')}</div></div>`; }).join('') : '<p class="prazno">Nema termina u naredne dve nedelje.</p>'}</div>`;
   vezi('plan');
   document.querySelectorAll('[data-slot]').forEach(b => b.onclick = () => { haptika(); slotPanel(b.dataset.slot); });
-  document.getElementById('otvoriRaspored').onclick = rasporedPanel;
+}
+
+async function ucitajMrezu() {
+  const kod = podaci.salon.kod;
+  if (!pravo() || (mrezaKes.kod === kod && Date.now() - mrezaKes.vreme < 15 * 60 * 1000)) return;
+  mrezaKes = { kod, vreme: Date.now(), lista: mrezaKes.kod === kod ? mrezaKes.lista : null };
+  try {
+    const odg = await fetch(API, { method: 'POST', body: new URLSearchParams({ ...prijava(), kod, deo: 'mreza' }) });
+    if (odg.status === 401 && !uTelegramu) return istekla();
+    const j = await odg.json(); if (!j.ok) throw new Error();
+    if (!podaci || podaci.salon.kod !== kod) return;
+    mrezaKes.lista = j.mediji || [];
+    if (tab === 'plan' && planPogled === 'mreza') planMreza();
+  } catch (e) { mrezaKes.vreme = 0; }
+}
+function planMreza() {
+  ucitajMrezu();
+  const buduce = (podaci.plan || []).filter(t => t.objava).slice().reverse();
+  const saInstagrama = mrezaKes.kod === podaci.salon.kod && mrezaKes.lista && mrezaKes.lista.length;
+  const objavljene = saInstagrama ? mrezaKes.lista : (podaci.objavljeno || []);
+  const kratko = t => { const d = datumTermina(t); return d ? DANI_K[(d.getDay() + 6) % 7] + ' ' + d.getDate() + '.' + (d.getMonth() + 1) + '.' : t.sat; };
+  const pl = buduce.map(t => `<button class="buduca" data-id="${t.objava.id}" data-izvor="plan" aria-label="Zakazano ${esc(t.dan)} u ${esc(t.sat)}">${t.objava.slika ? `<img ${sl_atr(t.objava.slika, 400)} alt="" loading="lazy">` : '<span class="bez-slike">🎬</span>'}<span class="kad">${esc(kratko(t))}</span>${t.objava.slika_broj > 1 ? '<span class="vise" aria-hidden="true">❐</span>' : (t.objava.tip === 'reel' ? '<span class="vise" aria-hidden="true">▶</span>' : '')}</button>`).join('');
+  const ob = saInstagrama
+    ? objavljene.map(m => `<a href="${esc(m.link)}" target="_blank" rel="noopener" data-ig><img src="${esc(m.slika)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">${m.vise ? '<span class="vise" aria-hidden="true">❐</span>' : (m.tip === 'VIDEO' ? '<span class="vise" aria-hidden="true">▶</span>' : '')}</a>`).join('')
+    : objavljene.map(x => `<button data-id="${x.id}" data-izvor="objavljeno">${x.slika ? `<img ${sl_atr(x.slika, 400)} alt="" loading="lazy">` : '<span class="bez-slike">🎬</span>'}${x.slika_broj > 1 ? '<span class="vise" aria-hidden="true">❐</span>' : (x.tip === 'reel' ? '<span class="vise" aria-hidden="true">▶</span>' : '')}</button>`).join('');
+  document.getElementById('planTelo').innerHTML = (pl || ob) ? `<p class="pod">Ovako će izgledati vaš profil. Objave sa datumom izlaze narednih dana, ostale su već na Instagramu.</p>
+    <div class="ig-glava"><span class="ig-avatar">${esc((podaci.salon.naziv || '?').slice(0, 1).toUpperCase())}</span><div><b>${esc(podaci.salon.naziv || '')}</b><small>${buduce.length} zakazano, ${objavljene.length} na profilu</small></div></div>
+    <div class="mreza ig-mreza">${pl}${ob}</div>`
+    : `<div class="prazno"><p>Kad pripremimo prve objave, ovde ćete videti kako će vaš profil izgledati.</p></div>`;
+  vezi('plan');
+  document.querySelectorAll('[data-ig]').forEach(a => { if (uTelegramu && tg.openLink) a.onclick = e => { e.preventDefault(); tg.openLink(a.href); }; });
+}
+
+function planKalendar() {
+  const danas = new Date(); danas.setHours(0, 0, 0, 0);
+  if (!kalMesec) kalMesec = new Date(danas.getFullYear(), danas.getMonth(), 1);
+  if (!kalDan) kalDan = kljucDana(danas);
+  const g = kalMesec.getFullYear(), m = kalMesec.getMonth();
+  const dog = {}; const dodaj = (k, x) => (dog[k] = dog[k] || []).push(x);
+  (podaci.plan || []).forEach(t => { const d = datumTermina(t); if (d) dodaj(kljucDana(d), { v: t.objava ? 'zakazano' : 'slobodno', t, d }); });
+  (podaci.objavljeno || []).forEach(x => { if (x.datum) { const d = new Date(x.datum); dodaj(kljucDana(d), { v: 'objavljeno', x, d }); } });
+  const pr = [...praznici(g - 1), ...praznici(g), ...praznici(g + 1)];
+  pr.forEach(p => dodaj(p.k, { v: 'praznik', p }));
+  const prvi = new Date(g, m, 1), brojDana = new Date(g, m + 1, 0).getDate(), pomak = (prvi.getDay() + 6) % 7;
+  let celije = ''; for (let i = 0; i < pomak; i++) celije += '<span></span>';
+  for (let dan = 1; dan <= brojDana; dan++) {
+    const k = kljucDana(new Date(g, m, dan)), e = dog[k] || [];
+    const tacke = [e.some(x => x.v === 'zakazano') ? '<i class="t-zak"></i>' : '', e.some(x => x.v === 'objavljeno') ? '<i class="t-obj"></i>' : '', e.some(x => x.v === 'slobodno') && !e.some(x => x.v === 'zakazano') ? '<i class="t-slo"></i>' : ''].join('');
+    const p = e.find(x => x.v === 'praznik');
+    celije += `<button class="kal-dan${k === kljucDana(danas) ? ' danas' : ''}" data-kdan="${k}" aria-pressed="${k === kalDan}" aria-label="${dan}. ${MESECI_GEN[m]}${p ? ', ' + esc(p.p.ime) : ''}">${p ? `<em aria-hidden="true">${p.p.em}</em>` : ''}<b>${dan}</b><span class="tacke">${tacke}</span></button>`;
+  }
+  const izabran = dog[kalDan] || [];
+  const [kg, km, kd] = kalDan.split('-').map(Number);
+  const red = x => {
+    if (x.v === 'zakazano') return `<button class="kal-stavka" data-id="${x.t.objava.id}" data-izvor="plan">${slika(x.t.objava)}<span><small>Zakazano u ${esc(x.t.sat)}</small>${esc(prvaRecenica(x.t.objava.caption))}</span></button>`;
+    if (x.v === 'objavljeno') return `<button class="kal-stavka" data-id="${x.x.id}" data-izvor="objavljeno">${slika(x.x)}<span><small>Objavljeno</small>${esc(prvaRecenica(x.x.caption))}</span></button>`;
+    if (x.v === 'slobodno') return x.t.kljuc ? `<button class="kal-slobodno" data-slot="${esc(x.t.kljuc)}">+ Dodaj objavu za ${esc(x.t.sat)}</button>` : '';
+    return `<div class="praznik-kartica"><span class="em" aria-hidden="true">${x.p.em}</span><div><b>${esc(x.p.ime)}</b><small>${esc(x.p.tema)}</small><button class="cip" data-praznik="${x.p.k}">Napravi objavu</button></div></div>`;
+  };
+  const uskoro = narednaPraznici(4);
+  document.getElementById('planTelo').innerHTML = `<div class="kal">
+      <div class="kal-glava"><button class="kal-str" id="kalNazad" aria-label="Prethodni mesec">‹</button><b>${MESECI[m].charAt(0).toUpperCase() + MESECI[m].slice(1)} ${g}</b><button class="kal-str" id="kalNapred" aria-label="Sledeći mesec">›</button></div>
+      <div class="kal-mreza">${DANI_K.map(x => `<span class="kal-ime">${x}</span>`).join('')}${celije}</div>
+      <div class="kal-legenda"><span><i class="t-zak"></i>zakazano</span><span><i class="t-obj"></i>objavljeno</span><span><i class="t-slo"></i>slobodan termin</span></div>
+    </div>
+    <h2>${kd}. ${MESECI_GEN[km - 1]}</h2>
+    <div class="kal-detalj">${izabran.length ? izabran.sort((a, b) => (a.v === 'praznik' ? -1 : 0) - (b.v === 'praznik' ? -1 : 0)).map(red).join('') : '<p class="pod" style="margin:0">Za ovaj dan nema ništa zakazano.</p>'}</div>
+    ${uskoro.length ? `<h2>Važni datumi uskoro</h2><div class="kal-detalj">${uskoro.map(p => `<div class="praznik-kartica"><span class="em" aria-hidden="true">${p.em}</span><div><b>${esc(p.ime)} <span class="kada">${p.dat.getDate()}. ${MESECI_GEN[p.dat.getMonth()]}, ${zaDana(p)}</span></b><small>${esc(p.tema)}</small><button class="cip" data-praznik="${p.k}">Napravi objavu</button></div></div>`).join('')}</div>` : ''}`;
+  document.getElementById('kalNazad').onclick = () => { haptika(); kalMesec = new Date(g, m - 1, 1); planKalendar(); };
+  document.getElementById('kalNapred').onclick = () => { haptika(); kalMesec = new Date(g, m + 1, 1); planKalendar(); };
+  document.querySelectorAll('[data-kdan]').forEach(b => b.onclick = () => { haptika(); kalDan = b.dataset.kdan; planKalendar(); });
+  document.querySelectorAll('[data-praznik]').forEach(b => b.onclick = () => { const p = pr.find(x => x.k === b.dataset.praznik); if (p) napraviZaPraznik(p); });
+  document.querySelectorAll('#planTelo [data-slot]').forEach(b => b.onclick = () => { haptika(); slotPanel(b.dataset.slot); });
+  vezi('plan');
+}
+
+/* ---------- pre i posle: dve slike u jednoj, u bojama salona ---------- */
+function ucitajSliku(f) {
+  return new Promise((ok, ne) => { const u = URL.createObjectURL(f), i = new Image(); i.onload = () => { URL.revokeObjectURL(u); ok(i); }; i.onerror = () => { URL.revokeObjectURL(u); ne(new Error('Slika nije mogla da se učita.')); }; i.src = u; });
+}
+function nacrtajPreIPosle(platno, pre, posle, raspored) {
+  const c = platno.getContext('2d'), W = 1080, H = 1350, b = podaci.salon.boje || {};
+  const poz = /^#[0-9a-f]{6}$/i.test(b.pozadina || '') ? b.pozadina : '#23281A', ak = /^#[0-9a-f]{6}$/i.test(b.akcenat || '') ? b.akcenat : '#D9A63A';
+  platno.width = W; platno.height = H; c.fillStyle = poz; c.fillRect(0, 0, W, H);
+  const pokrij = (img, x, y, w, h) => { const r = Math.max(w / img.width, h / img.height), sw = w / r, sh = h / r; c.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h); };
+  const lr = raspored === 'lr', deb = 8;
+  const delovi = lr ? [[0, 0, W / 2 - deb / 2, H], [W / 2 + deb / 2, 0, W / 2 - deb / 2, H]] : [[0, 0, W, H / 2 - deb / 2], [0, H / 2 + deb / 2, W, H / 2 - deb / 2]];
+  [pre, posle].forEach((img, i) => { if (img) pokrij(img, ...delovi[i]); });
+  c.fillStyle = ak; if (lr) c.fillRect(W / 2 - deb / 2, 0, deb, H); else c.fillRect(0, H / 2 - deb / 2, W, deb);
+  const natpis = (t, x, y) => {
+    c.font = '700 40px system-ui, -apple-system, "Segoe UI", sans-serif'; const w = c.measureText(t).width + 44, h = 64;
+    c.globalAlpha = .9; c.fillStyle = poz; c.beginPath(); if (c.roundRect) c.roundRect(x, y - h, w, h, 32); else c.rect(x, y - h, w, h); c.fill(); c.globalAlpha = 1;
+    c.fillStyle = '#FFFFFF'; c.textBaseline = 'middle'; c.fillText(t, x + 22, y - h / 2 + 2);
+  };
+  natpis('PRE', delovi[0][0] + 28, delovi[0][1] + delovi[0][3] - 28);
+  natpis('POSLE', delovi[1][0] + 28, delovi[1][1] + delovi[1][3] - 28);
+}
+function preIPosle(terminZa) {
+  if (typeof terminZa !== 'string') terminZa = '';
+  haptika(); let pre = null, posle = null, raspored = 'lr';
+  otvoriPanel(`<h3>Pre i posle${terminZa ? ' za ' + esc(tekstTermina(terminZa, true)) : ''}</h3><p>Izaberite sliku pre i sliku posle. Spojićemo ih u jednu objavu, u bojama vašeg salona.</p>
+    <div class="pp-izbor"><label class="pp-slot" id="ppPreL"><input type="file" id="ppPre" accept="image/*" hidden><span>+ Slika pre</span></label><label class="pp-slot" id="ppPosleL"><input type="file" id="ppPosle" accept="image/*" hidden><span>+ Slika posle</span></label></div>
+    <div class="seg" role="group" aria-label="Raspored" style="grid-template-columns:repeat(2,1fr);margin-top:12px"><button data-pp="lr" aria-pressed="true">Levo i desno</button><button data-pp="gd" aria-pressed="false">Gore i dole</button></div>
+    <canvas class="pp-platno" id="ppPlatno" hidden aria-label="Pregled slike pre i posle"></canvas>
+    <textarea class="polje" id="ppNapomena" placeholder="Šta je rađeno, npr. „keratin tretman, kosa posle 2 sata“"></textarea>
+    <button class="dugme" id="ppNapravi" style="margin-top:14px" disabled>Izaberite obe slike</button>`);
+  const platno = document.getElementById('ppPlatno'), dugme = document.getElementById('ppNapravi');
+  const prikaziPlatno = () => {
+    platno.hidden = !(pre || posle); if (pre || posle) nacrtajPreIPosle(platno, pre, posle, raspored);
+    dugme.disabled = !(pre && posle); dugme.textContent = pre && posle ? 'Napravi objavu' : 'Izaberite obe slike';
+  };
+  const izbor = (id, labelId, postavi) => document.getElementById(id).addEventListener('change', async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { const img = await ucitajSliku(f); postavi(img); const l = document.getElementById(labelId); l.classList.add('ima'); l.querySelector('span').textContent = id === 'ppPre' ? '✓ Pre (promeni)' : '✓ Posle (promeni)'; prikaziPlatno(); } catch (er) { tost(er.message); }
+  });
+  izbor('ppPre', 'ppPreL', x => pre = x); izbor('ppPosle', 'ppPosleL', x => posle = x);
+  document.querySelectorAll('[data-pp]').forEach(b => b.onclick = () => { haptika(); raspored = b.dataset.pp; document.querySelectorAll('[data-pp]').forEach(x => x.setAttribute('aria-pressed', x === b)); prikaziPlatno(); });
+  dugme.onclick = async () => {
+    if (!pre || !posle) return;
+    haptika('medium');
+    const nap = document.getElementById('ppNapomena').value.trim();
+    const napomena = 'PRE I POSLE (' + (raspored === 'lr' ? 'levo je pre, desno posle' : 'gore je pre, dole posle') + ').' + (nap ? ' ' + nap : '');
+    const slikaB64 = platno.toDataURL('image/jpeg', 0.9).split(',')[1];
+    radi('Šaljem sliku i pišem opis. Traje oko pola minuta.', 25);
+    try { const j = await akcija({ akcija: 'objava', napomena, slike: JSON.stringify([slikaB64]), videi: '[]' }); const tz = await zakaziNovu(j.objava, terminZa); await gotovo(); osvezi(); pregled(j.objava, tz || j.termin); }
+    catch (er) { zatvoriPanel(); tost(er.message || 'Objava nije napravljena. Pokušajte ponovo.'); }
+  };
 }
 
 function objave() {
@@ -946,10 +1204,11 @@ function objave() {
 function vezi(izvor) {
   document.querySelectorAll('[data-id]').forEach(d => d.onclick = () => {
     haptika();
-    const lista = izvor === 'plan' ? podaci.plan.map(t => t.objava).filter(Boolean) : podaci.objavljeno;
+    const iz = d.dataset.izvor || izvor;
+    const lista = iz === 'plan' ? podaci.plan.map(t => t.objava).filter(Boolean) : podaci.objavljeno;
     const x = lista.find(y => String(y.id) === d.dataset.id); if (!x) return;
-    const t = izvor === 'plan' ? (podaci.plan.find(y => y.objava && String(y.objava.id) === d.dataset.id) || {}) : {};
-    pregledGotove(x, izvor, t.dan ? t.dan + ' u ' + t.sat : '');
+    const t = iz === 'plan' ? (podaci.plan.find(y => y.objava && String(y.objava.id) === d.dataset.id) || {}) : {};
+    pregledGotove(x, iz, t.dan ? t.dan + ' u ' + t.sat : '');
   });
 }
 function pregledGotove(x, izvor, kada) {
@@ -1072,12 +1331,26 @@ function brojke() {
   const godine = st.godine ? Object.entries(st.godine) : [];
   const maxG = Math.max(1, ...godine.map(g => g[1]));
   const pol = st.pol || {}; const z = pol.F || 0, m = pol.M || 0, uk = z + m + (pol.U || 0);
+  const bb = podaci.brojke || {};
+  const minuta = (bb.objavljeno || 0) * 30 + (bb.story || 0) * 10 + (bb.reels || 0) * 45;
+  const sati = Math.max(1, Math.round(minuta / 60)), satiRec = sati % 10 === 1 && sati % 100 !== 11 ? 'sat' : (sati % 10 >= 2 && sati % 10 <= 4 && (sati % 100 < 12 || sati % 100 > 14) ? 'sata' : 'sati');
+  const naj = niz.reduce((a, x) => (x.v > (a ? a.v : 0) ? x : a), null);
+  const dk = d => { const x = new Date(d); return kljucDana(x); };
+  const najObjava = naj ? (podaci.objavljeno || []).find(o => o.datum && [naj.d, kljucDana(new Date(new Date(naj.d).getTime() - 864e5))].includes(dk(o.datum))) : null;
+  const poDanu = [0, 0, 0, 0, 0, 0, 0], brDana = [0, 0, 0, 0, 0, 0, 0];
+  niz.forEach(x => { const w = (new Date(x.d + 'T12:00:00').getDay() + 6) % 7; poDanu[w] += x.v; brDana[w]++; });
+  const prosek = poDanu.map((v, i) => brDana[i] ? v / brDana[i] : 0), najDan = prosek.indexOf(Math.max(...prosek));
+  const DANI_INSTR = ['ponedeljkom', 'utorkom', 'sredom', 'četvrtkom', 'petkom', 'subotom', 'nedeljom'];
+  const imaNedelju = niz.filter(x => x.v > 0).length >= 6 && niz.length >= 21;
   ekran(`<h1>Brojke</h1><p class="pod">Instagram, poslednjih 30 dana.</p>
+    <div class="uradili"><h2>Ovog meseca smo za vas objavili</h2><div class="uradili-red"><div><b>${bb.objavljeno || 0}</b><span>${objava(bb.objavljeno || 0)}</span></div><div><b>${bb.story || 0}</b><span>Story</span></div><div><b>${bb.reels || 0}</b><span>Reels</span></div></div>
+      ${minuta ? `<p>Uštedeli ste oko <strong>${sati} ${satiRec}</strong> rada na Instagramu. Računamo oko pola sata po objavi.</p>` : '<p>Prve objave ovog meseca su u pripremi.</p>'}</div>
     <div class="pratioci" style="margin-top:18px"><span class="veliki">${broj(st.pratioci)}</span><span class="pod" style="margin:0">pratilaca</span></div>
     <div class="metrike">
       <div><b>${broj(st.doseg)}</b><span>doseg</span></div><div><b>${broj(st.pregledi)}</b><span>pregleda</span></div><div><b>${broj(st.lajkovi)}</b><span>lajkova</span></div>
-      <div><b>${broj(st.komentari)}</b><span>komentara</span></div><div><b>${broj(st.sacuvano)}</b><span>sačuvano</span></div><div><b>${broj(st.posete)}</b><span>aktivnih</span></div>
+      <div><b>${broj(st.komentari)}</b><span>komentara</span></div><div><b>${broj(st.sacuvano)}</b><span>sačuvano</span></div><div><b>${broj(st.deljenja != null ? st.deljenja : st.posete)}</b><span>${st.deljenja != null ? 'deljenja' : 'aktivnih'}</span></div>
     </div>
+    ${naj ? `<h2>Najbolji dan</h2><div class="najbolji">${najObjava && najObjava.slika ? `<img ${sl_atr(najObjava.slika, 200)} alt="">` : ''}<div><b>${new Date(naj.d + 'T12:00:00').getDate()}. ${MESECI_GEN[new Date(naj.d + 'T12:00:00').getMonth()]}: ${broj(naj.v)} ljudi je videlo profil</b><small>${najObjava ? 'Tog dana je izašla objava „' + esc(prvaRecenica(najObjava.caption)) + '“.' : 'Najviše dosega u poslednjih 30 dana.'}${imaNedelju ? ' Najveći doseg imate ' + DANI_INSTR[najDan] + '.' : ''}</small></div></div>` : ''}
     ${niz.length > 1 ? `<h2>Doseg po danima</h2><div class="grafikon"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Doseg po danima, ukupno ${ukupno}">
       <path d="${linija} L${W} ${H} L0 ${H} Z" fill="var(--orhideja-svetla)"/><path d="${linija}" fill="none" stroke="var(--orhideja)" stroke-width="2.2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>
       <div class="ose"><span>${esc(datum(niz[0].d))}</span><span>najviše ${broj(max)} u danu</span><span>${esc(datum(niz[niz.length - 1].d))}</span></div></div>` : ''}
@@ -1214,11 +1487,12 @@ async function smanji(fajl) {
   c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
   return c.toDataURL('image/jpeg', 0.85);
 }
-function novaObjava(terminZa) {
+function novaObjava(terminZa, tema) {
   if (typeof terminZa !== 'string') terminZa = '';
   haptika(); let izabrane = [];
   otvoriPanel(`<h3>Nova objava${terminZa ? ' za ' + esc(tekstTermina(terminZa, true)) : ''}</h3><p>Izaberite jednu sliku ili do 10 slika i videa za karusel. Bez slike napišite temu, a mi pravimo grafiku sa tekstom.</p>
     <label class="biraj" id="birajSlike"><input type="file" id="fajlovi" accept="image/*,video/*" multiple hidden>Izaberite slike ili video<small>iz galerije ili kamere</small></label>
+    <button class="tekst-dugme" type="button" id="idiPreIPosle">Ili napravite sliku pre i posle</button>
     <input type="file" id="josFajlova" accept="image/*,video/*" multiple hidden>
     <div class="izabrane" id="izabrane"></div>
     <textarea class="polje" id="napomena" placeholder="Uz slike: kratka napomena, npr. „balayage, nova klijentkinja“. Bez slike: tema, npr. „3 razloga da negujete kosu zimi“."></textarea>
@@ -1231,9 +1505,12 @@ function novaObjava(terminZa) {
     dugme.disabled = !izabrane.length && !tema;
     dugme.textContent = izabrane.length > 1 ? `Napravi karusel (${izabrane.length})` : (izabrane.length ? 'Napravi objavu' : (tema ? 'Napravi objavu bez slike' : 'Izaberite sliku ili napišite temu'));
   };
+  if (typeof tema === 'string' && tema) polje.value = tema;
   polje.addEventListener('input', osveziDugme); osveziDugme();
+  document.getElementById('idiPreIPosle').onclick = () => preIPosle(terminZa);
   const nacrtaj = () => {
     document.getElementById('birajSlike').hidden = izabrane.length > 0;
+    document.getElementById('idiPreIPosle').hidden = izabrane.length > 0;
     document.getElementById('izabrane').innerHTML = izabrane.map((u, i) => `<div class="sl"><img src="${u.src}" alt="">${u.fajl ? IGRAJ : ''}<button class="ukloni" type="button" data-ukloni="${i}" aria-label="Ukloni">×</button></div>`).join('')
       + (izabrane.length && izabrane.length < 10 ? '<label class="dodaj-sl" for="josFajlova" aria-label="Dodaj još slika">+</label>' : '');
     document.querySelectorAll('[data-ukloni]').forEach(b => b.onclick = () => { haptika(); izabrane.splice(Number(b.dataset.ukloni), 1); nacrtaj(); });
@@ -1564,18 +1841,56 @@ async function demoAkcija(p) {
 }
 
 const sl = (h1, h2) => `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${h1}"/><stop offset="1" stop-color="${h2}"/></linearGradient></defs><rect width="80" height="100" fill="url(#g)"/></svg>`)}`;
+/* demo: grafike kakve Razvitak pravi, u bojama izmišljenog salona */
+const DEMO_BOJE = { braon: '#6E4433', tamna: '#3B2A22', zlato: '#E0B07A', krem: '#F4EBDD', karamel: '#C98F5E' };
+function demoKarta(v) {
+  const B = DEMO_BOJE, F = 'system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif', S = 'Georgia,Times New Roman,serif';
+  const t = (x, y, s, boja, tekst, o = '') => `<text x="${x}" y="${y}" font-family="${o.includes('serif') ? S : F}" font-size="${s}" fill="${boja}" ${o.replace('serif', '')}>${tekst}</text>`;
+  const potpis = (boja) => t(200, 472, 13, boja, 'STUDIO LANA', 'text-anchor="middle" font-weight="700" letter-spacing="3"');
+  let g = '';
+  if (v === 'dm') g = `<rect width="400" height="500" fill="${B.braon}"/><rect x="34" y="58" width="300" height="92" rx="22" fill="#fff"/>${t(56, 88, 13, B.karamel, 'Milica', 'font-weight="700"')}${t(56, 112, 17, B.tamna, 'Da li balayage uništava kosu?')}${t(56, 134, 17, B.tamna, 'Bojim se da probam')}<circle cx="34" cy="150" r="7" fill="#fff"/>
+    ${t(36, 230, 40, B.krem, 'Ne, ako se radi', 'serif font-weight="700"')}${t(36, 278, 40, B.krem, 'postepeno i uz', 'serif font-weight="700"')}${t(36, 326, 40, B.zlato, 'pravu negu.', 'serif font-weight="700"')}${t(36, 380, 16, B.krem, 'Prevucite i saznajte kako radimo →', 'opacity=".8"')}${potpis(B.zlato)}`;
+  else if (v === 'saveti') g = `<rect width="400" height="500" fill="${B.krem}"/>${t(34, 150, 130, B.zlato, '3', 'serif font-weight="700"')}${t(120, 92, 30, B.braon, 'saveta za', 'serif font-weight="700"')}${t(120, 128, 30, B.braon, 'sjajnu kosu', 'serif font-weight="700"')}${t(120, 164, 30, B.braon, 'zimi', 'serif font-weight="700"')}
+    ${[['Hladna voda na kraju pranja', 230], ['Maska jednom nedeljno', 290], ['Kapa od svile ili satena', 350]].map(([x, y], i) => `<circle cx="48" cy="${y - 6}" r="14" fill="${B.braon}"/>${t(48, y - 1, 14, B.krem, i + 1, 'text-anchor="middle" font-weight="700"')}${t(74, y, 19, B.tamna, x)}`).join('')}${potpis(B.karamel)}`;
+  else if (v === 'termini') g = `<rect width="400" height="500" fill="${B.zlato}"/><rect x="28" y="28" width="344" height="444" rx="26" fill="none" stroke="${B.braon}" stroke-width="2"/>${t(200, 150, 22, B.braon, 'OVE NEDELJE', 'text-anchor="middle" font-weight="700" letter-spacing="4"')}${t(200, 214, 46, B.tamna, 'Slobodni', 'text-anchor="middle" serif font-weight="700"')}${t(200, 264, 46, B.tamna, 'termini', 'text-anchor="middle" serif font-weight="700"')}
+    ${t(200, 320, 21, B.braon, 'utorak 14h i 16h', 'text-anchor="middle"')}${t(200, 350, 21, B.braon, 'četvrtak 11h', 'text-anchor="middle"')}<rect x="120" y="380" width="160" height="40" rx="20" fill="${B.braon}"/>${t(200, 406, 16, B.krem, 'Zakažite u DM', 'text-anchor="middle" font-weight="700"')}`;
+  else if (v === 'citat') g = `<rect width="400" height="500" fill="${B.tamna}"/>${t(34, 170, 140, B.zlato, '“', 'serif')}${t(40, 230, 34, B.krem, 'Lepa kosa', 'serif font-style="italic"')}${t(40, 274, 34, B.krem, 'ne počinje farbom,', 'serif font-style="italic"')}${t(40, 318, 34, B.zlato, 'nego negom.', 'serif font-style="italic"')}<rect x="40" y="350" width="60" height="3" fill="${B.zlato}"/>${potpis(B.zlato)}`;
+  else if (v === 'prepre') {
+    const talas = (x0, glatko, boja) => Array.from({ length: 7 }, (_, i) => { const x = x0 + 22 + i * 22; return glatko ? `<path d="M${x} 90 C ${x + 18} 170, ${x - 18} 250, ${x} 330 S ${x + 14} 420, ${x + 4} 440" stroke="${boja}" stroke-width="7" fill="none" stroke-linecap="round"/>` : `<path d="M${x} 90 l8 30 l-12 26 l14 30 l-10 32 l12 28 l-14 34 l10 30 l-8 40 l10 50" stroke="${boja}" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>`; }).join('');
+    g = `<rect width="200" height="500" fill="#9A8B7E"/><rect x="200" width="200" height="500" fill="${B.karamel}"/>${talas(0, false, '#6B5D52')}${talas(200, true, '#F6D9AE')}<rect x="197" width="6" height="500" fill="${B.zlato}"/>
+      <rect x="16" y="446" width="64" height="32" rx="16" fill="${B.tamna}" opacity=".9"/>${t(48, 467, 14, '#fff', 'PRE', 'text-anchor="middle" font-weight="700"')}<rect x="216" y="446" width="84" height="32" rx="16" fill="${B.tamna}" opacity=".9"/>${t(258, 467, 14, '#fff', 'POSLE', 'text-anchor="middle" font-weight="700"')}`;
+  }
+  else if (v === 'reel') g = `<defs><linearGradient id="r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${B.karamel}"/><stop offset="1" stop-color="${B.tamna}"/></linearGradient></defs><rect width="400" height="500" fill="url(#r)"/><circle cx="200" cy="210" r="46" fill="#fff" opacity=".92"/><path d="M188 186 L222 210 L188 234 Z" fill="${B.tamna}"/>
+    ${t(200, 320, 34, '#fff', 'Feniranje', 'text-anchor="middle" serif font-weight="700"')}${t(200, 362, 34, B.zlato, 'za 60 sekundi', 'text-anchor="middle" serif font-weight="700"')}${potpis('#fff')}`;
+  else if (v === 'razlika') g = `<rect width="400" height="500" fill="${B.braon}"/>${t(36, 120, 20, B.zlato, 'BALAYAGE ILI OMBRE?', 'font-weight="700" letter-spacing="2"')}${t(36, 200, 44, B.krem, 'Razlika', 'serif font-weight="700"')}${t(36, 252, 44, B.krem, 'koju ćete', 'serif font-weight="700"')}${t(36, 304, 44, B.krem, 'videti odmah', 'serif font-weight="700"')}
+    ${[0, 1, 2, 3].map(i => `<circle cx="${44 + i * 22}" cy="370" r="6" fill="${i ? B.karamel : B.zlato}"/>`).join('')}${t(140, 375, 15, B.krem, '4 slajda, prevucite', 'opacity=".85"')}${potpis(B.zlato)}`;
+  else if (v === 'novo') g = `<rect width="400" height="500" fill="${B.krem}"/><circle cx="330" cy="90" r="120" fill="${B.zlato}" opacity=".35"/>${t(36, 130, 18, B.karamel, 'NOVO U SALONU', 'font-weight="700" letter-spacing="3"')}${t(36, 210, 50, B.tamna, 'Keratin', 'serif font-weight="700"')}${t(36, 266, 50, B.tamna, 'tretman', 'serif font-weight="700"')}${t(36, 320, 19, B.braon, 'Mekša kosa, bez kovrdžanja,')}${t(36, 346, 19, B.braon, 'i do tri meseca.')}${potpis(B.karamel)}`;
+  else if (v === 'pitanje') g = `<rect width="400" height="500" fill="${B.karamel}"/>${t(36, 140, 32, B.krem, 'Koliko često', 'serif font-weight="700"')}${t(36, 182, 32, B.krem, 'treba šišati vrhove?', 'serif font-weight="700"')}<rect x="36" y="230" width="328" height="130" rx="24" fill="${B.krem}"/>${t(60, 284, 44, B.braon, '8 do 10', 'serif font-weight="700"')}${t(60, 328, 20, B.tamna, 'nedelja, za zdrave krajeve')}${potpis(B.krem)}`;
+  else if (v === 'hvala') g = `<rect width="400" height="500" fill="${B.tamna}"/>${[[60, 80], [330, 120], [90, 400], [320, 380], [210, 60]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="${B.zlato}"/>`).join('')}${t(200, 210, 96, B.zlato, '2.000', 'text-anchor="middle" serif font-weight="700"')}${t(200, 262, 26, B.krem, 'hvala vam što ste tu', 'text-anchor="middle" serif font-style="italic"')}${potpis(B.zlato)}`;
+  else if (v === 'karamel') g = `<rect width="400" height="500" fill="${B.karamel}"/><circle cx="200" cy="200" r="110" fill="${B.zlato}" opacity=".5"/>${t(200, 190, 40, B.tamna, 'Topli karamel', 'text-anchor="middle" serif font-weight="700"')}${t(200, 236, 40, B.krem, 'za jesen', 'text-anchor="middle" serif font-weight="700"')}${potpis(B.tamna)}`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">${g}</svg>`);
+}
+
+const FOTO = {"balayage": "https://i.ibb.co/ymknSvQv/hf-20261117-203637-256a28cd-46f3-455f-9f0d-7625b05b223f.jpg", "fen": "https://i.ibb.co/6cQVqXXC/hf-20261117-203638-2c2b1120-f2d2-4903-9abb-34ec3528746a.jpg", "folije": "https://i.ibb.co/zVKmfms7/hf-20261117-203637-56b504d8-17ed-4833-b1b8-b619deb7f80f.jpg", "bob": "https://i.ibb.co/Zpz5QLKR/hf-20261117-203639-2992726d-75c7-4b43-99f3-1f8d94955173.jpg", "salon": "https://i.ibb.co/Z6cn98qd/hf-20261117-203637-53e502a5-52a8-43c7-859e-9a9958de614f.jpg", "keratin": "https://i.ibb.co/xSTtwMfq/hf-20261117-203716-eb90e63c-b0e8-4d9c-afa8-f66f676d4487.jpg", "pundja": "https://i.ibb.co/zHBp6Ngx/hf-20261117-203638-3f0e0d8b-b7df-412f-9d5b-08f7a50ff8fe.jpg", "kovrdze": "https://i.ibb.co/dsHtddG0/hf-20261117-203638-6ed7a3d2-9fe5-4568-b4b0-f58a4f535c7c.jpg", "sisanje": "https://i.ibb.co/tdKkL7n/hf-20261117-203715-1a4e9906-6141-4fec-aa5e-fe8a4c3e232e.jpg", "prepre": "https://i.ibb.co/GvZW9SGP/file.jpg"};
 const PRIMER = {
   ok: true, admin: false, ime: 'Jelena',
-  salon: { naziv: 'Studio Lana', kod: 'lana', paket: 'PREMIUM', limit: 20, limiti: { objave: 20, reels: 4, story: 20 }, raspored: 'uto, čet, sub u 19h', dani: [2, 4, 6], sati: [19], story: true },
+  salon: { naziv: 'Studio Lana', kod: 'lana', paket: 'PREMIUM', delatnost: 'Ženski frizerski salon', boje: { pozadina: '#7A4E3A', akcenat: '#E0B07A' }, limit: 20, limiti: { objave: 20, reels: 4, story: 20 }, raspored: 'uto, čet, sub u 19h', dani: [2, 4, 6], sati: [19], story: true },
   brojke: { objavljeno: 11, reels: 2, story: 9, ceka: 1, spremno: 2 },
-  ceka: [{ id: 21, tip: 'post', slika: sl('#C7A27C', '#5B3A29'), slika_broj: 1, caption: 'Topli karamel za jesen', datum: '' }],
-  plan: [
-    { dan: 'utorak 17.11.', sat: '19h', objava: { id: 31, tip: 'post', slika: sl('#E8C9A0', '#8A5A3B'), slika_broj: 3, caption: 'Balayage koji lepo raste i posle tri meseca ✨\nJelena je radila meke prelaze za našu stalnu klijentkinju.\n\n#vracar #balayage' } },
-    { dan: 'četvrtak 19.11.', sat: '19h', objava: { id: 32, tip: 'reel', slika: null, slika_broj: 0, caption: 'Feniranje za 60 sekundi, pre i posle' } },
-    { dan: 'subota 21.11.', sat: '19h', objava: null }, { dan: 'utorak 24.11.', sat: '19h', objava: null },
-    { dan: 'četvrtak 26.11.', sat: '19h', objava: null }, { dan: 'subota 28.11.', sat: '19h', objava: null }],
-  objavljeno: [['#D9B38C', '#6E4630'], ['#2E2A2B', '#7A6A62'], ['#F1D8C9', '#B98476'], ['#B88A5A', '#3D2A1E'], ['#E9D2B4', '#A07850'], ['#4A3B36', '#C29A7A'], ['#F3E3D3', '#C9A27E']].map((c, i) => ({ id: 40 + i, tip: i === 1 ? 'reel' : 'post', slika: sl(c[0], c[1]), slika_broj: i === 2 ? 4 : 1, caption: ['Plava bez žutih tonova, uz Olaplex negu', 'Muško šišanje, Marko', 'Svečane frizure za vikend', 'Čokoladna smeđa', 'Keratin tretman, pre i posle', 'Kratka bob frizura', 'Sjaj posle prvog tretmana'][i] + '\n\n#vracar #frizer', datum: new Date(Date.now() - i * 2.5 * 864e5).toISOString() })),
-  stat: { pratioci: 2384, doseg: 5120, pregledi: 14890, lajkovi: 912, komentari: 64, sacuvano: 141, posete: 388,
+  ceka: [{ id: 21, tip: 'post', slika: FOTO.kovrdze, slike: [FOTO.kovrdze], slika_broj: 1, caption: 'Meke kovrdže sa toplim pramenovima za jesen 🍂\nOblikovano feniranjem i figarom, traje do sledećeg pranja.\n\n#vracar #frizer', datum: '' }],
+  plan: (() => {
+    const DN = ['nedelja', 'ponedeljak', 'utorak', 'sreda', 'četvrtak', 'petak', 'subota'], sad = new Date(), out = [];
+    const obj = [{ id: 31, tip: 'post', slika: FOTO.balayage, slike: [FOTO.balayage, FOTO.folije], slika_broj: 2, caption: 'Da li balayage uništava kosu? Ne, ako se radi postepeno ✨\nObjašnjavamo kako radimo da kosa ostane mekana i sjajna.\n\n#vracar #balayage' },
+      { id: 32, tip: 'reel', slika: FOTO.fen, slika_broj: 1, caption: 'Feniranje za 60 sekundi, od mokre kose do sjaja 💨' },
+      { id: 33, tip: 'post', slika: FOTO.prepre, slike: [FOTO.prepre], slika_broj: 1, caption: 'Pre i posle: keratin koji kosu čini glatkom i sjajnom' }];
+    for (let i = 0; out.length < 6 && i < 20; i++) {
+      const d = new Date(sad.getFullYear(), sad.getMonth(), sad.getDate() + i, 19); if (![2, 4, 6].includes(d.getDay()) || d <= sad) continue;
+      const k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + 'T19:00';
+      out.push({ kada: d.toISOString(), kljuc: k, dan: (i === 0 ? 'danas' : (i === 1 ? 'sutra' : DN[d.getDay()])) + ' ' + d.getDate() + '.' + (d.getMonth() + 1) + '.', sat: '19h', objava: obj[out.length] || null });
+    }
+    return out;
+  })(),
+  objavljeno: [['keratin', 'Keratin tretman: glatka kosa bez peglanja do 3 meseca ✨', 1], ['bob', 'Ravan bob, linija koja ne izlazi iz mode', 1], ['termini', 'Slobodni termini ove nedelje, javite se u DM', 1, 1], ['pundja', 'Svadbena punđa za subotnje venčanje 🤍', 1], ['salon', 'Kod nas je uvek mirno i toplo, svratite na kafu ☕', 1], ['sisanje', 'Precizno šišanje na mokroj kosi, svaki milimetar se računa ✂️', 1]].map(([v, c, n, g], i) => ({ id: 40 + i, tip: 'post', slika: g ? demoKarta(v) : FOTO[v], slike: [g ? demoKarta(v) : FOTO[v]], slika_broj: n, caption: c + '\n\n#vracar #frizer', datum: new Date(Date.now() - (i + 0.6) * 2.5 * 864e5).toISOString() })),
+  stat: { pratioci: 2384, doseg: 5120, pregledi: 14890, lajkovi: 912, komentari: 64, sacuvano: 141, posete: 388, deljenja: 57, interakcije: 1174,
     niz: Array.from({ length: 30 }, (_, i) => ({ d: new Date(Date.now() - (29 - i) * 864e5).toISOString().slice(0, 10), v: Math.round(90 + 70 * Math.sin(i / 3) + i * 6 + (i % 4 === 1 ? 120 : 0)) })),
     godine: { '18-24': 410, '25-34': 980, '35-44': 640, '45-54': 250, '55-64': 80 }, pol: { F: 1890, M: 410, U: 84 },
     gradovi: [['Beograd', 1720], ['Pančevo', 96], ['Novi Sad', 71], ['Zemun', 58], ['Smederevo', 31]] }
