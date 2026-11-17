@@ -4,23 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Razvitak, Instagram za salone lepote</title>
-<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/png" href="favicon.png?v=2">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="description" content="Pošaljete sliku iz salona, mi napišemo opis i objavimo na Instagramu u pravom terminu. Vi samo kliknete Objavi.">
 <meta property="og:title" content="Razvitak: Instagram za salone lepote">
 <meta property="og:description" content="Pošaljete sliku, mi pišemo i objavljujemo. Vi samo odobrite.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600&display=swap&subset=latin-ext" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--pozadina:#F6F7F1;--povrsina:#FFFFFF;--mastilo:#23281A;--tiho:#646A58;--linija:#E2E6D6;--orhideja:#5F7033;--orhideja-tamna:#4A5827;--orhideja-svetla:#EBEFDC;--rumenilo:#F5E8C6;--zlato:#D9A63A;--display:"Fredoka",system-ui,sans-serif;--telo:"Figtree",system-ui,sans-serif}
-*{box-sizing:border-box;margin:0;padding:0}
+:root{--pozadina:#F6F7F1;--povrsina:#FFFFFF;--mastilo:#23281A;--tiho:#646A58;--linija:#E2E6D6;--orhideja:#5F7033;--orhideja-tamna:#4A5827;--orhideja-svetla:#EBEFDC;--rumenilo:#F5E8C6;--zlato:#D9A63A;--display:"Space Grotesk", system-ui, sans-serif;--telo:"DM Sans", system-ui, sans-serif;--broj:"DM Mono", ui-monospace, monospace;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--pozadina);color:var(--mastilo);font-family:var(--telo);font-size:17px;line-height:1.55}
 a{color:inherit}
 a:focus-visible,button:focus-visible{outline:2px solid var(--orhideja);outline-offset:3px;border-radius:6px}
 .sir{max-width:1120px;margin:0 auto;padding:0 22px}
 h1,h2,h3{font-family:var(--display);letter-spacing:-.025em;line-height:1.05}
-h1{font-size:clamp(40px,6.4vw,76px);font-weight:800}
+h1{font-size:clamp(40px,6.4vw,76px);font-weight:700}
 h2{font-size:clamp(30px,4vw,46px);font-weight:700;margin-bottom:14px}
 h3{font-size:21px;font-weight:700;letter-spacing:-.01em}
 p.uvod{font-size:19px;color:var(--tiho);max-width:34em}
@@ -29,7 +29,8 @@ p.uvod{font-size:19px;color:var(--tiho);max-width:34em}
 header.traka{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--pozadina) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid transparent}
 header.traka .sir{display:flex;align-items:center;justify-content:space-between;height:66px}
 .znak{display:flex;align-items:center;gap:10px;text-decoration:none}
-.znak b{font-family:var(--display);font-weight:800;font-size:23px}
+.znak img{width:52px;height:52px;display:block}
+.znak b{font-family:var(--display);font-weight:700;font-size:23px}
 nav.meni{display:flex;gap:26px;align-items:center;font-size:15px}
 nav.meni a{text-decoration:none;color:var(--tiho)}
 nav.meni a:hover{color:var(--mastilo)}
@@ -55,7 +56,7 @@ nav.meni .dugme{padding:10px 16px;font-size:15px;color:#fff}
 section{padding:72px 0}
 .tok{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px;counter-reset:k}
 .tok li{list-style:none;background:var(--povrsina);border-radius:22px;padding:26px 24px 28px;position:relative;counter-increment:k}
-.tok li::before{content:counter(k);font-family:var(--display);font-weight:800;font-size:56px;color:var(--orhideja);line-height:1;display:block;margin-bottom:14px}
+.tok li::before{content:counter(k);font-family:var(--broj);font-weight:700;font-size:56px;color:var(--orhideja);line-height:1;display:block;margin-bottom:14px}
 .tok p{color:var(--tiho);margin-top:8px;font-size:16px}
 @media(max-width:820px){.tok{grid-template-columns:1fr}}
 
@@ -74,7 +75,7 @@ section{padding:72px 0}
 .paket.istaknut{background:#F2F4EA;color:var(--mastilo)}
 .paket .naziv{font-family:var(--display);font-weight:700;font-size:22px;display:flex;justify-content:space-between;align-items:center}
 .paket .oznaka{font-family:var(--telo);font-size:13px;font-weight:600;background:var(--orhideja);color:#fff;border-radius:999px;padding:4px 10px}
-.paket .cena{font-family:var(--display);font-weight:800;font-size:44px;letter-spacing:-.03em;margin-top:18px}
+.paket .cena{font-family:var(--broj);font-weight:700;font-size:44px;letter-spacing:-.03em;margin-top:18px}
 .paket .cena small{font-size:16px;font-weight:500;opacity:.7}
 .paket .stara{font-size:14px;opacity:.75;margin-top:6px;line-height:1.4}
 .paket .stara b{font-weight:600;opacity:1}
@@ -141,18 +142,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 <header class="traka">
   <div class="sir">
     <a class="znak" href="#" aria-label="Razvitak, početak">
-      <svg width="32" height="36" aria-hidden="true" viewBox="150 125 212 238"><path d="M256.0 214.0 L214.0 160.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" fill="none"/>
-<path d="M198.0 170.0 L206.0 140.0 L232.0 154.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<path d="M256.0 214.0 L312.0 150.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" fill="none"/>
-<path d="M290.0 146.0 L322.0 138.0 L316.0 170.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<circle cx="256.0" cy="222.0" r="22.0" fill="#6B7C3C"/>
-<rect x="160.0" y="216.0" width="192.0" height="138.0" rx="30.0" fill="#6B7C3C"/>
-<rect x="178.0" y="234.0" width="128.0" height="102.0" rx="20.0" fill="#FFFFFF"/>
-<circle cx="328.0" cy="260.0" r="8.5" fill="#FFFFFF"/>
-<circle cx="328.0" cy="288.0" r="8.5" fill="#FFFFFF"/>
-<path d="M192.0 322.0 L222.0 292.0 L240.0 308.0 L282.0 262.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<path d="M258.0 258.0 L288.0 254.0 L286.0 284.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-      <b>Razvitak</b>
+      <img src="razvitak-logo.png?v=2" alt="" width="52" height="52">
     </a>
     <nav class="meni" aria-label="Glavni meni">
       <a href="#kako">Kako radi</a>
@@ -257,7 +247,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
   <section class="kraj" id="upit">
     <div class="sir">
-      <img class="pecat" src="razvitak-logo.svg" alt="Razvitak" width="150" height="150">
+      <img class="pecat" src="razvitak-logo.png?v=2" alt="Razvitak" width="150" height="150">
       <h2>Probajte na svom salonu</h2>
       <p class="uvod">Ostavite Instagram salona i email. Javićemo vam se i pokazati kako bi izgledala prva objava za vaš salon.</p>
       <form class="upit" id="formaUpit" novalidate>
