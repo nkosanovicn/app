@@ -3,12 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Razvitak, Instagram za salone lepote</title>
+<title>Automatsko vođenje Instagrama za salone | Razvitak</title>
 <link rel="icon" type="image/png" href="favicon.png?v=2">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
-<meta name="description" content="Pošaljete sliku iz salona, mi napišemo opis i objavimo na Instagramu u pravom terminu. Vi samo kliknete Objavi.">
-<meta property="og:title" content="Razvitak: Instagram za salone lepote">
-<meta property="og:description" content="Pošaljete sliku, mi pišemo i objavljujemo. Vi samo odobrite.">
+<meta name="description" content="Razvitak je aplikacija za automatsko vođenje Instagram profila za frizerske i kozmetičke salone, salone za nokte i barbershopove. Od slike do objave za minut.">
+<link rel="canonical" href="https://razvitak.studio/">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="sr_RS">
+<meta property="og:url" content="https://razvitak.studio/">
+<meta property="og:site_name" content="Razvitak">
+<meta property="og:title" content="Razvitak: aplikacija za automatsko vođenje Instagrama za salone">
+<meta property="og:description" content="Od slike iz salona do gotove Instagram objave za minut. Za frizere, kozmetičare, salone za nokte i barbere.">
+<meta property="og:image" content="https://razvitak.studio/razvitak-logo.png">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Razvitak", "url": "https://razvitak.studio/", "applicationCategory": "BusinessApplication", "operatingSystem": "Web, Android, iOS", "inLanguage": "sr-Latn", "description": "Aplikacija za automatsko vođenje Instagram profila za frizerske i kozmetičke salone, salone za nokte i barbershopove.", "offers": {"@type": "AggregateOffer", "priceCurrency": "RSD", "lowPrice": "1490", "highPrice": "5790", "offerCount": "3"}, "image": "https://razvitak.studio/razvitak-logo.png"}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Šta je Razvitak?", "acceptedAnswer": {"@type": "Answer", "text": "Razvitak je aplikacija za automatsko vođenje Instagram profila salona lepote. Od slike iz salona pravi gotovu objavu: opis, hashtagove i grafiku, i objavljuje je u terminu koji izaberete."}}, {"@type": "Question", "name": "Za koje salone je aplikacija?", "acceptedAnswer": {"@type": "Answer", "text": "Za frizerske i kozmetičke salone, salone za nokte, trepavice i obrve, masažu i barbershopove u Srbiji."}}, {"@type": "Question", "name": "Da li treba da znam nešto o Instagramu?", "acceptedAnswer": {"@type": "Answer", "text": "Ne. Dovoljno je da slikate rad telefonom. Opis, hashtagovi, grafika i vreme objave idu automatski."}}, {"@type": "Question", "name": "Da li nešto izlazi bez mog odobrenja?", "acceptedAnswer": {"@type": "Answer", "text": "Ne. Svaku objavu prvo vidite u aplikaciji. Ako želite, može da se podesi da objave izlaze i bez pregleda."}}, {"@type": "Question", "name": "Šta ako mi se opis ne dopada?", "acceptedAnswer": {"@type": "Answer", "text": "Jednim dodirom dobijate kraću, opušteniju ili potpuno novu verziju. Pravila koja zadate, npr. da se ne pišu cene, važe za sve buduće objave."}}, {"@type": "Question", "name": "Kada se vide rezultati?", "acceptedAnswer": {"@type": "Answer", "text": "Prve objave izlaze već prve nedelje. Rast pratilaca i poruka od novih klijenata obično se vidi posle dva do tri meseca redovnog objavljivanja."}}, {"@type": "Question", "name": "Mogu li da otkažem?", "acceptedAnswer": {"@type": "Answer", "text": "Da. Mesečni paket se otkazuje kad god želite, bez ugovorne obaveze. Paket za 3 meseca plaća se unapred i traje do kraja ta tri meseca."}}, {"@type": "Question", "name": "Treba li mi poslovni Instagram nalog?", "acceptedAnswer": {"@type": "Answer", "text": "Da, poslovni ili kreatorski nalog. Besplatan je, a prebacivanje traje minut."}}]}]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -136,13 +144,15 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 @media (max-width:520px){.period{display:grid;grid-auto-flow:row;grid-template-columns:1fr;border-radius:18px;width:100%}.period button{justify-content:center}}
 .paket .popust{display:inline-block;align-self:flex-start;margin-top:8px;padding:4px 10px;border-radius:999px;background:var(--zlato);color:#2A2410;font-size:13px;font-weight:700}
 .paket .popust[hidden]{display:none}
+.delatnosti{list-style:none;padding:0;margin:28px 0 0;display:flex;flex-wrap:wrap;gap:10px}
+.delatnosti li{background:var(--povrsina);border:1px solid var(--linija);border-radius:999px;padding:10px 18px;font-weight:600}
 </style>
 </head>
 <body>
 <header class="traka">
   <div class="sir">
     <a class="znak" href="#" aria-label="Razvitak, početak">
-      <img src="razvitak-logo.png?v=2" alt="" width="52" height="52">
+      <img src="razvitak-logo.png?v=2" alt="Razvitak" width="52" height="52">
     </a>
     <nav class="meni" aria-label="Glavni meni">
       <a href="#kako">Kako radi</a>
@@ -157,10 +167,10 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <section class="hero" style="padding-top:56px">
     <div class="sir">
       <div>
-        <h1>Salon je pun. Instagram više neće biti prazan.<span>Pošaljete sliku iz salona, mi napišemo opis i objavimo u pravom terminu. Vi samo kliknete Objavi.</span></h1>
+        <h1>Aplikacija za automatsko vođenje Instagram profila<span>Za frizerske i kozmetičke salone, salone za nokte, trepavice i barbershopove. Slika iz salona postaje gotova objava za minut.</span></h1>
         <div class="akcije">
-          <a class="dugme" href="#upit">Zakažite razgovor</a>
-          <a class="dugme svetlo" href="app/">Probajte aplikaciju</a>
+          <a class="dugme" href="app/?demo=1">Probajte aplikaciju</a>
+          <a class="dugme svetlo" href="#upit">Zakažite razgovor</a>
         </div>
       </div>
       <div>
@@ -172,27 +182,37 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
   <section id="kako">
     <div class="sir">
-      <h2>Kako radi</h2>
-      <p class="uvod">Sve radite iz naše aplikacije u telefonu. Bez kurseva o Instagramu i bez komplikovanih podešavanja.</p>
+      <h2>Kako radi aplikacija</h2>
+      <p class="uvod">Tri koraka, sve iz telefona. Bez kurseva i bez podešavanja.</p>
       <ol class="tok">
-        <li><h3>Pošaljete sliku</h3><p>Fotografiju rada, više slika za karusel ili kratak video. Može i jedna rečenica napomene, npr. „balayage, nova klijentkinja“.</p></li>
-        <li><h3>Dobijete predlog</h3><p>Za minut stiže gotov opis u stilu vašeg salona, sa hashtagovima i pozivom na zakazivanje. Ako želite drugačije, jedan klik: kraće, opuštenije ili sasvim novo.</p></li>
-        <li><h3>Objava izlazi sama</h3><p>Kliknete Objavi i objava izlazi u dogovorenom terminu, npr. utorkom i petkom u 19h. Ništa ne izlazi bez vašeg odobrenja.</p></li>
+        <li><h3>Slika</h3><p>Slikajte rad telefonom i ubacite sliku, više slika ili kratak video u aplikaciju.</p></li>
+        <li><h3>Objava</h3><p>Aplikacija napiše opis sa hashtagovima i napravi grafiku u temi vašeg profila.</p></li>
+        <li><h3>Instagram</h3><p>Objava izlazi sama, u danima i satima koje izaberete.</p></li>
       </ol>
     </div>
   </section>
 
   <section>
     <div class="sir">
-      <h2>Šta sve radimo umesto vas</h2>
+      <h2>Sve za Instagram salona na jednom mestu</h2>
       <div class="mogucnosti">
-        <div><h3>Opisi koji zvuče kao vi</h3><p>Pre početka zapišemo kako vaš salon priča: usluge, tim, stil, šta nikad ne pominjete. Svaka objava to poštuje.</p></div>
-        <div><h3>Karuseli od više slika</h3><p>Pre i posle, nekoliko radova u jednoj objavi. Pošaljete slike zajedno, dobijete jednu objavu.</p></div>
-        <div><h3>Story iz jedne rečenice</h3><p>„Danas slobodni termini u 14h i 16h“ i za par sekundi imate gotovu Story grafiku. Može i glasovnom porukom.</p></div>
-        <div><h3>Reels od vašeg videa</h3><p>Kratak snimak feniranja ili farbanja postaje Reels sa opisom, bez montaže sa vaše strane.</p></div>
-        <div><h3>Objave i kad nemate slike</h3><p>Ako nekoliko dana ništa ne stigne, predlažemo objavu sa savetom ili obaveštenjem. Profil ne stoji prazan.</p></div>
-        <div><h3>Plan i brojke na jednom mestu</h3><p>U aplikaciji vidite šta izlazi narednih dana, šta je objavljeno i kako raste profil: pratioci, doseg, ko vas prati.</p></div>
+        <div><h3>Opisi u stilu salona</h3><p>Svaki opis zvuči kao vaš salon: vaše usluge, vaš ton i pravila koja zadate, npr. da se ne pišu cene.</p></div>
+        <div><h3>Teme profila</h3><p>Šest tema sa svojim bojama, fontovima i rasporedima. Izaberete jednu i profil izgleda kao celina.</p></div>
+        <div><h3>Karuseli, reels i pre i posle</h3><p>Više radova u jednoj objavi, kratak video kao reels ili poređenje pre i posle u jednoj slici.</p></div>
+        <div><h3>Story za par sekundi</h3><p>Jedna rečenica ili glasovna poruka, npr. „slobodni termini danas u 14h“, postaje gotov story.</p></div>
+        <div><h3>Ideje kad nema slika</h3><p>Predlozi objava i podsetnici za praznike, da profil ne stoji prazan.</p></div>
+        <div><h3>Plan i analitika</h3><p>Šta izlazi narednih dana, šta je objavljeno i kako raste profil: pratioci, doseg i posete.</p></div>
       </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sir">
+      <h2>Instagram za svaku vrstu salona</h2>
+      <p class="uvod">Razvitak se prilagođava delatnosti, pa opisi i ideje odgovaraju baš vašem poslu.</p>
+      <ul class="delatnosti">
+        <li>Frizerski saloni</li><li>Kozmetički saloni</li><li>Saloni za nokte</li><li>Barbershopovi</li><li>Trepavice i obrve</li><li>Masaža i spa</li>
+      </ul>
     </div>
   </section>
 
@@ -234,22 +254,23 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div class="sir">
       <h2>Česta pitanja</h2>
       <div class="pitanja">
-        <details><summary>Da li treba da znam nešto o Instagramu?</summary><p>Ne. Vi šaljete slike i klikćete Objavi. Opise, hashtagove i termine radimo mi.</p></details>
-        <details><summary>Da li nešto može da izađe bez mog odobrenja?</summary><p>Ne, osim ako sami ne tražite da objave idu bez pregleda. Svaki predlog prvo vidite i odobrite.</p></details>
-        <details><summary>Šta ako mi se opis ne dopada?</summary><p>Jednim klikom dobijete kraću, opušteniju ili potpuno novu verziju. Ili napišete šta da promenimo. Ako kažete da nešto uvek važi, npr. „nikad ne pišite cene“, to pamtimo za sve buduće objave.</p></details>
-        <details><summary>Kada se vide rezultati?</summary><p>Prve objave izlaze već prve nedelje. Rast pratilaca i poruka od novih mušterija obično se vidi posle dva do tri meseca redovnog objavljivanja, zato savetujemo da počnete sa 3 meseca. Tada dobijate i popust.</p></details>
-        <details><summary>Mogu li da otkažem?</summary><p>Da. Mesečni paket otkazujete kad želite, bez ugovorne obaveze i bez penala. Paket za 3 meseca je plaćen unapred i traje do kraja ta tri meseca.</p></details>
-        <details><summary>Koliko traje uključivanje?</summary><p>Razgovor od 15 minuta o vašem salonu i povezivanje Instagram naloga. Prva objava može da izađe već iste nedelje.</p></details>
-        <details><summary>Treba li mi poslovni Instagram nalog?</summary><p>Da, Business ili Creator nalog. Besplatno je i prebacivanje traje minut. Pomognemo vam ako niste sigurni.</p></details>
+        <details><summary>Šta je Razvitak?</summary><p>Razvitak je aplikacija za automatsko vođenje Instagram profila salona lepote. Od slike iz salona pravi gotovu objavu: opis, hashtagove i grafiku, i objavljuje je u terminu koji izaberete.</p></details>
+        <details><summary>Za koje salone je aplikacija?</summary><p>Za frizerske i kozmetičke salone, salone za nokte, trepavice i obrve, masažu i barbershopove u Srbiji.</p></details>
+        <details><summary>Da li treba da znam nešto o Instagramu?</summary><p>Ne. Dovoljno je da slikate rad telefonom. Opis, hashtagovi, grafika i vreme objave idu automatski.</p></details>
+        <details><summary>Da li nešto izlazi bez mog odobrenja?</summary><p>Ne. Svaku objavu prvo vidite u aplikaciji. Ako želite, može da se podesi da objave izlaze i bez pregleda.</p></details>
+        <details><summary>Šta ako mi se opis ne dopada?</summary><p>Jednim dodirom dobijate kraću, opušteniju ili potpuno novu verziju. Pravila koja zadate, npr. da se ne pišu cene, važe za sve buduće objave.</p></details>
+        <details><summary>Kada se vide rezultati?</summary><p>Prve objave izlaze već prve nedelje. Rast pratilaca i poruka od novih klijenata obično se vidi posle dva do tri meseca redovnog objavljivanja.</p></details>
+        <details><summary>Mogu li da otkažem?</summary><p>Da. Mesečni paket se otkazuje kad god želite, bez ugovorne obaveze. Paket za 3 meseca plaća se unapred i traje do kraja ta tri meseca.</p></details>
+        <details><summary>Treba li mi poslovni Instagram nalog?</summary><p>Da, poslovni ili kreatorski nalog. Besplatan je, a prebacivanje traje minut.</p></details>
       </div>
     </div>
   </section>
 
   <section class="kraj" id="upit">
     <div class="sir">
-      <img class="pecat" src="razvitak-logo.png?v=2" alt="Razvitak" width="150" height="150">
-      <h2>Probajte na svom salonu</h2>
-      <p class="uvod">Ostavite Instagram salona i email. Javićemo vam se i pokazati kako bi izgledala prva objava za vaš salon.</p>
+      <img class="pecat" src="razvitak-logo.png?v=2" alt="Razvitak logo" width="150" height="150">
+      <h2>Probajte Razvitak na svom salonu</h2>
+      <p class="uvod">Ostavite Instagram salona i email. Javljamo se sa primerom prve objave za vaš salon.</p>
       <form class="upit" id="formaUpit" novalidate>
         <p class="izabran-paket" id="izabranPaket" hidden></p>
         <label for="uInstagram">Instagram salona</label>
@@ -274,7 +295,7 @@ footer .sir{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 </main>
 
 <footer>
-  <div class="sir"><span>Razvitak, Instagram za salone lepote</span><a href="app/">Aplikacija za klijente</a></div>
+  <div class="sir"><span>Razvitak, aplikacija za automatsko vođenje Instagrama za salone lepote</span><a href="app/">Aplikacija za klijente</a></div>
 </footer>
 <script>
 (() => {
