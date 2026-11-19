@@ -582,7 +582,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-19.50';
+const VERZIJA = '2026-11-19.51';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -2227,17 +2227,21 @@ const PRIPREME = {
     tagovi: '#krilca #novisad #chickenwings' }
 };
 const priprema = jeHrana() ? PRIPREME[new URLSearchParams(location.search).get('za')] : null;
-if (priprema) { MESEC_PLOCICE = priprema.plocice; MESEC_OPISI = priprema.opisi; }
+const MESEC_OSNOVA = { p: MESEC_PLOCICE, o: MESEC_OPISI };
+const DEMO_PRIPREME = { demo_cbw: 'cbw' }; // pravi demo profili koji imaju pripremljen sadrzaj
+const demoProfil = () => pravo() && podaci && podaci.salon && String(podaci.salon.kod || '').startsWith('demo_');
+function mesecPriprema() { return priprema || (demoProfil() ? PRIPREME[DEMO_PRIPREME[podaci.salon.kod]] || null : null); }
 let mesecSt = null;
 function mesecKartica() {
-  if (pravo()) return '';
+  if (pravo() && !demoProfil()) return '';
   return `<button class="mesec-kartica" id="mesecDugme"><span class="ik" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17M8 14h2M14 14h2M8 17h2"/></svg></span><span><strong>Zakažite mesec za minut</strong><span class="op">Izaberite temu, dodajte 4 slike i pogledajte kako će profil izgledati za mesec dana.</span></span></button>`;
 }
 function mesecOtvori() {
   haptika(); ucitajFontoveStilova();
   let m = document.getElementById('mesec');
   if (!m) { m = document.createElement('div'); m.id = 'mesec'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'Zakažite mesec za minut'); document.body.appendChild(m); }
-  mesecSt = { od: Date.now(), slike: [], tema: priprema ? priprema.tema : (podaci.salon.stil && DIZ_TEME[podaci.salon.stil] ? podaci.salon.stil : 'vedro'), naziv: priprema ? priprema.naziv : '', tik: null, gotovo: 0 };
+  const pr = mesecPriprema(); MESEC_PLOCICE = pr ? pr.plocice : MESEC_OSNOVA.p; MESEC_OPISI = pr ? pr.opisi : MESEC_OSNOVA.o;
+  mesecSt = { pr, samoPrikaz: pravo(), od: Date.now(), slike: [], tema: pr ? pr.tema : (podaci.salon.stil && DIZ_TEME[podaci.salon.stil] ? podaci.salon.stil : 'vedro'), naziv: pr ? pr.naziv : (pravo() ? podaci.salon.naziv || '' : ''), tik: null, gotovo: 0 };
   m.hidden = false; document.body.style.overflow = 'hidden';
   mesecPodesi();
   clearInterval(mesecSt.tik); mesecSt.tik = setInterval(mesecSat, 250);
@@ -2310,22 +2314,21 @@ function mesecSlikeBrzo() { // ne cekamo vise od 1.6s; ako grafike kasne, plan s
 async function mesecZakazi() {
   haptika();
   const m = document.getElementById('mesec'), st = mesecSt;
-  const koraci = ['Opisi i hashtagovi za 9 objava', 'Grafike sa savetima u temi ' + stilPo(st.tema).ime, 'Najbolji termini za naredne 4 nedelje', 'Zakazivanje na Instagram'];
+  const koraci = ['Opisi i hashtagovi za 9 objava', 'Grafike sa savetima u temi ' + stilPo(st.tema).ime, 'Najbolji termini za naredne 4 nedelje', st.samoPrikaz ? 'Raspored u vašim terminima' : 'Zakazivanje na Instagram'];
   m.innerHTML = `<div class="ms-in">${mesecVrh(false)}<h2>Pripremam vaš mesec</h2><p class="ms-pod">${esc(mesecNaziv())}, tema ${esc(stilPo(st.tema).ime)}</p><ol class="ms-koraci">${koraci.map(k => `<li><b></b>${esc(k)}</li>`).join('')}</ol></div>`;
   document.getElementById('msX').onclick = mesecZatvori;
   const li = [...m.querySelectorAll('.ms-koraci li')];
   const radi = i => { li[i].classList.add('ms-radi'); }, gotov = i => { li[i].classList.remove('ms-radi'); li[i].classList.add('ms-gotovo'); li[i].querySelector('b').textContent = '✓'; haptika(); };
   radi(0); await cekaj(1100); gotov(0);
-  radi(1); const [grafike] = await Promise.all([mesecSlikeBrzo(), cekaj(1200)]); gotov(1);
+  radi(1); const [grafike] = await Promise.all([st.samoPrikaz ? [] : mesecSlikeBrzo(), cekaj(1200)]); gotov(1);
   radi(2); await cekaj(900); gotov(2);
-  radi(3); mesecUPlan(grafike); await cekaj(800); gotov(3);
+  radi(3); if (st.samoPrikaz) st.termini = mesecTermini().slice(0, 9); else { mesecUPlan(grafike); st.termini = podaci.plan.filter(t => t.objava); } await cekaj(800); gotov(3);
   await cekaj(350);
   st.gotovo = Date.now(); clearInterval(st.tik);
   mesecRezultat();
 }
 function mesecRed() { const r = []; for (let i = 0; i < 9; i++) r.push(i % 2 ? { s: (i - 1) / 2 } : { p: i / 2 }); return r; } // mreza 1..9: 2,4,6,8 su slike
-function mesecUPlan(grafike) {
-  const st = mesecSt, red = mesecRed().slice().reverse(); // najstarija prva
+function mesecTermini() {
   const dani = (podaci.salon.dani && podaci.salon.dani.length) ? podaci.salon.dani : [2, 4, 6], sat = (podaci.salon.sati || [19])[0];
   const DN = ['nedelja', 'ponedeljak', 'utorak', 'sreda', 'četvrtak', 'petak', 'subota'], sad = new Date(), out = [];
   for (let i = 1; out.length < 12 && i < 40; i++) {
@@ -2333,9 +2336,13 @@ function mesecUPlan(grafike) {
     const k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + 'T' + String(sat).padStart(2, '0') + ':00';
     out.push({ kada: d.toISOString(), kljuc: k, dan: (i === 1 ? 'sutra' : DN[d.getDay()]) + ' ' + d.getDate() + '.' + (d.getMonth() + 1) + '.', sat: sat + 'h', objava: null });
   }
+  return out;
+}
+function mesecUPlan(grafike) {
+  const st = mesecSt, red = mesecRed().slice().reverse(), out = mesecTermini(); // najstarija prva
   red.forEach((x, j) => { if (!out[j]) return;
     const slk = x.s != null ? st.slike[x.s] : grafike[x.p];
-    const cap = (x.s != null ? MESEC_OPISI[x.s % MESEC_OPISI.length].replace('{n}', mesecNaziv()) : MESEC_PLOCICE[x.p][2]) + (priprema ? '\n\n' + priprema.tagovi : jeHrana() ? '\n\n#piletina #fastfood' : '\n\n#instagram #novo');
+    const cap = (x.s != null ? MESEC_OPISI[x.s % MESEC_OPISI.length].replace('{n}', mesecNaziv()) : MESEC_PLOCICE[x.p][2]) + (st.pr ? '\n\n' + st.pr.tagovi : jeHrana() ? '\n\n#piletina #fastfood' : '\n\n#instagram #novo');
     out[j].objava = { id: 900 + j, tip: x.s != null ? 'post' : 'post_kartica', slika: slk, slike: [slk], slika_broj: 1, caption: cap, plocica: x.s != null ? null : x.p };
   });
   podaci.plan = out; podaci.salon.stil = st.tema; if ((st.naziv || '').trim()) podaci.salon.naziv = st.naziv.trim();
@@ -2343,18 +2350,18 @@ function mesecUPlan(grafike) {
 }
 function mesecRezultat() {
   const m = document.getElementById('mesec'), st = mesecSt, T = DIZ_TEME[st.tema];
-    const datumi = podaci.plan.filter(t => t.objava).reverse();
+  const datumi = st.termini.slice().reverse();
   const kratko = t => { const d = new Date(t.kada); return d.getDate() + '.' + (d.getMonth() + 1) + '.'; };
   m.innerHTML = `<div class="ms-in">${mesecVrh(false)}
         <div class="ms-profil"><div class="ms-ig"><span class="ms-prsten"><span style="background:${T.p[1][0]};color:${T.p[1][1]}">${esc(mesecNaziv().slice(0, 1).toUpperCase())}</span></span><div><b>${esc(mesecNaziv())}</b><small>9 novih objava · tema ${esc(stilPo(st.tema).ime)}</small></div></div>
     <div class="ms-mreza">${mesecRed().map((x, i) => `<span style="animation-delay:${200 + i * 160}ms">${x.s != null ? `<img src="${st.slike[x.s]}" alt="">` : mesecPlocica(x.p, 'msp' + st.tema + i)}<em>${esc(kratko(datumi[i]))}</em></span>`).join('')}</div></div>
-    <div class="ms-dvoje"><button class="dugme sporedno" id="msOpet">Druga tema</button><button class="dugme" id="msPlan">Pogledaj plan</button></div>
+    <div class="ms-dvoje"><button class="dugme sporedno" id="msOpet">Druga tema</button>${st.samoPrikaz ? '<button class="dugme" id="msPlan">Gotovo</button>' : '<button class="dugme" id="msPlan">Pogledaj plan</button>'}</div>
   </div>`;
   m.scrollTop = 0;
   const skal = () => m.querySelectorAll('.ms-mreza>span').forEach(e => { const w = e.clientWidth, x = e.querySelector('.sp2-in'); if (w && x) x.style.transform = 'scale(' + (w / 1080) + ')'; });
   skal(); requestAnimationFrame(skal);
   document.getElementById('msX').onclick = mesecZatvori;
-  document.getElementById('msPlan').onclick = () => { mesecZatvori(); tab = 'plan'; planPogled = 'lista'; prikazi(); };
+  document.getElementById('msPlan').onclick = () => { mesecZatvori(); if (st.samoPrikaz) return; tab = 'plan'; planPogled = 'lista'; prikazi(); };
   document.getElementById('msOpet').onclick = () => { haptika(); st.od = Date.now(); st.gotovo = 0; clearInterval(st.tik); st.tik = setInterval(mesecSat, 250); mesecPodesi(); };
 }
 
