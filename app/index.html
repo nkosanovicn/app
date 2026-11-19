@@ -614,7 +614,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-19.67';
+const VERZIJA = '2026-11-19.68';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -769,6 +769,7 @@ function prikazi(bezSkrola) {
   try { sessionStorage.setItem('razvitak_tab', tab); } catch (e) {}
   ({ pocetna, plan, objave, brojke, saloni: saloniEkran })[tab]();
   if (!bezSkrola) window.scrollTo(0, 0);
+  osveziNazad();
 }
 
 const objava = n => n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'objave' : 'objava';
@@ -1787,11 +1788,32 @@ function brojke() {
 function otvoriPanel(html) {
   document.getElementById('panelSadrzaj').innerHTML = html;
   document.getElementById('panel').classList.add('otvoren'); document.getElementById('zavesa').classList.add('otvorena');
-  if (tg && tg.BackButton) { tg.BackButton.show(); tg.BackButton.onClick(zatvoriPanel); }
+  osveziNazad();
 }
 function zatvoriPanel() {
   document.getElementById('panel').classList.remove('otvoren'); document.getElementById('zavesa').classList.remove('otvorena');
-  if (tg && tg.BackButton) { tg.BackButton.offClick(zatvoriPanel); tg.BackButton.hide(); }
+  osveziNazad();
+}
+/* dugme nazad (Android, browser, Telegram): prvo zatvara prozor, pa vraca na Pocetnu, tek onda izlazi */
+function imaNazad() { const m = document.getElementById('mesec'); return !!(m && !m.hidden) || document.getElementById('panel').classList.contains('otvoren') || (podaci && tab !== 'pocetna'); }
+function nazad() {
+  const m = document.getElementById('mesec');
+  if (m && !m.hidden) { mesecZatvori(); return true; }
+  if (document.getElementById('panel').classList.contains('otvoren')) { zatvoriPanel(); return true; }
+  if (podaci && tab !== 'pocetna') { tab = 'pocetna'; prikazi(); return true; }
+  return false;
+}
+function osveziNazad() { try { if (tg && tg.BackButton) { if (imaNazad()) tg.BackButton.show(); else tg.BackButton.hide(); } } catch (e) {} }
+if (tg && tg.BackButton) { try { tg.BackButton.onClick(() => { haptika(); nazad(); }); } catch (e) {} }
+if (!uTelegramu) {
+  let izlaz = 0;
+  try { history.pushState({ rz: 1 }, ''); } catch (e) {}
+  window.addEventListener('popstate', () => {
+    if (nazad()) { try { history.pushState({ rz: 1 }, ''); } catch (e) {} return; }
+    if (Date.now() - izlaz < 2500) { history.back(); return; }
+    izlaz = Date.now(); tost('Pritisnite nazad još jednom za izlaz.');
+    try { history.pushState({ rz: 1 }, ''); } catch (e) {}
+  });
 }
 document.getElementById('zavesa').onclick = zatvoriPanel;
 /* povuci panel na dole da se zatvori */
@@ -2295,11 +2317,11 @@ function mesecOtvori() {
   mesecSt.neparne = mesecNeparne();
   m.hidden = false; document.body.style.overflow = 'hidden';
   mesecPodesi();
-  clearInterval(mesecSt.tik); mesecSt.tik = setInterval(mesecSat, 250);
+  clearInterval(mesecSt.tik); mesecSt.tik = setInterval(mesecSat, 250); osveziNazad();
 }
 const mesecVreme = ms => { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 function mesecSat() { const e = document.getElementById('msSat'); if (e && mesecSt && !mesecSt.gotovo) e.lastChild.textContent = mesecVreme(Date.now() - mesecSt.od); }
-function mesecZatvori() { const m = document.getElementById('mesec'); if (m) m.hidden = true; document.body.style.overflow = ''; if (mesecSt) clearInterval(mesecSt.tik); }
+function mesecZatvori() { const m = document.getElementById('mesec'); if (m) m.hidden = true; document.body.style.overflow = ''; if (mesecSt) clearInterval(mesecSt.tik); osveziNazad(); }
 function mesecVrh(sat) { return `<div class="ms-vrh"><button class="ms-x" id="msX" aria-label="Zatvori">×</button>${sat ? `<span class="ms-sat" id="msSat"><i></i>${mesecVreme(Date.now() - mesecSt.od)}</span>` : ''}</div>`; }
 function mesecPodesi() {
   const m = document.getElementById('mesec'), st = mesecSt;
