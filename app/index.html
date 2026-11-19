@@ -582,7 +582,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-19.48';
+const VERZIJA = '2026-11-19.50';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -2213,6 +2213,21 @@ if (jeHrana()) {
   ];
   MESEC_OPISI = ['Sveže iz naše kuhinje 🔥\nKo bi ovo pojeo odmah? Označite društvo.', 'Petak uveče je rezervisan za ovo 🍗\nPoručite u DM ili svratite.', 'Kad krene glad, znate gde smo 😋\nDostava svaki dan do 23h.', 'Ovako izgleda kad se pravi od nule ✅\nProbajte i recite nam utiske.'];
 }
+/* priprema za konkretan lokal: ?demo=hrana&za=cbw */
+const PRIPREME = {
+  cbw: { naziv: 'Chicken Banana Wings', tema: 'vedro',
+    plocice: [
+      ['naslovni', { ime: 'Jovana', poruka: 'Koliko krilca da uzmemo za četvoro?', naslov: 'Family meni: 1 kg krilca', raspored: 0, seme: 0 }, 'Koliko krilca za četvoro? Uzmite Family meni 🍗\n1 kg krilca, 2 sosa, 2 somuna, 2 pomfrita i sok. Poručite preko Wolta.'],
+      ['naslovni', { naslov: 'Krilca, pomfrit i somun', dodatak: '500 g krilca + veliki pomfrit + somun', oznaka: 'Omiljena kombinacija', raspored: 2, seme: 1 }, 'Omiljena kombinacija u kraju: 500 g krilca, veliki pomfrit i somun 🔥\nKo je za ručak?'],
+      ['stavka', { broj: '2', naslov: 'Dva ukusa uz svaki kilogram', tekst: 'Izaberite dva ukusa i kombinujte ih kako volite.', br: '1 / 3', raspored: 2, seme: 2 }, 'Uz svaki kilogram krilca birate dva ukusa 🍗\nKoja je vaša kombinacija? Pišite u komentarima.'],
+      ['naslovni', { ime: 'Luka', poruka: 'Imate li nešto i za decu?', naslov: 'Nuggetsi, pa palačinke', raspored: 1, seme: 3 }, 'Imate li nešto i za decu? Imamo 😊\nNuggetsi sa pomfritom, a posle palačinke.'],
+      ['naslovni', { naslov: 'Omiljena hrana u kraju', oznaka: 'Novi Sad', raspored: 3, seme: 4 }, 'Omiljena hrana u kraju 🍌🍗\nJoakima Vujića 14, Novi Sad. Svratite ili poručite.']
+    ],
+    opisi: ['Sveža krilca, upravo izašla 🔥\nKo bi ovo pojeo odmah? Označite društvo.', 'Petak uveče je rezervisan za krilca 🍗\nPoručite preko Wolta ili svratite.', 'Kad krene glad, znate gde smo 😋\nJoakima Vujića 14.', 'Hrskavo spolja, sočno unutra ✅\nProbajte i recite nam utiske.'],
+    tagovi: '#krilca #novisad #chickenwings' }
+};
+const priprema = jeHrana() ? PRIPREME[new URLSearchParams(location.search).get('za')] : null;
+if (priprema) { MESEC_PLOCICE = priprema.plocice; MESEC_OPISI = priprema.opisi; }
 let mesecSt = null;
 function mesecKartica() {
   if (pravo()) return '';
@@ -2222,7 +2237,7 @@ function mesecOtvori() {
   haptika(); ucitajFontoveStilova();
   let m = document.getElementById('mesec');
   if (!m) { m = document.createElement('div'); m.id = 'mesec'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'Zakažite mesec za minut'); document.body.appendChild(m); }
-  mesecSt = { od: Date.now(), slike: [], tema: podaci.salon.stil && DIZ_TEME[podaci.salon.stil] ? podaci.salon.stil : 'vedro', naziv: '', tik: null, gotovo: 0 };
+  mesecSt = { od: Date.now(), slike: [], tema: priprema ? priprema.tema : (podaci.salon.stil && DIZ_TEME[podaci.salon.stil] ? podaci.salon.stil : 'vedro'), naziv: priprema ? priprema.naziv : '', tik: null, gotovo: 0 };
   m.hidden = false; document.body.style.overflow = 'hidden';
   mesecPodesi();
   clearInterval(mesecSt.tik); mesecSt.tik = setInterval(mesecSat, 250);
@@ -2241,9 +2256,10 @@ function mesecPodesi() {
     <span class="ms-ozn">Tema</span>
     <div class="st-cipovi" id="msTeme" role="group" aria-label="Tema">${STILOVI.map(x => `<button data-t="${x.id}" aria-pressed="${x.id === st.tema}"><i aria-hidden="true" style="background:conic-gradient(${DIZ_TEME[x.id].p.slice(0, 4).map((c, j) => c[0] + ' ' + j * 25 + '% ' + (j + 1) * 25 + '%').join(',')})"></i>${x.ime}</button>`).join('')}</div>
     <span class="ms-ozn">4 slike</span>
+    ${st.slike.filter(Boolean).length < 4 ? `<button class="dugme sporedno ms-sve" id="msSve" style="margin:0 0 10px">Izaberite 4 slike odjednom</button>` : ''}
     <div class="ms-slike">${[0, 1, 2, 3].map(i => `<button class="ms-slot${st.slike[i] ? ' puna' : ''}" data-i="${i}" aria-label="Slika ${i + 1}">${st.slike[i] ? `<img src="${st.slike[i]}" alt="">` : i + 1}</button>`).join('')}</div>
     <input type="file" id="msFajl" accept="image/*" multiple hidden>
-    <button class="dugme ms-dug" id="msKreni" ${st.slike.length < 4 ? 'disabled' : ''}>Zakaži mesec</button>
+    <button class="dugme ms-dug" id="msKreni" ${st.slike.filter(Boolean).length < 4 ? 'disabled' : ''}>Zakaži mesec</button>
   </div>`;
   document.getElementById('msX').onclick = mesecZatvori;
   const nz = document.getElementById('msNaziv'); nz.oninput = () => st.naziv = nz.value;
@@ -2251,10 +2267,12 @@ function mesecPodesi() {
   const f = document.getElementById('msFajl');
   m.querySelectorAll('.ms-slot').forEach(b => b.onclick = () => { st.cilj = +b.dataset.i; f.click(); });
   f.onchange = async () => {
+    if (st.sve && f.files.length) st.slike = []; st.sve = false;
     let i = st.cilj || 0;
     for (const fl of [...f.files]) { if (i > 3) break; try { st.slike[i] = await mesecSmanji(fl); } catch (e) {} i++; while (i <= 3 && st.slike[i] && f.files.length > 1) i++; }
     st.slike = st.slike.slice(0, 4); f.value = ''; mesecPodesi();
   };
+  const sve = document.getElementById('msSve'); if (sve) sve.onclick = () => { st.sve = true; st.cilj = 0; f.click(); };
   document.getElementById('msKreni').onclick = mesecZakazi;
 }
 function mesecSmanji(file) {
@@ -2317,7 +2335,7 @@ function mesecUPlan(grafike) {
   }
   red.forEach((x, j) => { if (!out[j]) return;
     const slk = x.s != null ? st.slike[x.s] : grafike[x.p];
-    const cap = (x.s != null ? MESEC_OPISI[x.s % MESEC_OPISI.length].replace('{n}', mesecNaziv()) : MESEC_PLOCICE[x.p][2]) + (jeHrana() ? '\n\n#piletina #fastfood' : '\n\n#instagram #novo');
+    const cap = (x.s != null ? MESEC_OPISI[x.s % MESEC_OPISI.length].replace('{n}', mesecNaziv()) : MESEC_PLOCICE[x.p][2]) + (priprema ? '\n\n' + priprema.tagovi : jeHrana() ? '\n\n#piletina #fastfood' : '\n\n#instagram #novo');
     out[j].objava = { id: 900 + j, tip: x.s != null ? 'post' : 'post_kartica', slika: slk, slike: [slk], slika_broj: 1, caption: cap, plocica: x.s != null ? null : x.p };
   });
   podaci.plan = out; podaci.salon.stil = st.tema; if ((st.naziv || '').trim()) podaci.salon.naziv = st.naziv.trim();
