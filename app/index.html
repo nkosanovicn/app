@@ -595,7 +595,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-19.58';
+const VERZIJA = '2026-11-19.59';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -2283,11 +2283,11 @@ function mesecPodesi() {
   const N = mesecBrojSlika(), puno = mesecSlotovi().filter(i => st.slike[i]).length;
   m.innerHTML = `<div class="ms-in">${mesecVrh(false)}
     <h2>${st.samoPrikaz ? 'Pripremite mesec za minut' : 'Zakažite mesec za minut'}</h2>
-    <p class="ms-pod">${st.samoPrikaz ? `Dodajte ${N} ${N === 5 ? 'slika' : 'slike'} ili videa (Reels). Razvitak od njih pravi ${N} ${N === 5 ? 'objava' : 'objave'} i dodaje ${9 - N} ${9 - N === 5 ? 'objava' : 'objave'} sa savetima, naizmenično, da profil izgleda kao šahovnica. Sve ide pravo u plan, a svaku objavu možete posle da promenite.` : 'Dodajte 4 slike. Ostalo pravi Razvitak.'}</p>
-    <span class="ms-ozn">${N} ${st.samoPrikaz ? 'slika ili videa' : 'slike'}</span>
+    <p class="ms-pod">${st.samoPrikaz ? `Dodajte ${N} ${N === 5 ? 'slika' : 'slike'}${mesecVideoDozvoljen() ? ' ili videa (do ' + MESEC_MAX_VIDEA + ' Reels-a)' : ''}. Razvitak od njih pravi ${N} ${N === 5 ? 'objava' : 'objave'} i dodaje ${9 - N} ${9 - N === 5 ? 'objava' : 'objave'} sa savetima, naizmenično, da profil izgleda kao šahovnica. Sve ide pravo u plan, a svaku objavu možete posle da promenite.` : 'Dodajte 4 slike. Ostalo pravi Razvitak.'}</p>
+    <span class="ms-ozn">${N} ${N === 5 ? 'slika' : 'slike'}${st.samoPrikaz && mesecVideoDozvoljen() ? ' ili videa' : ''}</span>
     ${puno < N ? `<button class="dugme sporedno ms-sve" id="msSve" style="margin:0 0 10px">Izaberite ${N} odjednom</button>` : ''}
     <div class="ms-slike${N === 5 ? ' pet' : ''}">${mesecSlotovi().map(i => `<button class="ms-slot${st.slike[i] ? ' puna' : ''}" data-i="${i}" aria-label="${st.videi[i] ? 'Video' : 'Slika'} ${i + 1}">${st.slike[i] ? `<img src="${st.slike[i]}" alt="">${st.videi[i] ? IGRAJ : ''}` : i + 1}</button>`).join('')}</div>
-    <input type="file" id="msFajl" accept="${st.samoPrikaz ? 'image/*,video/*' : 'image/*'}" multiple hidden>
+    <input type="file" id="msFajl" accept="${st.samoPrikaz && mesecVideoDozvoljen() ? 'image/*,video/*' : 'image/*'}" multiple hidden>
     ${st.samoPrikaz ? `<label class="ms-cek"><input type="checkbox" id="msKarusel" ${st.karusel ? 'checked' : ''}><span>Objave sa savetima kao karusel (više slajdova)<small>Kreiranje će trajati duže, oko 10 minuta.</small></span></label>` : ''}
     <button class="dugme ms-dug" id="msKreni" ${puno < N ? 'disabled' : ''}>${st.samoPrikaz ? 'Pripremi 9 objava' : 'Zakaži mesec'}</button>
   </div>`;
@@ -2302,6 +2302,8 @@ function mesecPodesi() {
       if (i > N - 1) break;
       try {
         if (String(fl.type).startsWith('video')) {
+          if (!mesecVideoDozvoljen()) { tost('Reels u pripremi meseca je deo paketa Premium. Ovde dodajte slike.'); continue; }
+          if (st.videi.filter((v, j) => v && j !== i).length >= MESEC_MAX_VIDEA) { tost(`Najviše ${MESEC_MAX_VIDEA} videa po pripremi (4 Reels-a mesečno).`); continue; }
           const mb = fl.size / 1048576;
           if (mb > VIDEO_MAX_MB) { tost(`Video ima ${mb.toFixed(0)} MB, a najviše može ${VIDEO_MAX_MB} MB.`); continue; }
           const k = await kadarIzFajla(fl);
@@ -2368,6 +2370,8 @@ async function mesecZakazi() {
 // mreza 1..9 (1 = najnovija, gore levo). Obicno su slike na 2,4,6,8; ako je poslednja objava pre ovog meseca grafika,
 // slike idu na 1,3,5,7,9 da se sahovnica na profilu nastavi bez prekida (9 objava = tacno 3 reda).
 function mesecRed() { const n = !!(mesecSt && mesecSt.neparne); const r = []; let s = 0, p = 0; for (let i = 0; i < 9; i++) r.push((i % 2 === 0) === n ? { s: s++ } : { p: p++ }); return r; }
+const mesecVideoDozvoljen = () => !pravo() || demoProfil() || !podaci.salon || !podaci.salon.paket || ['PREMIUM', 'TEST'].includes(String(podaci.salon.paket).toUpperCase());
+const MESEC_MAX_VIDEA = 2; // 2 po pripremi, 2 pripreme mesecno = 4 Reels-a u Premiumu
 const mesecBrojSlika = () => mesecSt && mesecSt.neparne ? 5 : 4;
 const mesecSlotovi = () => Array.from({ length: mesecBrojSlika() }, (_, i) => i);
 function mesecNeparne() { // tip poslednje objave pre prvog slobodnog termina
