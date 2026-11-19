@@ -589,7 +589,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-19.55';
+const VERZIJA = '2026-11-19.56';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -2479,7 +2479,7 @@ function mesecRezultatPravi(bezAnimacije) {
       if (o) return `<span style="${an}" data-i="${i}" role="button" tabindex="0"><img ${sl_atr(o.slika || (o.slike || [])[0] || '', 540)} alt=""><em>${esc(kratko(datumi[i]))}</em></span>`;
       if (st.greske[i]) return `<span class="ms-greska" style="${an}">${esc(st.greske[i] === 'Još se pravi' ? 'Još se pravi, stići će u plan' : 'Nije uspelo')}</span>`;
       return `<span class="ms-ceka" style="${an}"><i></i><small>${x.p != null ? 'crtam…' : 'pišem…'}</small><em>${esc(kratko(datumi[i]))}</em></span>`; }).join('')}</div></div>
-    <p class="ms-napomena">${cekaGraf ? 'Razvitak sada pravi objave na serveru, 2 do 5 minuta. Možete slobodno da zatvorite aplikaciju, sve će biti u planu.' : 'Sve je u planu i izlazi u terminima ispod slika. Dodirnite objavu da promenite tekst ili termin.'}</p>
+    <p class="ms-napomena">${cekaGraf ? 'Razvitak sada pravi objave na serveru, 4 do 7 minuta. Možete slobodno da zatvorite aplikaciju, sve će biti u planu.' : 'Sve je u planu i izlazi u terminima ispod slika. Dodirnite objavu da promenite tekst ili termin.'}</p>
     <div class="ms-dvoje"><button class="dugme sporedno" id="msZatvori">Zatvori</button><button class="dugme" id="msPlan">Pogledaj plan</button></div>
   </div>`;
   document.getElementById('msX').onclick = mesecZatvori;
