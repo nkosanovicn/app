@@ -589,7 +589,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-19.53';
+const VERZIJA = '2026-11-19.54';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -2346,15 +2346,30 @@ async function mesecZakazi() {
   mesecRezultat();
 }
 function mesecRed() { const r = []; for (let i = 0; i < 9; i++) r.push(i % 2 ? { s: (i - 1) / 2 } : { p: i / 2 }); return r; } // mreza 1..9: 2,4,6,8 su slike
-function mesecTermini() {
-  const dani = (podaci.salon.dani && podaci.salon.dani.length) ? podaci.salon.dani : [2, 4, 6], sat = (podaci.salon.sati || [19])[0];
+function mesecTermini() { // slobodni termini iz rasporeda profila, hronoloski
   const DN = ['nedelja', 'ponedeljak', 'utorak', 'sreda', 'četvrtak', 'petak', 'subota'], sad = new Date(), out = [];
-  for (let i = 1; out.length < 12 && i < 40; i++) {
-    const d = new Date(sad.getFullYear(), sad.getMonth(), sad.getDate() + i, sat); if (!dani.includes(d.getDay())) continue;
-    const k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + 'T' + String(sat).padStart(2, '0') + ':00';
-    out.push({ kada: d.toISOString(), kljuc: k, dan: (i === 1 ? 'sutra' : DN[d.getDay()]) + ' ' + d.getDate() + '.' + (d.getMonth() + 1) + '.', sat: sat + 'h', objava: null });
+  const fmt = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + 'T' + String(d.getHours()).padStart(2, '0') + ':00';
+  const opis = (d, h) => { const i = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(sad.getFullYear(), sad.getMonth(), sad.getDate())) / 864e5); return { dan: (i === 0 ? 'danas' : i === 1 ? 'sutra' : DN[d.getDay()]) + ' ' + d.getDate() + '.' + (d.getMonth() + 1) + '.', sat: h + 'h' }; };
+  const zauzeto = new Set();
+  if (pravo() && Array.isArray(podaci.plan)) {
+    for (const t of podaci.plan) { if (!t.kljuc) continue; if (t.objava) { zauzeto.add(t.kljuc); continue; } const d = new Date(t.kada); out.push({ kada: t.kada, kljuc: t.kljuc, dan: t.dan, sat: t.sat, objava: null }); }
   }
-  return out;
+  // dopuna (ili demo): po rasporedu profila, posle poslednjeg termina iz plana
+  const mapa = podaci.salon.raspored_mapa && Object.keys(podaci.salon.raspored_mapa).length ? podaci.salon.raspored_mapa : null;
+  const dani = (podaci.salon.dani && podaci.salon.dani.length) ? podaci.salon.dani : [2, 4, 6], sat = (podaci.salon.sati || [19])[0];
+  const posle = out.length ? new Date(out[out.length - 1].kada).getTime() : (pravo() && podaci.plan && podaci.plan.length ? new Date(podaci.plan[podaci.plan.length - 1].kada).getTime() : sad.getTime());
+  for (let i = 0; out.length < 12 && i < 90; i++) {
+    const dan = new Date(sad.getFullYear(), sad.getMonth(), sad.getDate() + i);
+    const iso = dan.getDay() || 7;
+    const sati = mapa ? (mapa[iso] || mapa[String(iso)] || []) : (dani.includes(dan.getDay()) ? [sat] : []);
+    for (const h of sati) {
+      const d = new Date(dan.getFullYear(), dan.getMonth(), dan.getDate(), h);
+      if (d.getTime() <= posle || d <= sad) continue;
+      const k = fmt(d); if (zauzeto.has(k) || out.some(x => x.kljuc === k)) continue;
+      out.push({ kada: d.toISOString(), kljuc: k, ...opis(d, h), objava: null });
+    }
+  }
+  return out.sort((a, b) => new Date(a.kada) - new Date(b.kada));
 }
 function mesecUPlan(grafike) {
   const st = mesecSt, red = mesecRed().slice().reverse(), out = mesecTermini(); // najstarija prva
@@ -2422,7 +2437,7 @@ async function mesecPravo() {
   const posla = [];
   for (let k = 0; k < 5; k++) {
     const x = { p: k }, poz = pozicija(x), t = terminZa(x);
-    posla.push(akcija({ akcija: 'grafika', napomena: teme[k], u_red: '1', termin_za: t ? t.kljuc : '' })
+    posla.push(akcija({ akcija: 'grafika', napomena: 'Karusel objava (naslovni slajd, pa 3 do 4 slajda sa stavkama i završni slajd) na temu: ' + teme[k], u_red: '1', termin_za: t ? t.kljuc : '' })
       .then(() => { gotovih++; broj(); }).catch(e => { st.greske[poz] = e.message || 'Greška'; gotovih++; broj(); }));
   }
   for (let k = 0; k < 4; k++) {
