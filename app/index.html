@@ -510,6 +510,14 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 #mesec .ms-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #mesec .ms-slot.puna{border:0}
 #mesec .ms-slike.pet{grid-template-columns:repeat(5,1fr);gap:8px}
+#mesec .ms-slike.sest{grid-template-columns:repeat(3,1fr);gap:8px}
+#mesec .ms-slike.sest .ms-slot{aspect-ratio:1}
+#mesec .ms-sabloni{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#mesec .ms-sabloni button{display:flex;gap:12px;align-items:center;text-align:left;padding:12px;border-radius:14px;border:2px solid var(--linija);background:none;color:inherit;font:inherit;cursor:pointer}
+#mesec .ms-sabloni button[aria-checked="true"]{border-color:var(--orhideja);background:var(--orhideja-svetla)}
+#mesec .ms-sabloni svg{flex:none}
+#mesec .ms-sabloni b{display:block;font-size:15px}
+#mesec .ms-sabloni small{display:block;font-size:12.5px;color:var(--tiho);margin-top:3px;line-height:1.3}
 #mesec .ms-slot .igraj,#mesec .ms-mreza .igraj{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:13px;line-height:30px;text-align:center;pointer-events:none;z-index:1}
 #mesec .ms-cek{display:flex;gap:12px;align-items:flex-start;margin:18px 0 4px;font-weight:600;font-size:15px;line-height:1.35;cursor:pointer}
 #mesec .ms-cek input{width:22px;height:22px;margin:0;flex:none;accent-color:var(--orhideja)}
@@ -595,7 +603,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-19.59';
+const VERZIJA = '2026-11-19.60';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -2268,7 +2276,7 @@ function mesecOtvori() {
   let m = document.getElementById('mesec');
   if (!m) { m = document.createElement('div'); m.id = 'mesec'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'Zakažite mesec za minut'); document.body.appendChild(m); }
   const pr = mesecPriprema(); MESEC_PLOCICE = pr ? pr.plocice : MESEC_OSNOVA.p; MESEC_OPISI = pr ? pr.opisi : MESEC_OSNOVA.o;
-  mesecSt = { pr, neparne: false, samoPrikaz: pravo(), od: Date.now(), slike: [], videi: [], karusel: false, tema: pr ? pr.tema : (podaci.salon.stil && DIZ_TEME[podaci.salon.stil] ? podaci.salon.stil : 'vedro'), naziv: pr ? pr.naziv : (pravo() ? podaci.salon.naziv || '' : ''), tik: null, gotovo: 0 };
+  mesecSt = { pr, neparne: false, sablon: (() => { try { return localStorage.getItem(mesecSablonKljuc()) === 'kolona' ? 'kolona' : 'sah'; } catch (e) { return 'sah'; } })(), samoPrikaz: pravo(), od: Date.now(), slike: [], videi: [], karusel: false, tema: pr ? pr.tema : (podaci.salon.stil && DIZ_TEME[podaci.salon.stil] ? podaci.salon.stil : 'vedro'), naziv: pr ? pr.naziv : (pravo() ? podaci.salon.naziv || '' : ''), tik: null, gotovo: 0 };
   mesecSt.neparne = mesecNeparne();
   m.hidden = false; document.body.style.overflow = 'hidden';
   mesecPodesi();
@@ -2283,15 +2291,18 @@ function mesecPodesi() {
   const N = mesecBrojSlika(), puno = mesecSlotovi().filter(i => st.slike[i]).length;
   m.innerHTML = `<div class="ms-in">${mesecVrh(false)}
     <h2>${st.samoPrikaz ? 'Pripremite mesec za minut' : 'Zakažite mesec za minut'}</h2>
-    <p class="ms-pod">${st.samoPrikaz ? `Dodajte ${N} ${N === 5 ? 'slika' : 'slike'}${mesecVideoDozvoljen() ? ' ili videa (do ' + MESEC_MAX_VIDEA + ' Reels-a)' : ''}. Razvitak od njih pravi ${N} ${N === 5 ? 'objava' : 'objave'} i dodaje ${9 - N} ${9 - N === 5 ? 'objava' : 'objave'} sa savetima, naizmenično, da profil izgleda kao šahovnica. Sve ide pravo u plan, a svaku objavu možete posle da promenite.` : 'Dodajte 4 slike. Ostalo pravi Razvitak.'}</p>
-    <span class="ms-ozn">${N} ${N === 5 ? 'slika' : 'slike'}${st.samoPrikaz && mesecVideoDozvoljen() ? ' ili videa' : ''}</span>
+    <p class="ms-pod">${st.samoPrikaz ? 'Izaberite izgled profila i dodajte slike. Razvitak pravi 9 objava, raspoređenih u vaše termine. Sve ide pravo u plan, a svaku objavu možete posle da promenite.' : 'Izaberite izgled profila i dodajte slike. Ostalo pravi Razvitak.'}</p>
+    <span class="ms-ozn">Izgled profila</span>
+    <div class="ms-sabloni" id="msSabloni" role="radiogroup" aria-label="Izgled profila">${MESEC_SABLONI.map(([id, ime]) => { const n = id === 'kolona' ? 6 : (st.neparne ? 5 : 4); return `<button type="button" role="radio" data-s="${id}" aria-checked="${st.sablon === id}">${mesecMini(id, st.neparne)}<span><b>${ime}</b><small>${n} ${n === 4 ? 'slike' : 'slika'} i ${9 - n} ${9 - n === 5 ? 'grafika' : 'grafike'} mesečno</small></span></button>`; }).join('')}</div>
+    <span class="ms-ozn">${N} ${N === 4 ? 'slike' : 'slika'}${st.samoPrikaz && mesecVideoDozvoljen() ? ' ili videa (do ' + MESEC_MAX_VIDEA + ' Reels-a)' : ''}</span>
     ${puno < N ? `<button class="dugme sporedno ms-sve" id="msSve" style="margin:0 0 10px">Izaberite ${N} odjednom</button>` : ''}
-    <div class="ms-slike${N === 5 ? ' pet' : ''}">${mesecSlotovi().map(i => `<button class="ms-slot${st.slike[i] ? ' puna' : ''}" data-i="${i}" aria-label="${st.videi[i] ? 'Video' : 'Slika'} ${i + 1}">${st.slike[i] ? `<img src="${st.slike[i]}" alt="">${st.videi[i] ? IGRAJ : ''}` : i + 1}</button>`).join('')}</div>
+    <div class="ms-slike${N === 5 ? ' pet' : N === 6 ? ' sest' : ''}">${mesecSlotovi().map(i => `<button class="ms-slot${st.slike[i] ? ' puna' : ''}" data-i="${i}" aria-label="${st.videi[i] ? 'Video' : 'Slika'} ${i + 1}">${st.slike[i] ? `<img src="${st.slike[i]}" alt="">${st.videi[i] ? IGRAJ : ''}` : i + 1}</button>`).join('')}</div>
     <input type="file" id="msFajl" accept="${st.samoPrikaz && mesecVideoDozvoljen() ? 'image/*,video/*' : 'image/*'}" multiple hidden>
     ${st.samoPrikaz ? `<label class="ms-cek"><input type="checkbox" id="msKarusel" ${st.karusel ? 'checked' : ''}><span>Objave sa savetima kao karusel (više slajdova)<small>Kreiranje će trajati duže, oko 10 minuta.</small></span></label>` : ''}
     <button class="dugme ms-dug" id="msKreni" ${puno < N ? 'disabled' : ''}>${st.samoPrikaz ? 'Pripremi 9 objava' : 'Zakaži mesec'}</button>
   </div>`;
   document.getElementById('msX').onclick = mesecZatvori;
+  document.getElementById('msSabloni').onclick = e => { const b = e.target.closest('button[data-s]'); if (!b || b.dataset.s === st.sablon) return; haptika(); st.sablon = b.dataset.s; try { localStorage.setItem(mesecSablonKljuc(), st.sablon); } catch (er) {} const n = mesecBrojSlika(); st.slike = st.slike.slice(0, n); st.videi = st.videi.slice(0, n); mesecPodesi(); };
   const kr = document.getElementById('msKarusel'); if (kr) kr.onchange = () => { haptika(); st.karusel = kr.checked; };
   const f = document.getElementById('msFajl');
   m.querySelectorAll('.ms-slot').forEach(b => b.onclick = () => { st.cilj = +b.dataset.i; f.click(); });
@@ -2369,10 +2380,15 @@ async function mesecZakazi() {
 }
 // mreza 1..9 (1 = najnovija, gore levo). Obicno su slike na 2,4,6,8; ako je poslednja objava pre ovog meseca grafika,
 // slike idu na 1,3,5,7,9 da se sahovnica na profilu nastavi bez prekida (9 objava = tacno 3 reda).
-function mesecRed() { const n = !!(mesecSt && mesecSt.neparne); const r = []; let s = 0, p = 0; for (let i = 0; i < 9; i++) r.push((i % 2 === 0) === n ? { s: s++ } : { p: p++ }); return r; }
+// sablon "kolona": grafike na 2,5,8 (srednja kolona), 6 slika; posle svake nove objave linija ostaje uspravna
+function mesecRed() { const n = !!(mesecSt && mesecSt.neparne), kol = mesecSt && mesecSt.sablon === 'kolona'; const r = []; let s = 0, p = 0; for (let i = 0; i < 9; i++) r.push((kol ? i % 3 !== 1 : (i % 2 === 0) === n) ? { s: s++ } : { p: p++ }); return r; }
+const MESEC_SABLONI = [['sah', 'Šahovnica'], ['kolona', 'Srednja kolona']];
+function mesecMini(sab, neparne) { const st = { sablon: sab, neparne }; const old = mesecSt; mesecSt = { ...(old || {}), ...st }; const r = mesecRed(); mesecSt = old;
+  return `<svg viewBox="0 0 64 80" width="48" height="60" aria-hidden="true">${r.map((x, i) => `<rect x="${(i % 3) * 22}" y="${Math.floor(i / 3) * 27}" width="20" height="25" rx="3" fill="${x.p != null ? 'var(--orhideja)' : 'var(--linija)'}"/>`).join('')}</svg>`; }
+function mesecSablonKljuc() { return 'msSablon_' + ((podaci && podaci.salon && podaci.salon.kod) || 'demo'); }
 const mesecVideoDozvoljen = () => !pravo() || demoProfil() || !podaci.salon || !podaci.salon.paket || ['PREMIUM', 'TEST'].includes(String(podaci.salon.paket).toUpperCase());
 const MESEC_MAX_VIDEA = 2; // 2 po pripremi, 2 pripreme mesecno = 4 Reels-a u Premiumu
-const mesecBrojSlika = () => mesecSt && mesecSt.neparne ? 5 : 4;
+const mesecBrojSlika = () => mesecSt && mesecSt.sablon === 'kolona' ? 6 : (mesecSt && mesecSt.neparne ? 5 : 4);
 const mesecSlotovi = () => Array.from({ length: mesecBrojSlika() }, (_, i) => i);
 function mesecNeparne() { // tip poslednje objave pre prvog slobodnog termina
   if (!pravo()) return false;
