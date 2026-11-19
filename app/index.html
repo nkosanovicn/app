@@ -411,6 +411,10 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 .praznik-kartica b{display:block;font-size:15px}
 .praznik-kartica .kada{font-weight:500;color:var(--tiho);font-size:13px}
 .praznik-kartica small{display:block;color:var(--tiho);font-size:13px;margin:4px 0 10px;line-height:1.4}
+.praznik-kartica.pk-red{align-items:center}
+.pk-red .pk-tekst{flex:1;min-width:0}
+.pk-red small{margin:2px 0 0}
+.pk-red .cip{flex:none}
 .praznik-podsetnik{margin-top:14px;width:100%;display:flex;gap:12px;align-items:center;text-align:left;background:var(--rumenilo);border-radius:var(--radius);padding:14px 16px;font-size:14px;color:var(--tiho)}
 .praznik-podsetnik strong{display:block;font-size:15px;color:var(--mastilo)}
 .praznik-podsetnik .em{font-size:26px;line-height:1}
@@ -610,7 +614,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-19.65';
+const VERZIJA = '2026-11-19.67';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -1400,6 +1404,7 @@ let planPogled = (() => { try { return sessionStorage.getItem('razvitak_plan') |
 let mrezaKes = { kod: null, vreme: 0, lista: null };
 let kalMesec = null, kalDan = null;
 const MESECI = ['januar', 'februar', 'mart', 'april', 'maj', 'jun', 'jul', 'avgust', 'septembar', 'oktobar', 'novembar', 'decembar'];
+const MESECI_NOM = ['januar', 'februar', 'mart', 'april', 'maj', 'jun', 'jul', 'avgust', 'septembar', 'oktobar', 'novembar', 'decembar'];
 const MESECI_GEN = ['januara', 'februara', 'marta', 'aprila', 'maja', 'juna', 'jula', 'avgusta', 'septembra', 'oktobra', 'novembra', 'decembra'];
 const DANI_K = ['pon', 'uto', 'sre', 'čet', 'pet', 'sub', 'ned'];
 const kljucDana = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -1525,7 +1530,7 @@ function planKalendar() {
     if (x.v === 'zakazano') return `<button class="kal-stavka" data-id="${x.t.objava.id}" data-izvor="plan">${slika(x.t.objava)}<span><small>Zakazano u ${esc(x.t.sat)}</small>${esc(prvaRecenica(x.t.objava.caption))}</span></button>`;
     if (x.v === 'objavljeno') return `<button class="kal-stavka" data-id="${x.x.id}" data-izvor="objavljeno">${slika(x.x)}<span><small>Objavljeno</small>${esc(prvaRecenica(x.x.caption))}</span></button>`;
     if (x.v === 'slobodno') return x.t.kljuc ? `<button class="kal-slobodno" data-slot="${esc(x.t.kljuc)}">+ Dodaj objavu za ${esc(x.t.sat)}</button>` : '';
-    return `<div class="praznik-kartica"><span class="em" aria-hidden="true">${x.p.em}</span><div><b>${esc(x.p.ime)}</b><small>${esc(x.p.tema)}</small><button class="cip" data-praznik="${x.p.k}">Napravi objavu</button></div></div>`;
+    return `<div class="praznik-kartica pk-red"><span class="em" aria-hidden="true">${x.p.em}</span><div class="pk-tekst"><b>${esc(x.p.ime)}</b><small>${x.p.dat.getDate()}. ${MESECI_NOM[x.p.dat.getMonth()]}</small></div><button class="cip" data-praznik="${x.p.k}">Napravi objavu</button></div>`;
   };
   const uskoro = narednaPraznici(4);
   document.getElementById('planTelo').innerHTML = `<div class="kal">
@@ -1535,7 +1540,7 @@ function planKalendar() {
     </div>
     <h2>${kd}. ${MESECI_GEN[km - 1]}</h2>
     <div class="kal-detalj">${izabran.length ? izabran.sort((a, b) => (a.v === 'praznik' ? -1 : 0) - (b.v === 'praznik' ? -1 : 0)).map(red).join('') : '<p class="pod" style="margin:0">Za ovaj dan nema ništa zakazano.</p>'}</div>
-    ${uskoro.length ? `<h2>Važni datumi uskoro</h2><div class="kal-detalj">${uskoro.map(p => `<div class="praznik-kartica"><span class="em" aria-hidden="true">${p.em}</span><div><b>${esc(p.ime)} <span class="kada">${p.dat.getDate()}. ${MESECI_GEN[p.dat.getMonth()]}, ${zaDana(p)}</span></b><small>${esc(p.tema)}</small><button class="cip" data-praznik="${p.k}">Napravi objavu</button></div></div>`).join('')}</div>` : ''}`;
+    ${uskoro.length ? `<h2>Važni datumi uskoro</h2><div class="kal-detalj">${uskoro.map(p => `<div class="praznik-kartica pk-red"><span class="em" aria-hidden="true">${p.em}</span><div class="pk-tekst"><b>${esc(p.ime)}</b><small>${p.dat.getDate()}. ${MESECI_NOM[p.dat.getMonth()]}</small></div><button class="cip" data-praznik="${p.k}">Napravi objavu</button></div>`).join('')}</div>` : ''}`;
   document.getElementById('kalNazad').onclick = () => { haptika(); kalMesec = new Date(g, m - 1, 1); planKalendar(); };
   document.getElementById('kalNapred').onclick = () => { haptika(); kalMesec = new Date(g, m + 1, 1); planKalendar(); };
   document.querySelectorAll('[data-kdan]').forEach(b => b.onclick = () => { haptika(); kalDan = b.dataset.kdan; planKalendar(); });
