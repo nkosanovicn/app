@@ -582,7 +582,7 @@ select.polje{width:100%;border:1px solid var(--linija);border-radius:var(--radiu
 
 <script>
 /* automatsko ažuriranje: ako na serveru postoji novija verzija, stranica se sama učita ponovo */
-const VERZIJA = '2026-11-18.47';
+const VERZIJA = '2026-11-19.48';
 async function proveriVerziju() {
   try {
     const odg = await fetch('verzija.json?t=' + Date.now(), { cache: 'no-store' });
@@ -609,6 +609,8 @@ const skladiste = {
 };
 let token = uTelegramu ? '' : skladiste.uzmi('blade_token');
 let demo = !uTelegramu && (uOkviru || new URLSearchParams(location.search).has('demo'));
+const demoVrsta = new URLSearchParams(location.search).get('demo') === 'hrana' ? 'hrana' : 'salon';
+const jeHrana = () => demo && demoVrsta === 'hrana';
 let podaci = null, tab = (() => { try { return sessionStorage.getItem('razvitak_tab') || 'pocetna'; } catch (e) { return 'pocetna'; } })(), kodIzbor = '';
 const pravo = () => uTelegramu || (!!token && !demo);
 const prijava = () => uTelegramu ? { initData: tg.initData } : { token };
@@ -920,7 +922,7 @@ function bioPanel(zelja = '') {
         j = await odg.json();
       } else {
         await cekaj(1800);
-        j = { ok: true, opisi: ['✂️ Frizerski salon u Novom Sadu\nBalayage, šišanje i nega kose\n📅 Zakažite termin porukom u DM', 'Kosa kakvu ste želeli ✨\nBojenje, šišanje i feniranje\nNovi Sad\n💬 Pišite nam u DM', 'Frizer · Novi Sad\nZakazivanje u DM 📩'], imena: ['Studio Lana | Frizer Novi Sad', 'Studio Lana Frizerski salon'] };
+        j = jeHrana() ? { ok: true, opisi: ['🍗 Hrskava piletina, burgeri i krilca\n🛵 Dostava svaki dan do 23h\n📍 Novi Sad', 'Hrskavo spolja, sočno unutra 🔥\nPiletina, wrapovi i sosovi\n💬 Poručite u DM', 'Fast food · Novi Sad\nDostava i za poneti 🛵'], imena: [podaci.salon.naziv + ' | Piletina Novi Sad', podaci.salon.naziv + ' Fast food'] } : { ok: true, opisi: ['✂️ Frizerski salon u Novom Sadu\nBalayage, šišanje i nega kose\n📅 Zakažite termin porukom u DM', 'Kosa kakvu ste želeli ✨\nBojenje, šišanje i feniranje\nNovi Sad\n💬 Pišite nam u DM', 'Frizer · Novi Sad\nZakazivanje u DM 📩'], imena: ['Studio Lana | Frizer Novi Sad', 'Studio Lana Frizerski salon'] };
       }
       if (!j.ok) throw new Error(j.greska || 'Predlog nije uspeo. Pokušajte ponovo.');
       await gotovo();
@@ -1539,7 +1541,7 @@ function preIPosle(terminZa) {
     <div class="pp-izbor"><label class="pp-slot" id="ppPreL"><input type="file" id="ppPre" accept="image/*" hidden><span>+ Slika pre</span></label><label class="pp-slot" id="ppPosleL"><input type="file" id="ppPosle" accept="image/*" hidden><span>+ Slika posle</span></label></div>
     <div class="seg" role="group" aria-label="Raspored" style="grid-template-columns:repeat(2,1fr);margin-top:12px"><button data-pp="lr" aria-pressed="true">Levo i desno</button><button data-pp="gd" aria-pressed="false">Gore i dole</button></div>
     <canvas class="pp-platno" id="ppPlatno" hidden aria-label="Pregled slike pre i posle"></canvas>
-    <textarea class="polje" id="ppNapomena" placeholder="Šta je rađeno, npr. „keratin tretman, kosa posle 2 sata“"></textarea>
+    <textarea class="polje" id="ppNapomena" placeholder="${jeHrana() ? 'Šta je na slikama, npr. „novi burger, pre i posle pečenja“' : 'Šta je rađeno, npr. „keratin tretman, kosa posle 2 sata“'}"></textarea>
     <button class="dugme" id="ppNapravi" style="margin-top:14px" disabled>Izaberite obe slike</button>`);
   const platno = document.getElementById('ppPlatno'), dugme = document.getElementById('ppNapravi');
   const prikaziPlatno = () => {
@@ -1789,7 +1791,7 @@ function pregled(o, termin) {
     ${termin || o.termin_za ? `<p>Ako odobrite, izlazi ${esc(termin || tekstTermina(o.termin_za))}.</p>` : (story ? '<p>Kad odobrite, Story izlazi odmah.</p>' : '')}
     ${story ? '' : `<div class="opis" id="opisPregled">${opisHtml(o.caption)}</div>`}
     ${story ? '' : `<div class="cipovi"><button class="cip" data-iz="kr">Kraće</button><button class="cip" data-iz="op">Opuštenije</button><button class="cip" data-iz="dt">Drugi tekst</button></div>
-    <div class="svoja-izmena"><textarea class="polje" id="svojaIzmena" rows="2" placeholder="${kartica ? 'Šta da promenimo? U opisu ili na slikama, npr. „neka Milica pita koliko traje balayage“' : 'Šta da promenimo u opisu? Npr. „dodaj da radimo i nedeljom“'}"></textarea>
+    <div class="svoja-izmena"><textarea class="polje" id="svojaIzmena" rows="2" placeholder="${kartica ? (jeHrana() ? 'Šta da promenimo? U opisu ili na slikama, npr. „dodaj da dostavljamo do 23h“' : 'Šta da promenimo? U opisu ili na slikama, npr. „neka Milica pita koliko traje balayage“') : 'Šta da promenimo u opisu? Npr. „dodaj da radimo i nedeljom“'}"></textarea>
     <div class="mikrofon-red"><button class="cip mik" id="mikIzmena" type="button"></button></div>
     <button class="dugme sporedno" id="posaljiIzmenu" type="button" disabled>Primeni izmenu</button></div>`}
     <div class="dugmad dole"><button class="dugme" id="aOk">${story ? 'Objavi Story' : 'Objavi'}</button><button class="dugme ne" id="aNe">Ne objavljuj</button></div>${story ? '' : '<button class="odmah-link" id="aTermin" type="button">Odobri za drugi dan</button><button class="odmah-link" id="aOdmah" type="button" style="margin-top:2px">Objavi odmah, bez čekanja termina</button>'}`);
@@ -1872,7 +1874,7 @@ function novaObjava(terminZa, tema) {
     <button class="tekst-dugme" type="button" id="idiPreIPosle">Ili napravite sliku pre i posle</button>
     <input type="file" id="josFajlova" accept="image/*,video/*" multiple hidden>
     <div class="izabrane" id="izabrane"></div>
-    <textarea class="polje" id="napomena" placeholder="Uz slike: kratka napomena, npr. „balayage, nova klijentkinja“. Bez slike: tema, npr. „3 razloga da negujete kosu zimi“."></textarea>
+    <textarea class="polje" id="napomena" placeholder="${jeHrana() ? 'Uz slike: kratka napomena, npr. „novi ljuti burger“. Bez slike: tema, npr. „3 sosa koja morate da probate“.' : 'Uz slike: kratka napomena, npr. „balayage, nova klijentkinja“. Bez slike: tema, npr. „3 razloga da negujete kosu zimi“.'}"></textarea>
     <div class="mikrofon-red"><button class="cip mik" id="mikNapomena" type="button"></button><small>govor se sam pretvara u tekst</small></div>
     <button class="dugme" id="napravi" style="margin-top:14px" disabled>Napravi objavu</button>`);
   mikrofon('napomena', 'mikNapomena', 'balayage, nova klijentkinja, radila Jelena');
@@ -1950,7 +1952,7 @@ function noviReels(terminZa) {
   otvoriPanel(`<h3>Novi Reels${terminZa ? ' za ' + esc(tekstTermina(terminZa, true)) : ''}</h3><p>Izaberite video od 3 do 90 sekundi. Šalje se u punom kvalitetu, a mi pišemo opis.</p>
     <label class="biraj" id="birajVideo"><input type="file" id="videoFajl" accept="video/*" hidden>Izaberite video<small>do ${VIDEO_MAX_MB} MB, najbolje 1080p</small></label>
     <div id="videoMesto"></div>
-    <textarea class="polje" id="reelsNapomena" placeholder="Šta je na snimku? Npr. „feniranje pre i posle“"></textarea>
+    <textarea class="polje" id="reelsNapomena" placeholder="${jeHrana() ? 'Šta je na snimku? Npr. „piletina izlazi iz friteze“' : 'Šta je na snimku? Npr. „feniranje pre i posle“'}"></textarea>
     <div class="mikrofon-red"><button class="cip mik" id="mikReels" type="button"></button><small>govor se sam pretvara u tekst</small></div>
     <button class="dugme" id="posaljiReels" style="margin-top:14px" disabled>Izaberite video</button>`);
   mikrofon('reelsNapomena', 'mikReels', 'feniranje pre i posle, radila Jelena');
@@ -2107,9 +2109,9 @@ function mikrofon(poljeId, dugmeId, primerTekst) {
 const ZNAK = '<svg class="velik-znak" aria-hidden="true" viewBox="150 125 212 238"><path d="M256.0 214.0 L214.0 160.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" fill="none"/><path d="M198.0 170.0 L206.0 140.0 L232.0 154.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M256.0 214.0 L312.0 150.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" fill="none"/><path d="M290.0 146.0 L322.0 138.0 L316.0 170.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="256.0" cy="222.0" r="22.0" fill="#6B7C3C"/><rect x="160.0" y="216.0" width="192.0" height="138.0" rx="30.0" fill="#6B7C3C"/><rect x="178.0" y="234.0" width="128.0" height="102.0" rx="20.0" fill="#FFFFFF"/><circle cx="328.0" cy="260.0" r="8.5" fill="#FFFFFF"/><circle cx="328.0" cy="288.0" r="8.5" fill="#FFFFFF"/><path d="M192.0 322.0 L222.0 292.0 L240.0 308.0 L282.0 262.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M258.0 258.0 L288.0 254.0 L286.0 284.0" stroke="#D9A63A" stroke-width="11.0" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
 let prozivka = null;
 function prikaziPrimer() {
-  podaci = JSON.parse(JSON.stringify(PRIMER));
+  podaci = JSON.parse(JSON.stringify(jeHrana() ? PRIMER_HRANA : PRIMER));
   const t = document.getElementById('primer'); t.hidden = false;
-  t.innerHTML = uOkviru ? 'Primer prikaza sa izmišljenim podacima.' : 'Primer sa izmišljenim podacima. <button id="trakaPrijava">Prijavite se</button> da vidite svoj salon.';
+  t.innerHTML = uOkviru ? 'Primer prikaza sa izmišljenim podacima.' : 'Primer sa izmišljenim podacima. <button id="trakaPrijava">Prijavite se</button> da vidite svoj profil.';
   const b = document.getElementById('trakaPrijava'); if (b) b.onclick = () => { demo = false; history.replaceState(null, '', location.pathname); ucitaj(); };
   document.body.classList.remove('bez-menija'); tab = 'pocetna'; prikazi();
 }
@@ -2193,14 +2195,24 @@ async function dodajNaEkran() {
 }
 
 /* demo: zakazivanje meseca za minut (samo primer, nista ne ide na server) */
-const MESEC_PLOCICE = [
+let MESEC_PLOCICE = [
   ['naslovni', { poruka: 'Da li imate slobodan termin za subotu?', naslov: 'Imamo! Javite se u DM', raspored: 0, seme: 0 }, 'Da li imate slobodan termin za subotu? Imamo! 😊\nJavite se porukom u DM, čuvamo termin za vas.'],
   ['naslovni', { naslov: 'Slobodni termini ove nedelje', dodatak: 'utorak 14h i četvrtak 11h', oznaka: 'Ove nedelje', raspored: 2, seme: 1 }, 'Slobodni termini ove nedelje: utorak 14h i četvrtak 11h 📅\nPrvi koji se javi, njegov je.'],
   ['stavka', { broj: '1', naslov: 'Kako da rezultat traje duže', tekst: 'Tri navike koje čuvaju rad do sledećeg termina.', br: '1 / 3', raspored: 2, seme: 2 }, 'Kako da rezultat traje duže? Tri male navike 💡\nSačuvajte objavu da vam bude pri ruci.'],
   ['naslovni', { poruka: 'Koliko unapred da zakažem?', naslov: 'Najbolje nedelju dana', raspored: 1, seme: 3 }, 'Pitanje koje čujemo svake nedelje 🙋\nNajbolje je da zakažete nedelju dana unapred.'],
   ['naslovni', { naslov: 'Kvalitet se vidi u detaljima', oznaka: 'Naša filozofija', raspored: 3, seme: 4 }, 'Kvalitet se vidi u detaljima 🤍\nZato za svaki posao odvojimo vreme koje mu treba.']
 ];
-const MESEC_OPISI = ['Novi rad, sveže iz {n} ✨\nKako vam se čini? Pišite u komentarima.', 'Detalji prave razliku 🤍\nTermin zakažite porukom u DM.', 'Još jedno zadovoljno lice danas 😊\nHvala na poverenju!', 'Ovako izgleda kad se radi sa pažnjom ✅\nSlobodni termini su u DM.'];
+let MESEC_OPISI = ['Novi rad, sveže iz {n} ✨\nKako vam se čini? Pišite u komentarima.', 'Detalji prave razliku 🤍\nTermin zakažite porukom u DM.', 'Još jedno zadovoljno lice danas 😊\nHvala na poverenju!', 'Ovako izgleda kad se radi sa pažnjom ✅\nSlobodni termini su u DM.'];
+if (jeHrana()) {
+  MESEC_PLOCICE = [
+    ['naslovni', { ime: 'Marko', poruka: 'Da li dostavljate i posle 22h?', naslov: 'Do 23h! Poručite u DM', raspored: 0, seme: 0 }, 'Da li dostavljate i posle 22h? Dostavljamo do 23h 🛵\nPoručite porukom u DM, stižemo vruće.'],
+    ['naslovni', { naslov: 'Meni dana', dodatak: 'burger, pomfrit i piće, od 12 do 16h', oznaka: 'Ove nedelje', raspored: 2, seme: 1 }, 'Meni dana: burger, pomfrit i piće 🍔\nSvakog dana od 12 do 16h. Ko je za ručak?'],
+    ['stavka', { broj: '1', naslov: 'Zašto je naša piletina hrskavija', tekst: 'Tri koraka koja nikad ne preskačemo.', br: '1 / 3', raspored: 2, seme: 2 }, 'Zašto je naša piletina hrskavija? Tri koraka koja nikad ne preskačemo 🍗\nSačuvajte objavu i probajte razliku.'],
+    ['naslovni', { ime: 'Ana', poruka: 'Koji sos da probam prvi put?', naslov: 'Ljuti, pa nam javite', raspored: 1, seme: 3 }, 'Pitanje koje čujemo svaki dan: koji sos prvi? 🌶️\nMi kažemo ljuti. Vi recite u komentarima koji je vaš.'],
+    ['naslovni', { naslov: 'Hrskavo spolja, sočno unutra', oznaka: 'Naša filozofija', raspored: 3, seme: 4 }, 'Hrskavo spolja, sočno unutra 🔥\nZato pržimo tek kad poručite, nikad unapred.']
+  ];
+  MESEC_OPISI = ['Sveže iz naše kuhinje 🔥\nKo bi ovo pojeo odmah? Označite društvo.', 'Petak uveče je rezervisan za ovo 🍗\nPoručite u DM ili svratite.', 'Kad krene glad, znate gde smo 😋\nDostava svaki dan do 23h.', 'Ovako izgleda kad se pravi od nule ✅\nProbajte i recite nam utiske.'];
+}
 let mesecSt = null;
 function mesecKartica() {
   if (pravo()) return '';
@@ -2305,7 +2317,7 @@ function mesecUPlan(grafike) {
   }
   red.forEach((x, j) => { if (!out[j]) return;
     const slk = x.s != null ? st.slike[x.s] : grafike[x.p];
-    const cap = (x.s != null ? MESEC_OPISI[x.s % MESEC_OPISI.length].replace('{n}', mesecNaziv()) : MESEC_PLOCICE[x.p][2]) + '\n\n#instagram #novo';
+    const cap = (x.s != null ? MESEC_OPISI[x.s % MESEC_OPISI.length].replace('{n}', mesecNaziv()) : MESEC_PLOCICE[x.p][2]) + (jeHrana() ? '\n\n#piletina #fastfood' : '\n\n#instagram #novo');
     out[j].objava = { id: 900 + j, tip: x.s != null ? 'post' : 'post_kartica', slika: slk, slike: [slk], slika_broj: 1, caption: cap, plocica: x.s != null ? null : x.p };
   });
   podaci.plan = out; podaci.salon.stil = st.tema; if ((st.naziv || '').trim()) podaci.salon.naziv = st.naziv.trim();
@@ -2337,17 +2349,17 @@ async function demoAkcija(p) {
   await cekaj(['objava', 'grafika'].includes(p.akcija) ? 1800 : 900);
   const d = podaci;
   if (p.akcija === 'grafika') {
-    const o = { id: Date.now(), tip: 'post_kartica', slika: sl('#3E4A20', '#6B7C3C'), slike: [], slika_broj: 1, caption: p.napomena.charAt(0).toUpperCase() + p.napomena.slice(1) + ' ✨\nSačuvajte objavu da vam bude pri ruci, a za sva pitanja smo tu.\n\nZakažite termin porukom u DM.\n\n#salon #beograd', status: 'ceka_odobrenje' };
+    const o = { id: Date.now(), tip: 'post_kartica', slika: sl('#3E4A20', '#6B7C3C'), slike: [], slika_broj: 1, caption: p.napomena.charAt(0).toUpperCase() + p.napomena.slice(1) + (jeHrana() ? ' 🔥\nSačuvajte objavu za sledeću porudžbinu.\n\nPoručite u DM ili svratite.\n\n#piletina #fastfood' : ' ✨\nSačuvajte objavu da vam bude pri ruci, a za sva pitanja smo tu.\n\nZakažite termin porukom u DM.\n\n#salon #beograd'), status: 'ceka_odobrenje' };
     o.slike = [o.slika]; d.ceka.unshift(o); d.brojke.ceka++; return { ok: true, objava: o, termin: 'u ' + (d.plan.find(t => !t.objava) || { dan: 'sledećem terminu' }).dan + ' u 19h' };
   }
   if (p.akcija === 'objava') {
     const slike = JSON.parse(p.slike).map(b => 'data:image/jpeg;base64,' + b);
-    const o = { id: Date.now(), tip: 'post', slika: slike[0], slike, slika_broj: slike.length, caption: (p.napomena ? 'Rezultat koji se vidi: ' + p.napomena + ' ✨' : 'Novi rad iz našeg salona ✨') + '\nSvaki detalj je urađen sa pažnjom, da kosa izgleda negovano i posle nekoliko nedelja.\n\nZakažite termin porukom u DM.\n\n#frizer #beograd', status: 'ceka_odobrenje' };
+    const o = { id: Date.now(), tip: 'post', slika: slike[0], slike, slika_broj: slike.length, caption: jeHrana() ? (p.napomena ? p.napomena.charAt(0).toUpperCase() + p.napomena.slice(1) + ' 🔥' : 'Sveže iz naše kuhinje 🔥') + '\nHrskavo spolja, sočno unutra, pravi se tek kad poručite.\n\nPoručite u DM ili svratite do nas 🛵\n\n#piletina #fastfood' : (p.napomena ? 'Rezultat koji se vidi: ' + p.napomena + ' ✨' : 'Novi rad iz našeg salona ✨') + '\nSvaki detalj je urađen sa pažnjom, da kosa izgleda negovano i posle nekoliko nedelja.\n\nZakažite termin porukom u DM.\n\n#frizer #beograd', status: 'ceka_odobrenje' };
     d.ceka.unshift(o); d.brojke.ceka++; return { ok: true, objava: o, termin: 'u ' + (d.plan.find(t => !t.objava) || { dan: 'sledećem terminu' }).dan + ' u 19h' };
   }
   if (p.akcija === 'story') { const o = { id: Date.now(), tip: 'story_tekst', slika: sl('#2B2B2B', '#4A3B36'), slike: [], caption: p.tekst, status: 'ceka_odobrenje' }; o.slike = [o.slika]; d.ceka.unshift(o); d.brojke.ceka++; return { ok: true, objava: o }; }
   const i = d.ceka.findIndex(o => String(o.id) === String(p.red_id)); const o = d.ceka[i];
-  if (['kr', 'op', 'dt', 'tx'].includes(p.akcija)) return { ok: true, caption: ({ kr: 'Kraća verzija: ', op: 'Opuštenije: ', dt: 'Nova verzija: ', tx: 'Po vašoj želji: ' })[p.akcija] + prvaRecenica(o.caption) + '\n\nZakažite termin porukom u DM.' };
+  if (['kr', 'op', 'dt', 'tx'].includes(p.akcija)) return { ok: true, caption: ({ kr: 'Kraća verzija: ', op: 'Opuštenije: ', dt: 'Nova verzija: ', tx: 'Po vašoj želji: ' })[p.akcija] + prvaRecenica(o.caption) + (jeHrana() ? '\n\nPoručite u DM ili svratite.' : '\n\nZakažite termin porukom u DM.') };
   d.ceka.splice(i, 1); d.brojke.ceka--;
   if (p.akcija === 'ok') { if (o.tip === 'story_tekst') { d.brojke.story++; return { ok: true, poruka: 'Story je objavljen na Instagramu.' }; } const t = d.plan.find(x => !x.objava); if (t) t.objava = o; d.brojke.spremno++; return { ok: true, poruka: 'Odobreno! Izlazi ' + (t ? t.dan + ' u ' + t.sat : 'u sledećem terminu') + '.' }; }
   return { ok: true, poruka: 'U redu, ova objava neće biti objavljena.' };
@@ -2407,6 +2419,46 @@ const PRIMER = {
     niz: Array.from({ length: 30 }, (_, i) => ({ d: new Date(Date.now() - (29 - i) * 864e5).toISOString().slice(0, 10), v: Math.round(90 + 70 * Math.sin(i / 3) + i * 6 + (i % 4 === 1 ? 120 : 0)) })),
     godine: { '18-24': 410, '25-34': 980, '35-44': 640, '45-54': 250, '55-64': 80 }, pol: { F: 1890, M: 410, U: 84 },
     gradovi: [['Beograd', 1720], ['Pančevo', 96], ['Novi Sad', 71], ['Zemun', 58], ['Smederevo', 31]] }
+};
+
+/* demo: fast food (piletina) — ?demo=hrana */
+const FOTO_H = { burger: 'https://i.ibb.co/zhGh0cLG/hf-20261119-123832-97ff9d71-0996-440b-addd-9fbb154e3580.jpg', tenders: 'https://i.ibb.co/j9t5Hzvc/hf-20261119-123831-dfb65c7e-ec3f-4456-bd4e-acdd4be72555.jpg', krilca: 'https://i.ibb.co/dww8gx10/hf-20261119-123833-4aa1eabe-8190-49fb-a523-a213bc91f3e4.jpg', wrap: 'https://i.ibb.co/r2MWgwvr/hf-20261119-123833-3b635c87-5712-448e-ad2b-36fecff72c08.jpg', meni: 'https://i.ibb.co/mrFWjgBd/hf-20261119-123831-e782f66a-8982-4a61-97aa-cdeb3aa9f437.jpg', friteza: 'https://i.ibb.co/DnQMcfb/hf-20261119-123831-77c24783-1191-4fc8-b5a8-d3a65a4b70a0.jpg', lokal: 'https://i.ibb.co/8LBr9nqZ/hf-20261119-123831-1c4076d7-6a28-4211-8758-5998ba72122c.jpg', dostava: 'https://i.ibb.co/Jw3tJsxr/hf-20261119-123831-fdc5f588-3111-4f07-a740-7fa9cd33afc6.jpg' };
+function demoKartaH(v) {
+  const B = { crvena: '#C62E1F', tamna: '#24130E', zuta: '#F6B915', krem: '#FFF3DD', narandza: '#E8661E' }, F = 'system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif';
+  const t = (x, y, s, boja, tekst, o = '') => `<text x="${x}" y="${y}" font-family="${F}" font-size="${s}" fill="${boja}" ${o}>${tekst}</text>`;
+  const potpis = boja => t(200, 472, 13, boja, 'HRSKAVO', 'text-anchor="middle" font-weight="800" letter-spacing="4"');
+  let g = '';
+  if (v === 'dm') g = `<rect width="400" height="500" fill="${B.crvena}"/><rect x="34" y="58" width="310" height="92" rx="22" fill="#fff"/>${t(56, 88, 13, B.narandza, 'Marko', 'font-weight="700"')}${t(56, 112, 17, B.tamna, 'Da li dostavljate i')}${t(56, 134, 17, B.tamna, 'posle 22h?')}<circle cx="34" cy="150" r="7" fill="#fff"/>${t(36, 236, 48, B.krem, 'Dostavljamo', 'font-weight="900"')}${t(36, 290, 48, B.zuta, 'do 23h!', 'font-weight="900"')}${t(36, 344, 18, B.krem, 'Poručite porukom u DM 🛵', 'opacity=".9"')}${potpis(B.zuta)}`;
+  else if (v === 'meni') g = `<rect width="400" height="500" fill="${B.zuta}"/><circle cx="330" cy="80" r="110" fill="${B.narandza}" opacity=".35"/>${t(36, 120, 18, B.crvena, 'SVAKOG DANA 12–16H', 'font-weight="800" letter-spacing="2"')}${t(36, 200, 64, B.tamna, 'Meni', 'font-weight="900"')}${t(36, 266, 64, B.crvena, 'dana', 'font-weight="900"')}${[['Burger', 320], ['Pomfrit', 356], ['Piće po izboru', 392]].map(([x, y]) => `<circle cx="44" cy="${y - 6}" r="6" fill="${B.tamna}"/>${t(60, y, 21, B.tamna, x, 'font-weight="600"')}`).join('')}${potpis(B.tamna)}`;
+  else if (v === 'sosovi') g = `<rect width="400" height="500" fill="${B.tamna}"/>${t(34, 150, 130, B.zuta, '3', 'font-weight="900"')}${t(120, 96, 30, B.krem, 'sosa koja', 'font-weight="800"')}${t(120, 132, 30, B.krem, 'morate da', 'font-weight="800"')}${t(120, 168, 30, B.zuta, 'probate', 'font-weight="800"')}${[['Beli luk', 240, B.krem], ['BBQ', 300, B.narandza], ['Ljuti', 360, B.crvena]].map(([x, y, c], i) => `<circle cx="52" cy="${y - 7}" r="18" fill="${c}"/>${t(52, y - 1, 15, B.tamna, i + 1, 'text-anchor="middle" font-weight="800"')}${t(84, y, 22, B.krem, x, 'font-weight="600"')}`).join('')}${potpis(B.zuta)}`;
+  else if (v === 'citat') g = `<rect width="400" height="500" fill="${B.narandza}"/>${t(200, 210, 50, B.krem, 'Hrskavo', 'text-anchor="middle" font-weight="900"')}${t(200, 262, 30, B.tamna, 'spolja,', 'text-anchor="middle" font-weight="700"')}${t(200, 320, 50, B.krem, 'sočno', 'text-anchor="middle" font-weight="900"')}${t(200, 372, 30, B.tamna, 'unutra.', 'text-anchor="middle" font-weight="700"')}${potpis(B.tamna)}`;
+  else if (v === 'novo') g = `<rect width="400" height="500" fill="${B.krem}"/><circle cx="320" cy="120" r="70" fill="${B.crvena}"/>${t(320, 114, 20, '#fff', 'NOVO', 'text-anchor="middle" font-weight="900" letter-spacing="2"')}${t(320, 140, 14, '#fff', 'na meniju', 'text-anchor="middle"')}${t(36, 270, 58, B.crvena, 'Ljuta', 'font-weight="900"')}${t(36, 330, 58, B.tamna, 'krilca', 'font-weight="900"')}${t(36, 376, 19, B.tamna, 'Za one koji vole da peče 🌶️')}${potpis(B.crvena)}`;
+  else if (v === 'pitanje') g = `<rect width="400" height="500" fill="${B.crvena}"/>${t(36, 140, 32, B.krem, 'Koliko traje', 'font-weight="800"')}${t(36, 182, 32, B.krem, 'dostava?', 'font-weight="800"')}<rect x="36" y="230" width="328" height="130" rx="24" fill="${B.krem}"/>${t(60, 290, 52, B.crvena, '25–35', 'font-weight="900"')}${t(60, 330, 20, B.tamna, 'minuta, zavisi od dela grada')}${potpis(B.zuta)}`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">${g}</svg>`);
+}
+const PRIMER_HRANA = {
+  ok: true, admin: false, ime: 'Nikola',
+  salon: { naziv: 'Hrskavo', kod: 'hrskavo', vrsta: 'hrana', stil: 'odvazno', paket: 'PREMIUM', delatnost: 'Fast food, piletina', boje: { pozadina: '#C62E1F', akcenat: '#F6B915' }, limit: 20, limiti: { objave: 20, reels: 4, story: 20 }, raspored: 'uto, čet, sub u 19h', dani: [2, 4, 6], sati: [19], story: true },
+  brojke: { objavljeno: 12, reels: 3, story: 14, ceka: 1, spremno: 2 },
+  ideje: [{ tema: 'Iza kulisa: kako pravimo hrskavu piletinu' }, { tema: 'Anketa: koji sos je vaš favorit?' }, { tema: 'Meni za društvo: šta poručiti za 4 osobe' }],
+  ceka: [{ id: 21, tip: 'post', slika: FOTO_H.krilca, slike: [FOTO_H.krilca], slika_broj: 1, caption: 'Ljuta krila su stigla na meni 🌶️🔥\nGlazirana, sa susamom i mladim lukom. Ko se usuđuje?\n\nPoručite u DM ili svratite.\n\n#piletina #fastfood', datum: '' }],
+  plan: (() => {
+    const DN = ['nedelja', 'ponedeljak', 'utorak', 'sreda', 'četvrtak', 'petak', 'subota'], sad = new Date(), out = [];
+    const obj = [{ id: 31, tip: 'post', slika: FOTO_H.tenders, slike: [FOTO_H.tenders, FOTO_H.friteza], slika_broj: 2, caption: 'Zašto su naši štapići tako hrskavi? Pržimo tek kad poručite 🍗\nNikad unapred, nikad podgrejano.\n\n#piletina #fastfood' },
+      { id: 32, tip: 'reel', slika: FOTO_H.friteza, slika_broj: 1, caption: 'Od friteze do kutije za 60 sekundi 🔥' },
+      { id: 33, tip: 'post', slika: FOTO_H.wrap, slike: [FOTO_H.wrap], slika_broj: 1, caption: 'Wrap sa grilovanom piletinom za brz ručak 🌯' }];
+    for (let i = 0; out.length < 6 && i < 20; i++) {
+      const d = new Date(sad.getFullYear(), sad.getMonth(), sad.getDate() + i, 19); if (![2, 4, 6].includes(d.getDay()) || d <= sad) continue;
+      const k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + 'T19:00';
+      out.push({ kada: d.toISOString(), kljuc: k, dan: (i === 0 ? 'danas' : (i === 1 ? 'sutra' : DN[d.getDay()])) + ' ' + d.getDate() + '.' + (d.getMonth() + 1) + '.', sat: '19h', objava: obj[out.length] || null });
+    }
+    return out;
+  })(),
+  objavljeno: [['burger', 'Hrskavi pileći burger, naš bestseler od prvog dana 🍔', 1], ['dm', 'Dostavljamo do 23h, poručite u DM 🛵', 1, 1], ['meni', 'Meni dana: burger, pomfrit i piće 🍟', 1], ['sosovi', '3 sosa koja morate da probate 🌶️', 1, 1], ['lokal', 'Svratite, uvek je toplo i miriše na piletinu 😋', 1], ['dostava', 'Petak uveče je rezervisan za ovo 🍗', 1], ['citat', 'Hrskavo spolja, sočno unutra 🔥', 1, 1], ['novo', 'Novo na meniju: ljuta krilca 🌶️', 1, 1], ['meni', 'Ručak za 10 minuta, bez čekanja ⏱️', 1]].map(([v, c, n, g], i) => { const src = g ? demoKartaH(v) : (FOTO_H[v] || FOTO_H.burger); return { id: 40 + i, tip: 'post', slika: src, slike: [src], slika_broj: n, caption: c + '\n\n#piletina #fastfood', datum: new Date(Date.now() - (i + 0.6) * 2.5 * 864e5).toISOString() }; }),
+  stat: { pratioci: 3172, doseg: 7840, pregledi: 21460, lajkovi: 1388, komentari: 112, sacuvano: 206, posete: 534, deljenja: 143, interakcije: 1849,
+    niz: Array.from({ length: 30 }, (_, i) => ({ d: new Date(Date.now() - (29 - i) * 864e5).toISOString().slice(0, 10), v: Math.round(130 + 80 * Math.sin(i / 3) + i * 8 + (i % 7 === 5 ? 180 : 0)) })),
+    godine: { '18-24': 1120, '25-34': 1240, '35-44': 520, '45-54': 210, '55-64': 82 }, pol: { F: 1460, M: 1620, U: 92 },
+    gradovi: [['Novi Sad', 2410], ['Petrovaradin', 214], ['Sremska Kamenica', 168], ['Futog', 97], ['Beograd', 64]] }
 };
 (() => {
   if (!uTelegramu && !token && !demo) {
